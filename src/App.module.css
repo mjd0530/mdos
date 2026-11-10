@@ -1,0 +1,30 @@
+.desktop {
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: var(--space-4);
+  background-color: var(--color-desktop);
+  background-image: var(--pattern-desktop);
+  background-size: 2px 2px;
+  image-rendering: pixelated;
+}
+
+.window {
+  max-width: 40ch;
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: var(--border-window);
+  box-shadow: var(--shadow-window);
+}
+
+.title {
+  margin: 0 0 var(--space-3);
+  font-size: var(--font-size-title);
+  font-weight: 700;
+}
+
+.body {
+  margin: 0;
+  line-height: 1.5;
+}

@@ -1,0 +1,43 @@
+/*
+ * Design tokens. Placeholder values for the scaffold; the System 7 palette,
+ * fonts and patterns are defined in step 2 (docs/implementation-plan.md).
+ * Components use these variables only, never raw colours or sizes.
+ */
+:root {
+  /* Colour: black, white and a short grey ramp (D-004). */
+  --color-black: #000;
+  --color-white: #fff;
+  --color-grey-1: #ddd;
+  --color-grey-2: #bbb;
+  --color-grey-3: #888;
+  --color-grey-4: #555;
+
+  --color-text: var(--color-black);
+  --color-surface: var(--color-white);
+  --color-desktop: var(--color-white);
+  --color-focus: var(--color-black);
+
+  /* 50% checkerboard: the classic grey desktop, drawn as 1px black dots. */
+  --pattern-desktop: conic-gradient(
+    var(--color-black) 25%,
+    transparent 0 50%,
+    var(--color-black) 0 75%,
+    transparent 0
+  );
+
+  /* Spacing: 4px base. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+
+  /* Type: system fallbacks until licensed bitmap fonts are chosen (step 2). */
+  --font-system: ui-monospace, 'SF Mono', Menlo, monospace;
+  --font-size-body: 16px;
+  --font-size-title: 18px;
+
+  /* Chrome. */
+  --border-window: 1px solid var(--color-black);
+  --shadow-window: 1px 1px 0 var(--color-black);
+}

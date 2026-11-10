@@ -1,0 +1,7 @@
+dist
+node_modules
+package-lock.json
+test-results
+playwright-report
+# Hand-written docs keep their own formatting.
+*.md

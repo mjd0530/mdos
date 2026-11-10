@@ -71,3 +71,8 @@ A build script resizes each drawing into a thumbnail and a full-size version, so
 _2026-11-10 · Accepted_
 
 Vite + React + TypeScript strict; Zustand (+ persist) for state; plain CSS tokens + CSS Modules; our own window manager on Pointer Events; Zod for content validation; Vitest + Playwright + axe for tests. Radix for menus is still to be evaluated in the menu bar step. No other runtime dependencies without a stated reason.
+
+## D-012 Scaffold tooling
+_2026-11-10 · Accepted_
+
+Current Vite template versions: Vite 8, React 19, TypeScript 7 (strict + `noUncheckedIndexedAccess`). **oxlint** instead of ESLint (the Vite default; one fast binary, no plugin tree). Prettier for formatting (Markdown docs excluded). Vitest 5, Playwright + `@axe-core/playwright` on desktop and mobile Chrome. Node 24 LTS in CI (`.nvmrc`).
