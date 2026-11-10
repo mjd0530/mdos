@@ -1,0 +1,115 @@
+/*
+ * System 7 controls. Frames and marks are pixel art from chromeArt.ts, exposed as
+ * --art-* custom properties by installChromeArt(). Text uses the system face.
+ */
+
+.button {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 64px;
+  margin: 0;
+  padding: 0 8px;
+  border-style: solid;
+  border-width: 4px;
+  border-image: var(--art-button) 4 fill / 4px stretch;
+  background: none;
+  color: var(--color-black);
+  font-family: var(--font-system);
+  font-size: var(--font-size-body);
+  line-height: 16px;
+  image-rendering: pixelated;
+  cursor: default;
+  user-select: none;
+}
+
+.button:active:not(:disabled) {
+  border-image: var(--art-button-pressed) 4 fill / 4px stretch;
+  color: var(--color-white);
+}
+
+.default {
+  border-width: 8px;
+  border-image: var(--art-default-ring) 8 fill / 8px stretch;
+}
+
+.default:active:not(:disabled) {
+  border-image: var(--art-default-ring-pressed) 8 fill / 8px stretch;
+}
+
+/* System 7 dims a disabled button's label; contrast rules exempt disabled controls. */
+.button:disabled {
+  color: var(--color-grey-3);
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* Checkbox and radio: a label row with a 12px pixel mark. */
+.choice {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-system);
+  font-size: var(--font-size-body);
+  line-height: 16px;
+  cursor: default;
+  user-select: none;
+}
+
+.checkbox,
+.radio {
+  appearance: none;
+  flex: none;
+  width: 12px;
+  height: 12px;
+  margin: 0;
+  background-size: 12px 12px;
+  image-rendering: pixelated;
+}
+
+.checkbox {
+  background-image: var(--art-checkbox);
+}
+
+.checkbox:checked {
+  background-image: var(--art-checkbox-on);
+}
+
+.radio {
+  background-image: var(--art-radio);
+}
+
+.radio:checked {
+  background-image: var(--art-radio-on);
+}
+
+/* Pressing shows a thicker frame, like System 7's tracking state. */
+.checkbox:active:not(:disabled),
+.radio:active:not(:disabled) {
+  outline: 1px solid var(--color-black);
+  outline-offset: -2px;
+}
+
+.checkbox:focus-visible,
+.radio:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.choice:has(input:disabled) {
+  color: var(--color-grey-3);
+}
+
+/* Touch: keep the pixel look but give fingers a 44px target. */
+@media (pointer: coarse) {
+  .button {
+    min-height: 44px;
+  }
+  .choice {
+    min-height: 44px;
+  }
+}

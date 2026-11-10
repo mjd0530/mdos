@@ -1,0 +1,198 @@
+/*
+ * System 7 window and menu chrome. Static styles only: behaviour (drag, resize, focus,
+ * menus opening) is added by the window manager (step 4) and menu bar (step 3).
+ */
+
+/* ---------- Window ---------- */
+
+.window {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--color-white);
+  border: 1px solid var(--color-black);
+  box-shadow: 1px 1px 0 var(--color-black);
+}
+
+.titleBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 19px;
+  padding: 0 8px;
+  border-bottom: 1px solid var(--color-black);
+  /* Six 1px stripes, inset 2px top and sides. */
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--color-black) 0 1px,
+    transparent 1px 2px
+  );
+  background-size: calc(100% - 4px) 11px;
+  background-position: 2px 4px;
+  background-repeat: no-repeat;
+  user-select: none;
+}
+
+.title {
+  flex: 0 1 auto;
+  min-width: 0;
+  margin: 0 auto;
+  padding: 0 8px;
+  overflow: hidden;
+  background: var(--color-white);
+  font-family: var(--font-system);
+  font-size: var(--font-size-title);
+  font-weight: 400;
+  line-height: 16px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Close / zoom / collapse: 11px pixel boxes with a 1px white moat that breaks the stripes. */
+.titleBox {
+  flex: none;
+  width: 13px;
+  height: 13px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: var(--color-white) center / 11px 11px no-repeat;
+  image-rendering: pixelated;
+  cursor: default;
+}
+
+.closeBox {
+  background-image: var(--art-close-box);
+}
+
+.zoomBox {
+  background-image: var(--art-zoom-box);
+}
+
+.collapseBox {
+  background-image: var(--art-collapse-box);
+}
+
+.titleBox:active {
+  filter: invert(1);
+}
+
+.titleBox:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 1px;
+}
+
+/* Inactive windows: plain title bar, no boxes, title dimmed (still 7:1 contrast). */
+.inactive .titleBar {
+  background-image: none;
+}
+
+.inactive .title {
+  color: var(--color-grey-4);
+}
+
+.inactive .titleBox {
+  visibility: hidden;
+}
+
+.content {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+/* ---------- Scroll bars ----------
+ * Interim: native scroll bars styled where the browser allows (track, thumb, corner).
+ * Chrome on macOS never draws ::-webkit-scrollbar-button, so System 7 arrow buttons come
+ * from a custom scroll bar in the window manager (step 4); its arrow art is already in
+ * chromeArt.ts. Firefox gets plain black/white. */
+
+.content::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+}
+
+.content::-webkit-scrollbar-track {
+  background: var(--art-scroll-track) 0 0 / 2px 2px;
+  image-rendering: pixelated;
+  border-left: 1px solid var(--color-black);
+}
+
+.content::-webkit-scrollbar-track:horizontal {
+  border-left: 0;
+  border-top: 1px solid var(--color-black);
+}
+
+.content::-webkit-scrollbar-thumb {
+  background: var(--color-white);
+  border: 1px solid var(--color-black);
+}
+
+.content::-webkit-scrollbar-corner {
+  background: var(--art-grow-box) center / 16px 16px no-repeat;
+  image-rendering: pixelated;
+  border-top: 1px solid var(--color-black);
+  border-left: 1px solid var(--color-black);
+}
+
+/* Inactive windows hide scroll bar detail, as System 7 did. */
+.inactive .content::-webkit-scrollbar-track,
+.inactive .content::-webkit-scrollbar-thumb {
+  background: var(--color-white);
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  .content {
+    scrollbar-color: var(--color-black) var(--color-white);
+  }
+}
+
+/* ---------- Menus ---------- */
+
+.menu {
+  min-width: 160px;
+  margin: 0;
+  padding: 2px 0;
+  list-style: none;
+  background: var(--color-white);
+  border: 1px solid var(--color-black);
+  box-shadow: 1px 1px 0 var(--color-black);
+  font-family: var(--font-system);
+  font-size: var(--font-size-body);
+  line-height: 16px;
+  user-select: none;
+}
+
+.menuItem {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 2px 12px 2px 16px;
+  white-space: nowrap;
+  cursor: default;
+}
+
+/* Highlight = inversion, the System 7 way. */
+.menuItem[data-highlighted],
+.menuItemActive {
+  background: var(--color-black);
+  color: var(--color-white);
+}
+
+.menuItem[aria-disabled='true'] {
+  color: var(--color-grey-3);
+}
+
+.shortcut {
+  font-family: var(--font-document);
+}
+
+.separator {
+  height: 1px;
+  margin: 3px 0;
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--color-grey-3) 0 1px,
+    transparent 1px 2px
+  );
+}

@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react';
 import { Artwork } from './Artwork';
+import { Controls } from './Controls';
 import styles from './Specimen.module.css';
 
 // Step 2 design specimen (dev only: /specimen.html). Each option pairs a "system" face
@@ -127,6 +128,7 @@ export function Specimen() {
       ))}
 
       <Artwork />
+      <Controls />
     </main>
   );
 }
