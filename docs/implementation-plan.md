@@ -7,7 +7,7 @@ _Each step ends with a demo Mike can try plus the checks in CLAUDE.md "Verify be
 | # | Step | Done when |
 |---|---|---|
 | 1 | **Scaffold** ✅ 2026-11-10 | Vite 8 + React 19 + TS 7 strict, oxlint + Prettier, Vitest, Playwright + axe (desktop + mobile), GitHub Actions deploying a placeholder page to `os.mikedemar.com` |
-| 2 | **Design foundations** 🔶 fonts done (D-014) | Tokens, chosen fonts (licenses recorded), first 8–10 icons, desktop patterns, a static System 7 "specimen" page for Mike to review |
+| 2 | **Design foundations** 🔶 fonts (D-014), 10 icons, 6 patterns done; controls + window chrome next | Tokens, chosen fonts (licenses recorded), first 8–10 icons, desktop patterns, a static System 7 "specimen" page for Mike to review |
 | 3 | **Desktop + menu bar** | Patterned desktop; menu bar with keyboard-accessible menus (Radix vs hand-rolled decided here); clock; About Mike OS alert; app-switching decision (Application menu / dock) |
 | 4 | **Window manager** | Open/close/focus/drag/resize/zoom/collapse, cascade, keyboard move mode, focus return, announcer; unit tests on the store |
 | 5 | **App framework** | `defineApp` registry, lazy loading, error boundary, a throwaway "Hello" app in a window |

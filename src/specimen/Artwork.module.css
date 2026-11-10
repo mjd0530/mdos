@@ -1,0 +1,105 @@
+.section {
+  margin-bottom: 48px;
+}
+
+.heading {
+  margin: 0;
+  font-family: var(--font-system);
+  font-size: var(--font-size-title);
+  font-weight: 400;
+}
+
+.note {
+  margin: var(--space-1) 0 var(--space-3);
+  max-width: 64ch;
+}
+
+.iconTable {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+  gap: var(--space-4);
+}
+
+.iconCell {
+  margin: 0;
+  padding: var(--space-3);
+  border: 1px solid var(--color-black);
+}
+
+.iconRow {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+/* Selected icons need a dark surround to read as inverted, like on a desktop. */
+.iconRow > svg:nth-child(2) {
+  outline: 1px dotted var(--color-grey-3);
+}
+
+.patternPicker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  margin: 0 0 var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-black);
+}
+
+.legend {
+  padding: 0 var(--space-1);
+  font-family: var(--font-system);
+}
+
+.patternOption {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.swatch {
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--color-black);
+  background-size: 8px 8px;
+  image-rendering: pixelated;
+}
+
+.desktop {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  padding: var(--space-5);
+  min-height: 200px;
+  border: 1px solid var(--color-black);
+  background-size: 8px 8px;
+  image-rendering: pixelated;
+}
+
+.desktopIcon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 80px;
+}
+
+.label,
+.labelSelected {
+  padding: 0 2px;
+  line-height: 16px;
+  white-space: nowrap;
+}
+
+.label {
+  background: var(--color-white);
+  color: var(--color-black);
+}
+
+.labelSelected {
+  background: var(--color-black);
+  color: var(--color-white);
+}
