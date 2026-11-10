@@ -32,10 +32,13 @@
   --space-4: 16px;
   --space-5: 24px;
 
-  /* Type: system fallbacks until licensed bitmap fonts are chosen (step 2). */
-  --font-system: ui-monospace, 'SF Mono', Menlo, monospace;
+  /* Type (D-014). Pixel fonts: sizes are whole multiples of 16px only. */
+  --font-system: 'Pixel Operator HB', 'Pixel Operator', monospace;
+  --font-document: 'Pixel Operator', monospace;
   --font-size-body: 16px;
-  --font-size-title: 18px;
+  --font-size-title: 16px;
+  --font-size-display: 32px;
+  --line-height-body: 1.25; /* 20px at 16px */
 
   /* Chrome. */
   --border-window: 1px solid var(--color-black);

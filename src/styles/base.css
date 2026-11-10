@@ -12,8 +12,11 @@ html {
 
 body {
   margin: 0;
-  font-family: var(--font-system);
+  font-family: var(--font-document);
   font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+  /* Keep pixel fonts crisp where the browser allows it (macOS Safari/Firefox). */
+  -webkit-font-smoothing: none;
   color: var(--color-text);
   background: var(--color-surface);
 }

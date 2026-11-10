@@ -20,11 +20,11 @@
 
 .title {
   margin: 0 0 var(--space-3);
+  font-family: var(--font-system);
   font-size: var(--font-size-title);
-  font-weight: 700;
+  font-weight: 400;
 }
 
 .body {
   margin: 0;
-  line-height: 1.5;
 }

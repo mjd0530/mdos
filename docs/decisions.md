@@ -83,3 +83,12 @@ _2026-11-10 · Accepted_
 DNS is deferred. Until then the site is served from GitHub's default address, so the CI build sets `BASE_PATH=/mdos/` and there is no `public/CNAME`.
 **To switch to `os.mikedemar.com` (D-002):** add a Route 53 CNAME `os → mjd0530.github.io`; restore `public/CNAME` containing `os.mikedemar.com`; remove `BASE_PATH` from `.github/workflows/ci.yml`; set the custom domain and Enforce HTTPS in Settings → Pages.
 **Rule until then:** asset and link URLs go through Vite (imports, `import.meta.env.BASE_URL`), never hard-coded `/…` paths, so they work under both addresses.
+
+## D-014 Fonts: Pixel Operator HB + Pixel Operator
+_2026-11-10 · Accepted_
+
+**Context.** No openly licensed Chicago lookalike exists: "Chicago Kare" copies Apple's design, has no published license and uses Apple's trademarked name (ruled out by D-003). Mike chose existing fonts over drawing our own.
+**Compared** (specimen, 2026-11-10): Pixel Operator Bold + Regular; **Pixel Operator HB + Regular**; Pixelify Sans Bold + Pixel Operator; Pixelify Sans throughout.
+**Decision.** System face (menus, titles, buttons, dialogs): **Pixel Operator HB**. Document face (reading text, labels): **Pixel Operator** Regular/Bold.
+**License.** CC0 1.0 (full text in `src/assets/fonts/pixel-operator/LICENSE.txt`); by Jayvee Enaguas, v2018.10.04, from fontlibrary.org.
+**Rules.** Drawn on a 16px grid: use 16px or whole multiples only (tokens `--font-size-body/title` = 16px, `--font-size-display` = 32px). TTF files are small (~17 KB each), so no WOFF2 conversion for now.

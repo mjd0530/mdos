@@ -46,7 +46,8 @@ New project, separate from the Astro portfolio (`~/Documents/GitHub/website`). R
 - System 7 (D-004): black and white plus a short grey ramp for bevels, title-bar stripes and frames. Grey is for chrome only; text stays black on white. Colour sparingly, never for chrome.
 - Pixel-exact. Bitmap fonts, crisp edges (`image-rendering: pixelated`), no smooth gradients, blurs or soft shadows.
 - Lives at `os.mikedemar.com` beside the Astro site (D-002).
-- Original Mike-specific 1-bit icons. Openly licensed fonts only (license checked and recorded).
+- Original Mike-specific 1-bit icons. Fonts (D-014): Pixel Operator HB for system chrome, Pixel Operator for text, CC0; 16px or whole multiples only.
+- Design specimen at `/specimen.html` (dev only): add each new building block there for review.
 - Never place text on dither patterns.
 
 ## Accessibility (WCAG 2.1 AA)
