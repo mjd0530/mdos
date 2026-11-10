@@ -22,7 +22,7 @@ New project, separate from the Astro portfolio (`~/Documents/GitHub/website`). R
 ## Stack (D-011)
 - Vite + React + TypeScript strict. Zustand for state (persisted keys `mikeos:*`, versioned).
 - Plain CSS tokens + CSS Modules. No Tailwind, no CSS-in-JS, no animation library.
-- Static site, no server. Hosting (D-005): GitHub Pages at `os.mikedemar.com`, deployed by GitHub Actions.
+- Static site, no server. Hosting (D-005): GitHub Pages, deployed by GitHub Actions. Temporarily at `mjd0530.github.io/mdos/` (D-013): never hard-code root `/` URLs; use imports or `import.meta.env.BASE_URL`.
 - No new dependency without stating why and the alternative.
 - Commands: `npm run dev` · `build` · `preview` · `check` (tsc) · `lint` (oxlint + Prettier) · `test` (Vitest) · `e2e` (Playwright + axe, builds first, port 4330).
 - Node 24 LTS (`.nvmrc`); CI uses it. Local npm 10 has a resolver bug with this tree: install with `npx npm@11 install`.

@@ -46,6 +46,9 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+        env:
+          # Served at mjd0530.github.io/mdos/ until os.mikedemar.com is set up (D-013).
+          BASE_PATH: /mdos/
       - uses: actions/upload-pages-artifact@v5
         with:
           path: dist

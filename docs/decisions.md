@@ -76,3 +76,10 @@ Vite + React + TypeScript strict; Zustand (+ persist) for state; plain CSS token
 _2026-11-10 · Accepted_
 
 Current Vite template versions: Vite 8, React 19, TypeScript 7 (strict + `noUncheckedIndexedAccess`). **oxlint** instead of ESLint (the Vite default; one fast binary, no plugin tree). Prettier for formatting (Markdown docs excluded). Vitest 5, Playwright + `@axe-core/playwright` on desktop and mobile Chrome. Node 24 LTS in CI (`.nvmrc`).
+
+## D-013 Temporary address: `mjd0530.github.io/mdos/`
+_2026-11-10 · Accepted_
+
+DNS is deferred. Until then the site is served from GitHub's default address, so the CI build sets `BASE_PATH=/mdos/` and there is no `public/CNAME`.
+**To switch to `os.mikedemar.com` (D-002):** add a Route 53 CNAME `os → mjd0530.github.io`; restore `public/CNAME` containing `os.mikedemar.com`; remove `BASE_PATH` from `.github/workflows/ci.yml`; set the custom domain and Enforce HTTPS in Settings → Pages.
+**Rule until then:** asset and link URLs go through Vite (imports, `import.meta.env.BASE_URL`), never hard-coded `/…` paths, so they work under both addresses.
