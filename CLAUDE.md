@@ -28,7 +28,7 @@ New project, separate from the Astro portfolio (`~/Documents/GitHub/website`). R
 - Node 24 LTS (`.nvmrc`); CI uses it. Local npm 10 has a resolver bug with this tree: install with `npx npm@11 install`.
 
 ## Architecture
-- `src/os/` shell: MenuBar, Desktop, DesktopIcon, WindowLayer, Window, ContextMenu, Clock, CursorClock, ScreenSaver, Announcer.
+- `src/os/` shell: `OS` (desktop + alerts), `menubar/` (MenuBar, menu types), `menus.ts` (system menus as data), Clock; next: WindowLayer, Window, DesktopIcon, ContextMenu, Announcer. Menus are data (`MenuDef`), not JSX.
 - `src/apps/<id>/` one folder per app: `index.ts` (`defineApp` metadata), `<App>.tsx`, `use<App>Logic.ts`, `<App>.module.css`. Apps render content only; `Window` owns chrome.
 - `src/ui/` shared controls (Button, Checkbox, Slider, ListView, IconGrid, ScrollArea, Alert…). Apps use these, never one-off copies.
 - `src/stores/` windows, desktop, settings (+ app stores only when needed).

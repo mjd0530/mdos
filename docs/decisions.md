@@ -92,3 +92,15 @@ _2026-11-10 · Accepted_
 **Decision.** System face (menus, titles, buttons, dialogs): **Pixel Operator HB**. Document face (reading text, labels): **Pixel Operator** Regular/Bold.
 **License.** CC0 1.0 (full text in `src/assets/fonts/pixel-operator/LICENSE.txt`); by Jayvee Enaguas, v2018.10.04, from fontlibrary.org.
 **Rules.** Drawn on a 16px grid: use 16px or whole multiples only (tokens `--font-size-body/title` = 16px, `--font-size-display` = 32px). TTF files are small (~17 KB each), so no WOFF2 conversion for now.
+
+## D-015 Menus are hand-built, not Radix
+_2026-11-10 · Accepted_
+
+**Why.** System 7 menus need press-drag-release, hover-to-switch while open, inverted highlights and pixel glyphs; Radix Menubar would need overriding in most of those places and adds several packages. The WAI-ARIA menubar pattern is ~250 lines (`src/os/menubar/MenuBar.tsx`).
+**Guardrails.** Playwright tests cover mouse, keyboard (one Tab stop, arrows, Home/End, Enter/Space, Esc with focus return), touch taps, and axe with a menu and an alert open (`tests/e2e/menubar.spec.ts`).
+**Alerts** use native `<dialog>` + `showModal()` (focus trap, inert page, Esc, focus return for free); focus moves to the default button so Return confirms.
+
+## D-016 App switching: decide once windows exist
+_2026-11-10 · Deferred to steps 4–5_
+
+System 7 switched apps from the Application menu at the right of the menu bar; there was no dock. With no windows yet there is nothing to switch, so the choice (Application menu, dock, or both) waits for the window manager.

@@ -1,0 +1,113 @@
+.bar {
+  position: relative;
+  z-index: var(--z-menubar, 1000);
+  display: flex;
+  align-items: stretch;
+  height: 20px;
+  padding: 0 8px;
+  background: var(--color-white);
+  border-bottom: 1px solid var(--color-black);
+  font-family: var(--font-system);
+  font-size: var(--font-size-body);
+  line-height: 16px;
+  user-select: none;
+}
+
+.menubar {
+  display: flex;
+  align-items: stretch;
+  min-width: 0;
+}
+
+.slot {
+  position: relative;
+  display: flex;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0 8px;
+  border: 0;
+  background: none;
+  color: var(--color-black);
+  font: inherit;
+  white-space: nowrap;
+  cursor: default;
+}
+
+.titleOpen {
+  background: var(--color-black);
+  color: var(--color-white);
+}
+
+.title:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+}
+
+.titleOpen:focus-visible {
+  outline-color: var(--color-white);
+}
+
+.mark {
+  display: block;
+  width: 16px;
+  height: 16px;
+  background: var(--art-mark) center / 16px 16px no-repeat;
+  image-rendering: pixelated;
+}
+
+.titleOpen .mark {
+  filter: invert(1);
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 0;
+}
+
+.dropdown [role='menuitem']:focus {
+  outline: none; /* highlight (inversion) shows the focused item */
+}
+
+.shortcut {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.command {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  background: var(--art-command) center / 9px 9px no-repeat;
+  image-rendering: pixelated;
+}
+
+/* The shortcut glyph inverts with its highlighted row. */
+[data-highlighted] .command {
+  filter: invert(1);
+}
+
+[aria-disabled='true'] .command {
+  opacity: 0.45;
+}
+
+.end {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+
+@media (max-width: 480px) {
+  .bar {
+    padding: 0 2px;
+  }
+  .title {
+    padding: 0 5px;
+  }
+}

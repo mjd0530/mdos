@@ -1,0 +1,59 @@
+/* System 7 modal dialog: 2px black frame, 2px white moat, 1px black outer line. */
+.alert {
+  width: min(400px, calc(100vw - 32px));
+  padding: 12px 16px 16px;
+  border: 2px solid var(--color-black);
+  background: var(--color-white);
+  color: var(--color-black);
+  box-shadow:
+    0 0 0 2px var(--color-white),
+    0 0 0 3px var(--color-black);
+}
+
+/* System 7 didn't dim the screen behind alerts. */
+.alert::backdrop {
+  background: transparent;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: 12px 16px;
+}
+
+.icon {
+  grid-row: 1;
+}
+
+.text {
+  min-width: 0;
+}
+
+.title {
+  margin: 0 0 8px;
+  font-family: var(--font-system);
+  font-size: var(--font-size-title);
+  font-weight: 400;
+  line-height: 16px;
+}
+
+.body {
+  font-family: var(--font-system);
+  line-height: var(--line-height-body);
+}
+
+.body p {
+  margin: 0 0 8px;
+}
+
+.body p:last-child {
+  margin-bottom: 0;
+}
+
+.buttons {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 16px;
+}

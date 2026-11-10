@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import './styles/fonts.css';
 import './styles/tokens.css';
 import './styles/base.css';
-import { App } from './App';
+import { OS } from './os/OS';
 import { installChromeArt } from './ui/chromeArt';
 
 installChromeArt();
@@ -13,6 +13,6 @@ if (!root) throw new Error('Missing #root element');
 
 createRoot(root).render(
   <StrictMode>
-    <App />
+    <OS />
   </StrictMode>,
 );

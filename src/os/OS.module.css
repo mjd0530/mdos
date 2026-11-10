@@ -1,0 +1,25 @@
+.screen {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.desktop {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  background-color: var(--color-white);
+  background-size: 8px 8px;
+  image-rendering: pixelated;
+}
+
+.shortcutList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.shortcutList li {
+  margin-bottom: 4px;
+}
