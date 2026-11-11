@@ -88,3 +88,52 @@ test('no axe violations in a case study and the viewer', async ({ page }) => {
   results = await new AxeBuilder({ page }).withTags(WCAG).analyze();
   expect(results.violations).toEqual([]);
 });
+
+test('Viewer steps through every picture in the document', async ({ page }) => {
+  const notes = await openMagicMove(page);
+  await notes
+    .getByRole('button', { name: /View larger: Planning board/ })
+    .click();
+  const viewer = page.getByRole('dialog', {
+    name: 'Journey and competitive mapping board',
+  });
+  await expect(viewer.getByText('2 of 7')).toBeVisible();
+
+  await viewer.getByRole('button', { name: 'Next ▶' }).click();
+  const next = page.getByRole('dialog', {
+    name: 'Mid-fidelity experience flows',
+  });
+  await expect(next.getByText('3 of 7')).toBeVisible();
+
+  // ← goes back while the window is active.
+  await next.getByRole('button', { name: 'Actual Size' }).focus();
+  await page.keyboard.press('ArrowLeft');
+  await expect(
+    page.getByRole('dialog', { name: 'Journey and competitive mapping board' }),
+  ).toBeVisible();
+
+  // Picking another picture in the document switches the same Viewer window.
+  await notes
+    .getByRole('button', { name: /View larger: Delivery board/ })
+    .focus();
+  await page.keyboard.press('Enter');
+  await expect(
+    page.getByRole('dialog', { name: 'Delivery screens' }),
+  ).toBeVisible();
+  await expect(page.getByRole('dialog', { name: /mapping board/ })).toHaveCount(
+    0,
+  );
+  await expect(
+    page.getByRole('dialog', { name: 'Delivery screens' }).getByRole('button', {
+      name: 'Next ▶',
+    }),
+  ).toBeDisabled();
+});
+
+test('case-study pictures are served resized, as WebP', async ({ page }) => {
+  const notes = await openMagicMove(page);
+  const src = await notes
+    .getByRole('img', { name: /High-fidelity mockups/ })
+    .getAttribute('src');
+  expect(src).toMatch(/high-fidelity-mockups-display-.*\.webp$/);
+});

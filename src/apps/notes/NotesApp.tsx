@@ -37,15 +37,28 @@ export default function NotesApp({
     };
   }, [docId, setTitle]);
 
-  // Pictures are <button class="doc-image"> from the build; open the clicked one in Viewer.
+  // Pictures are <button class="doc-image"> from the build. Clicking one opens Viewer on
+  // it, with Previous / Next stepping through every picture in this document.
   const onBodyClick = (event: MouseEvent) => {
-    const button = (event.target as Element).closest('button.doc-image');
-    const img = button?.querySelector('img');
-    if (!button || !img) return;
+    const clicked = (event.target as Element).closest('button.doc-image');
+    if (!clicked || !bodyRef.current || !docId) return;
+    const buttons = [
+      ...bodyRef.current.querySelectorAll<HTMLButtonElement>(
+        'button.doc-image',
+      ),
+    ];
+    const items = buttons.map((button) => {
+      const img = button.querySelector('img');
+      return {
+        src: img?.currentSrc || img?.src || '',
+        alt: img?.alt ?? '',
+        title: button.getAttribute('data-view-title') || img?.alt || '',
+      };
+    });
     launch('viewer', {
-      src: img.currentSrc || img.src,
-      alt: img.alt,
-      title: button.getAttribute('data-view-title') || img.alt,
+      set: `doc:${docId}`,
+      index: Math.max(0, buttons.indexOf(clicked as HTMLButtonElement)),
+      items,
     });
   };
 

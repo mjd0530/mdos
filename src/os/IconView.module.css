@@ -108,3 +108,22 @@
     min-height: 44px;
   }
 }
+
+/* Sketchbook thumbnails in place of pixel icons. */
+.thumb {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  background: var(--color-white);
+  border: 1px solid var(--color-black);
+}
+
+.item[aria-selected='true'] .thumb {
+  outline: 2px solid var(--color-black);
+  outline-offset: 1px;
+}
+
+.list .thumb {
+  width: 32px;
+  height: 32px;
+}

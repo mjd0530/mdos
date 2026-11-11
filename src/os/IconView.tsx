@@ -32,6 +32,7 @@ const KIND_LABEL: Record<VNode['kind'], string> = {
   doc: 'Document',
   app: 'Application',
   link: 'Web link',
+  image: 'Picture',
 };
 
 /**
@@ -207,11 +208,23 @@ export function IconView({
               if (!selected) onSelect(node.id);
             }}
           >
-            <PixelIcon
-              name={iconFor(node)}
-              selected={selected}
-              className={styles.icon}
-            />
+            {node.kind === 'image' ? (
+              // Drawings show themselves; the label carries the name.
+              <img
+                src={node.thumb}
+                alt=""
+                className={`${styles.icon} ${styles.thumb}`}
+                loading="lazy"
+                decoding="async"
+                draggable={false}
+              />
+            ) : (
+              <PixelIcon
+                name={iconFor(node)}
+                selected={selected}
+                className={styles.icon}
+              />
+            )}
             <span className={styles.label}>{node.name}</span>
             {layout === 'list' && (
               <span className={styles.kind}>{KIND_LABEL[node.kind]}</span>

@@ -27,6 +27,7 @@ export function launch(appId: string, payload?: unknown): string | undefined {
   const windows = useWindows.getState();
   const existing = findExistingWindow(app, payload, windows.windows);
   if (existing) {
+    if (payload !== undefined) windows.setPayload(existing, payload);
     windows.focus(existing);
     return existing;
   }

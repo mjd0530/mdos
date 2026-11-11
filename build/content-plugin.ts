@@ -6,7 +6,9 @@ import {
   docModuleCode,
   vfsModuleCode,
   type ContentResult,
+  type ImageMaps,
 } from './content.ts';
+import { processAll } from './images.ts';
 
 const VFS_ID = 'virtual:vfs';
 const DOC_PREFIX = 'virtual:doc/';
@@ -21,12 +23,25 @@ export function contentPlugin(): Plugin {
   let contentDir = '';
   let isBuild = false;
   let result: ContentResult | undefined;
+  let images: ImageMaps | undefined;
 
   const appExists = (appId: string) =>
     existsSync(path.join(rootDir, 'src', 'apps', appId, 'index.ts'));
 
-  const rebuild = () => {
-    result = buildContent({ contentDir, rootDir, appExists });
+  // Validate synchronously, then resize every referenced image (cached by content).
+  const rebuild = async () => {
+    const next = buildContent({ contentDir, rootDir, appExists });
+    const docImages = [...next.docs.values()].flatMap((doc) => doc.images);
+    const [docDisplay, galleryDisplay, thumb] = await Promise.all([
+      processAll(rootDir, docImages, 'display'),
+      processAll(rootDir, next.assets, 'display'),
+      processAll(rootDir, next.assets, 'thumb'),
+    ]);
+    result = next;
+    images = {
+      display: new Map([...docDisplay, ...galleryDisplay]),
+      thumb,
+    };
   };
 
   return {
@@ -38,9 +53,9 @@ export function contentPlugin(): Plugin {
       isBuild = config.command === 'build';
     },
 
-    buildStart() {
+    async buildStart() {
       try {
-        rebuild();
+        await rebuild();
       } catch (error) {
         if (isBuild) throw error;
         this.warn(String(error));
@@ -62,20 +77,20 @@ export function contentPlugin(): Plugin {
         }
         return undefined;
       }
-      if (virtualId === VFS_ID) return vfsModuleCode(result);
+      if (virtualId === VFS_ID) return vfsModuleCode(result, images);
       if (virtualId.startsWith(DOC_PREFIX)) {
         const rendered = result.docs.get(virtualId.slice(DOC_PREFIX.length));
-        if (rendered) return docModuleCode(rendered);
+        if (rendered) return docModuleCode(rendered, images?.display);
       }
       return undefined;
     },
 
     configureServer(devServer) {
       devServer.watcher.add(contentDir);
-      const onChange = (file: string) => {
+      const onChange = async (file: string) => {
         if (!file.startsWith(contentDir)) return;
         try {
-          rebuild();
+          await rebuild();
         } catch (error) {
           devServer.config.logger.error(String(error));
           devServer.ws.send({
@@ -95,9 +110,10 @@ export function contentPlugin(): Plugin {
         }
         devServer.ws.send({ type: 'full-reload' });
       };
-      devServer.watcher.on('change', onChange);
-      devServer.watcher.on('add', onChange);
-      devServer.watcher.on('unlink', onChange);
+      const handle = (file: string) => void onChange(file);
+      devServer.watcher.on('change', handle);
+      devServer.watcher.on('add', handle);
+      devServer.watcher.on('unlink', handle);
     },
   };
 }

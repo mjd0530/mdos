@@ -34,7 +34,19 @@ export interface LinkNode extends NodeBase {
   href: string;
 }
 
-export type VNode = FolderNode | DocNode | AppNode | LinkNode;
+/** A picture (a Sketchbook drawing); opens in Viewer. */
+export interface ImageNode extends NodeBase {
+  kind: 'image';
+  /** Resized display image URL. */
+  src: string;
+  /** Small thumbnail URL for Files. */
+  thumb: string;
+  alt: string;
+  date?: string;
+  description?: string;
+}
+
+export type VNode = FolderNode | DocNode | AppNode | LinkNode | ImageNode;
 
 export interface CaseStudyMeta {
   client: string;
@@ -63,4 +75,5 @@ export const DEFAULT_ICONS: Record<VNode['kind'], IconName> = {
   doc: 'document',
   app: 'computer',
   link: 'link',
+  image: 'image',
 };

@@ -1,7 +1,7 @@
 import { docLoaders, tree } from 'virtual:vfs';
 import type { Doc, FolderNode, VNode } from './types';
 
-export type { Doc, FolderNode, VNode } from './types';
+export type { Doc, FolderNode, ImageNode, VNode } from './types';
 export { DEFAULT_ICONS } from './types';
 
 /** The desktop folder: the root of everything in content/fs.yaml. */
@@ -20,6 +20,12 @@ const parentOf = new Map<string, string>();
 
 export function findNode(id: string): VNode | undefined {
   return byId.get(id);
+}
+
+/** The folder that contains a node. */
+export function parentFolder(id: string): FolderNode | undefined {
+  const parent = byId.get(parentOf.get(id) ?? '');
+  return parent?.kind === 'folder' ? parent : undefined;
 }
 
 /** Folders from the desktop down to (and including) this node: for Files' path menu. */

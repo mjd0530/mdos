@@ -5,6 +5,8 @@
 #   - folder: Name                   (children: [...])
 #   - app: app-id                    (name: required)
 #   - link: https://…                (name: required)
+#   - gallery: folder-name           (name: required; pictures listed in
+#                                     content/<folder-name>/manifest.yaml)
 # Any entry can set icon: <name from src/assets/icons/icons.ts>.
 
 desktop:
@@ -22,8 +24,8 @@ desktop:
       - doc: about/biography
         name: Biography
 
-  - folder: Sketchbook
-    children: []
+  - gallery: sketchbook
+    name: Sketchbook
 
   - folder: Contact
     children:

@@ -1,0 +1,12 @@
+# Mike's drawings. Put image files in this folder (PNG or JPG, any size: the build
+# resizes them), then list each one below. Order here is the order in the folder and
+# in Viewer. Every drawing needs alt text describing it for people who can't see it.
+#
+# drawings:
+#   - file: owl.png
+#     title: Night Owl
+#     alt: A pencil sketch of an owl on a branch, looking over its shoulder
+#     date: 2025-03-14          # optional
+#     description: Procreate, 6B pencil brush.   # optional
+
+drawings: []

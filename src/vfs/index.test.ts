@@ -26,7 +26,7 @@ describe('the real content', () => {
     expect(doc.title).toBe('Smart Share / Magic Move');
     expect(doc.caseStudy?.role).toBe('Lead UX Designer');
     expect(doc.html).not.toContain('__MIKEOS_IMAGE_');
-    expect(doc.html).toMatch(/src="[^"]*tap-and-share[^"]*\.jpg"/);
+    expect(doc.html).toMatch(/src="[^"]*tap-and-share[^"]*\.webp"/);
   });
 
   it('rejects unknown documents', async () => {

@@ -7,7 +7,7 @@ import { Marked, type Tokens } from 'marked';
 import YAML from 'yaml';
 import { z } from 'zod';
 import { ICONS } from '../src/assets/icons/icons.ts';
-import type { Doc, FolderNode, VNode } from '../src/vfs/types.ts';
+import type { Doc, FolderNode, ImageNode, VNode } from '../src/vfs/types.ts';
 
 export class ContentError extends Error {
   readonly file: string;
@@ -26,6 +26,7 @@ const text = z.string().trim().min(1);
 
 type FsEntry =
   | { folder: string; icon?: string; children: FsEntry[] }
+  | { gallery: string; name: string; icon?: string }
   | { doc: string; name?: string; icon?: string }
   | { app: string; name: string; icon?: string }
   | { link: string; name: string; icon?: string };
@@ -47,7 +48,35 @@ const entrySchemas = {
   link: z
     .object({ link: z.string().url(), name: text, icon: iconName.optional() })
     .strict(),
+  /** A folder of pictures described by content/<gallery>/manifest.yaml. */
+  gallery: z
+    .object({ gallery: text, name: text, icon: iconName.optional() })
+    .strict(),
 };
+
+const galleryManifest = z
+  .object({
+    drawings: z
+      .array(
+        z
+          .object({
+            file: text,
+            title: text,
+            alt: text,
+            // YAML turns 2025-03-14 into a Date; keep it as written.
+            date: z
+              .union([
+                text,
+                z.date().transform((d) => d.toISOString().slice(0, 10)),
+              ])
+              .optional(),
+            description: text.optional(),
+          })
+          .strict(),
+      )
+      .default([]),
+  })
+  .strict();
 
 const ENTRY_KINDS = Object.keys(entrySchemas) as (keyof typeof entrySchemas)[];
 
@@ -148,6 +177,9 @@ export interface RenderedDoc {
 }
 
 export const imageToken = (index: number) => `__MIKEOS_IMAGE_${index}__`;
+/** Placeholders in the tree for gallery image URLs, swapped for imports in virtual:vfs. */
+export const assetToken = (variant: 'display' | 'thumb', index: number) =>
+  `__MIKEOS_ASSET_${variant}_${index}__`;
 
 const escapeHtml = (value: string) =>
   value
@@ -255,6 +287,8 @@ export interface ContentResult {
   docs: Map<string, RenderedDoc>;
   /** Every file read: the dev server watches these. */
   files: string[];
+  /** Root-relative gallery images referenced by the tree, by asset index. */
+  assets: string[];
 }
 
 interface BuildOptions {
@@ -284,6 +318,7 @@ export function buildContent({
 
   const docs = new Map<string, RenderedDoc>();
   const files = [fsPath];
+  const assets: string[] = [];
   const ids = new Set<string>();
 
   const uniqueId = (base: string) => {
@@ -315,6 +350,53 @@ export function buildContent({
       );
     }
     return docs.get(docId) as RenderedDoc;
+  };
+
+  const loadGallery = (galleryDir: string, parentId: string): ImageNode[] => {
+    const dir = path.join(contentDir, galleryDir);
+    const manifestPath = path.join(dir, 'manifest.yaml');
+    if (!existsSync(manifestPath)) {
+      throw new ContentError(
+        fsPath,
+        `gallery "${galleryDir}" needs ${galleryDir}/manifest.yaml`,
+      );
+    }
+    files.push(manifestPath);
+    let raw: unknown;
+    try {
+      raw = YAML.parse(readFileSync(manifestPath, 'utf8')) ?? {};
+    } catch (error) {
+      throw new ContentError(manifestPath, `not valid YAML: ${error}`);
+    }
+    const parsed = galleryManifest.safeParse(raw);
+    if (!parsed.success) {
+      throw new ContentError(manifestPath, describe(parsed.error));
+    }
+    return parsed.data.drawings.map((drawing) => {
+      const absolute = path.join(dir, drawing.file);
+      if (!existsSync(absolute)) {
+        throw new ContentError(
+          manifestPath,
+          `image not found: ${drawing.file}`,
+        );
+      }
+      assets.push(
+        '/' + path.relative(rootDir, absolute).split(path.sep).join('/'),
+      );
+      const index = assets.length - 1;
+      return {
+        kind: 'image',
+        id: uniqueId(
+          `${parentId}/${slug(drawing.file.replace(/\.[^.]+$/, ''))}`,
+        ),
+        name: drawing.title,
+        alt: drawing.alt,
+        date: drawing.date,
+        description: drawing.description,
+        src: assetToken('display', index),
+        thumb: assetToken('thumb', index),
+      };
+    });
   };
 
   const walk = (entries: FsEntry[], parent: string): VNode[] =>
@@ -354,6 +436,18 @@ export function buildContent({
           appId: entry.app,
         };
       }
+      if ('gallery' in entry) {
+        const id = uniqueId(
+          parent ? `${parent}/${slug(entry.name)}` : slug(entry.name),
+        );
+        return {
+          kind: 'folder',
+          id,
+          name: entry.name,
+          icon: entry.icon as VNode['icon'],
+          children: loadGallery(entry.gallery, id),
+        };
+      }
       return {
         kind: 'link',
         id: uniqueId(
@@ -371,26 +465,53 @@ export function buildContent({
     name: 'Desktop',
     children: walk(entries, ''),
   };
-  return { tree, docs, files };
+  return { tree, docs, files, assets };
 }
 
 // ---------- Module code ----------
 
-/** `virtual:vfs`: the tree plus a lazy loader per document. */
-export function vfsModuleCode(result: ContentResult): string {
+export interface ImageMaps {
+  display: Map<string, string>;
+  thumb: Map<string, string>;
+}
+
+const resolved = (map: Map<string, string>, source: string) =>
+  map.get(source) ?? source;
+
+/** `virtual:vfs`: the tree (with gallery images imported) plus a lazy loader per doc. */
+export function vfsModuleCode(
+  result: ContentResult,
+  images?: ImageMaps,
+): string {
+  const imports = result.assets
+    .flatMap((source, i) => [
+      `import display${i} from ${JSON.stringify(resolved(images?.display ?? new Map(), source))};`,
+      `import thumb${i} from ${JSON.stringify(resolved(images?.thumb ?? new Map(), source))};`,
+    ])
+    .join('\n');
+  const tree = JSON.stringify(result.tree).replace(
+    /"__MIKEOS_ASSET_(display|thumb)_(\d+)__"/g,
+    (_match, variant: string, index: string) => `${variant}${index}`,
+  );
   const loaders = [...result.docs.keys()]
     .map(
       (docId) =>
         `  ${JSON.stringify(docId)}: () => import(${JSON.stringify(`virtual:doc/${docId}`)}),`,
     )
     .join('\n');
-  return `export const tree = ${JSON.stringify(result.tree)};\nexport const docLoaders = {\n${loaders}\n};\n`;
+  return `${imports}\nexport const tree = ${tree};\nexport const docLoaders = {\n${loaders}\n};\n`;
 }
 
-/** `virtual:doc/<id>`: one document, with its images imported so Vite hashes them. */
-export function docModuleCode(rendered: RenderedDoc): string {
+/** `virtual:doc/<id>`: one document, importing its (resized) images so Vite hashes them. */
+export function docModuleCode(
+  rendered: RenderedDoc,
+  display?: Map<string, string>,
+): string {
   const imports = rendered.images
-    .map((src, i) => `import image${i} from ${JSON.stringify(src)};`)
+    .map(
+      (src, i) =>
+        `import image${i} from ${JSON.stringify(resolved(display ?? new Map(), src))};`,
+    )
     .join('\n');
   const replacements = rendered.images
     .map((_, i) => `.replaceAll(${JSON.stringify(imageToken(i))}, image${i})`)

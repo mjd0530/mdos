@@ -151,3 +151,11 @@ _2026-11-11 · Accepted_
 - **Magic Move** is ported from the Astro site with all real copy and the six real images; sections still marked Placeholder there are `TODO(mike)` comments, and the two films wait for video support in Notes.
 - **Hello** is now a hidden test fixture: not in any menu; Playwright opens it through a `?e2e` hook to test windows and crash recovery.
 - **Known cost:** case-study PNGs ship at full size (up to ~3 MB each, loaded only when that document is opened and scrolled to). Step 10's image pipeline should resize them along with the Sketchbook.
+
+## D-023 Image pipeline, Sketchbook and Viewer sets
+_2026-11-11 · Accepted_
+
+- **Every content picture is resized at build time** with `sharp` (devDependency): longest edge 2000px, WebP q82; Sketchbook thumbnails 192px. Output is cached in `node_modules/.cache/mikeos-images` by file content, so unchanged images are never reprocessed. Magic Move's images went from ~7.5 MB to ~0.53 MB with no visible loss in the annotated mockups.
+- **Originals stay in git** (they're the source). If the Sketchbook grows large, consider Git LFS. Pushing several MB over HTTPS may need `git -c http.postBuffer=524288000 push`.
+- **Sketchbook** is a `gallery:` entry in `fs.yaml`, backed by `content/sketchbook/manifest.yaml` (file, title, alt, optional date and description). Drawings show as thumbnails in Files. It starts empty until Mike adds drawings.
+- **Viewer** opens a *set* of pictures (a gallery folder, or every picture in one document) with Previous / Next buttons, ← → while active, and "n of N". One Viewer window per set; opening another picture from the same set switches that window (re-launch passes the new payload).

@@ -53,6 +53,8 @@ interface WindowsState {
   open: (options: OpenOptions) => string;
   close: (id: string) => void;
   setTitle: (id: string, title: string) => void;
+  /** Re-launching an open window can hand it new data (e.g. a different picture). */
+  setPayload: (id: string, payload: unknown) => void;
   focus: (id: string) => void;
   move: (id: string, x: number, y: number) => void;
   resize: (id: string, w: number, h: number) => void;
@@ -152,6 +154,8 @@ export const useWindows = create<WindowsState>()(
           if (get().windows.find((w) => w.id === id)?.title === title) return;
           update(id, (win) => ({ ...win, title }));
         },
+
+        setPayload: (id, payload) => update(id, (win) => ({ ...win, payload })),
 
         focus: (id) =>
           set((state) =>

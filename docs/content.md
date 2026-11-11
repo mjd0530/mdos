@@ -30,7 +30,23 @@ Everything visitors read lives in `content/`. You never touch code to add or cha
 
 ## Pictures
 
-`![Alt text describing the picture](./file.png "Optional caption")`. Every picture can be clicked to open larger in Viewer; the caption shows under it and in Viewer's title.
+`![Alt text describing the picture](./file.png "Optional caption")`. Every picture can be clicked to open larger in Viewer (which steps through all the pictures in that document); the caption shows under it and in Viewer's title. Pictures are resized to WebP at build time, so add originals at full size.
+
+## Sketchbook drawings
+
+1. Put the image in `content/sketchbook/` (PNG or JPG at any size; the build resizes it).
+2. Add it to `content/sketchbook/manifest.yaml`:
+
+   ```yaml
+   drawings:
+     - file: owl.png
+       title: Night Owl
+       alt: A pencil sketch of an owl on a branch, looking over its shoulder
+       date: 2025-03-14            # optional
+       description: Procreate.     # optional
+   ```
+
+Order in the file is the order in the folder and in Viewer.
 
 ## Case studies
 
@@ -58,6 +74,7 @@ caseStudy:
 | `folder:` | `- folder: Personal` + `children:` | Files |
 | `link:` | `- link: https://…` + `name:` | A new browser tab |
 | `app:` | `- app: weather` + `name:` | That app |
+| `gallery:` | `- gallery: sketchbook` + `name:` | Files, showing thumbnails; pictures open in Viewer |
 
 Any entry can take `icon:` with a name from `src/assets/icons/icons.ts`. Order in the file is the order on screen.
 

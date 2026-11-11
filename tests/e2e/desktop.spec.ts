@@ -173,3 +173,13 @@ test('no axe violations with Files and Notes open', async ({ page }) => {
   const results = await new AxeBuilder({ page }).withTags(WCAG).analyze();
   expect(results.violations).toEqual([]);
 });
+
+test('the Sketchbook opens, empty until drawings are added', async ({
+  page,
+}) => {
+  await icon(page, 'Sketchbook').focus();
+  await page.keyboard.press('Enter');
+  const sketchbook = page.getByRole('dialog', { name: 'Sketchbook' });
+  await expect(sketchbook.getByText('0 items')).toBeVisible();
+  await expect(sketchbook.getByText('This folder is empty.')).toBeVisible();
+});

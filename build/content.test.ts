@@ -3,12 +3,14 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
+  assetToken,
   buildContent,
   ContentError,
   docModuleCode,
   imageToken,
   slug,
   splitFrontMatter,
+  vfsModuleCode,
 } from './content.ts';
 
 let root: string;
@@ -216,6 +218,90 @@ describe('buildContent: broken content fails with a clear message', () => {
   it.each(cases)('%s', (_name, setup, message) => {
     setup();
     expect(build).toThrow(ContentError);
+    expect(build).toThrow(message);
+  });
+});
+
+describe('galleries', () => {
+  const setup = (manifest: string, files: string[] = ['owl.png']) => {
+    write(
+      'fs.yaml',
+      'desktop:\n  - gallery: sketchbook\n    name: Sketchbook\n',
+    );
+    write('sketchbook/manifest.yaml', manifest);
+    for (const file of files) write(`sketchbook/${file}`, 'png');
+  };
+
+  it('turns the manifest into a folder of picture nodes', () => {
+    setup(`drawings:
+  - file: owl.png
+    title: Night Owl
+    alt: An owl on a branch
+    date: 2025-03-14
+    description: Pencil.
+`);
+    const { tree, assets } = build();
+    const folder = tree.children[0];
+    expect(folder).toMatchObject({
+      kind: 'folder',
+      id: 'sketchbook',
+      name: 'Sketchbook',
+    });
+    expect(folder?.kind === 'folder' && folder.children[0]).toEqual({
+      kind: 'image',
+      id: 'sketchbook/owl',
+      name: 'Night Owl',
+      alt: 'An owl on a branch',
+      date: '2025-03-14',
+      description: 'Pencil.',
+      src: assetToken('display', 0),
+      thumb: assetToken('thumb', 0),
+      icon: undefined,
+    });
+    expect(assets).toEqual(['/content/sketchbook/owl.png']);
+  });
+
+  it('imports gallery images in virtual:vfs instead of leaving tokens', () => {
+    setup('drawings:\n  - file: owl.png\n    title: Owl\n    alt: An owl\n');
+    const code = vfsModuleCode(build(), {
+      display: new Map([
+        ['/content/sketchbook/owl.png', '/cache/owl-display.webp'],
+      ]),
+      thumb: new Map([
+        ['/content/sketchbook/owl.png', '/cache/owl-thumb.webp'],
+      ]),
+    });
+    expect(code).toContain('import display0 from "/cache/owl-display.webp";');
+    expect(code).toContain('import thumb0 from "/cache/owl-thumb.webp";');
+    expect(code).toContain('"src":display0');
+    expect(code).not.toContain('__MIKEOS_ASSET_');
+  });
+
+  it('allows an empty sketchbook', () => {
+    setup('drawings: []\n', []);
+    const folder = build().tree.children[0];
+    expect(folder?.kind === 'folder' && folder.children).toEqual([]);
+  });
+
+  it.each([
+    [
+      'a missing manifest',
+      () => write('fs.yaml', 'desktop:\n  - gallery: art\n    name: Art\n'),
+      /needs art\/manifest\.yaml/,
+    ],
+    [
+      'a missing image',
+      () =>
+        setup('drawings:\n  - file: cat.png\n    title: Cat\n    alt: A cat\n'),
+      /image not found: cat\.png/,
+    ],
+    [
+      'a drawing without alt text',
+      () => setup('drawings:\n  - file: owl.png\n    title: Owl\n'),
+      /alt/,
+    ],
+  ])('fails on %s', (_name, arrange, message) => {
+    arrange();
     expect(build).toThrow(message);
   });
 });
