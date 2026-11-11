@@ -9,7 +9,7 @@ _Each step ends with a demo Mike can try plus the checks in CLAUDE.md "Verify be
 | 1 | **Scaffold** ✅ 2026-11-10 | Vite 8 + React 19 + TS 7 strict, oxlint + Prettier, Vitest, Playwright + axe (desktop + mobile), GitHub Actions deploying a placeholder page to `os.mikedemar.com` |
 | 2 | **Design foundations** ✅ 2026-11-10: fonts (D-014), 10 icons, 6 patterns, buttons/checkbox/radio, menu + window chrome | Tokens, chosen fonts (licenses recorded), first 8–10 icons, desktop patterns, a static System 7 "specimen" page for Mike to review |
 | 3 | **Desktop + menu bar** ✅ 2026-11-10 (D-015, D-016) | Patterned desktop; menu bar with keyboard-accessible menus (Radix vs hand-rolled decided here); clock; About Mike OS alert; app-switching decision (Application menu / dock) |
-| 4 | **Window manager** | Open/close/focus/drag/resize/zoom/collapse, custom System 7 scroll bar with arrow buttons (CSS can't draw them in Chrome/macOS), cascade, keyboard move mode, focus return, announcer; unit tests on the store |
+| 4 | **Window manager** ✅ 2026-11-11 (D-017) | Open/close/focus/drag/resize/zoom/collapse, custom System 7 scroll bar with arrow buttons (CSS can't draw them in Chrome/macOS), cascade, keyboard move mode, focus return, announcer; unit tests on the store |
 | 5 | **App framework** | `defineApp` registry, lazy loading, error boundary, a throwaway "Hello" app in a window |
 | 6 | **Content pipeline + VFS** | Vite plugin validates `content/`, emits vfs + docs + images; build fails on bad content; tests |
 | 7 | **Desktop icons + Files** | Icons from VFS, select/drag/arrange, roving-tabindex grid, context menu; Files app with icon/list views, back/forward |

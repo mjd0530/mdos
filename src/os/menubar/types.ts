@@ -4,6 +4,8 @@ export interface MenuCommand {
   label: string;
   /** Letter for ⌘/Ctrl shortcuts, e.g. 'W'. Shown in the menu; wiring is per command. */
   shortcut?: string;
+  /** A shortcut that isn't ⌘+letter: shown as text, e.g. { label: 'Ctrl+`', aria: 'Control+`' }. */
+  keyHint?: { label: string; aria: string };
   disabled?: boolean;
   onSelect?: () => void;
 }

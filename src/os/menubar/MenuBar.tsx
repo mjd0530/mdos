@@ -213,7 +213,7 @@ export function MenuBar({ menus, end }: MenuBarProps) {
                         aria-keyshortcuts={
                           entry.shortcut
                             ? `Meta+${entry.shortcut} Control+${entry.shortcut}`
-                            : undefined
+                            : entry.keyHint?.aria
                         }
                         data-highlighted={open.item === i || undefined}
                         className={chrome.menuItem}
@@ -233,6 +233,11 @@ export function MenuBar({ menus, end }: MenuBarProps) {
                           <span className={styles.shortcut} aria-hidden="true">
                             <span className={styles.command} />
                             {entry.shortcut}
+                          </span>
+                        )}
+                        {entry.keyHint && (
+                          <span className={styles.shortcut} aria-hidden="true">
+                            {entry.keyHint.label}
                           </span>
                         )}
                       </div>

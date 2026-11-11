@@ -1,0 +1,48 @@
+.window {
+  position: absolute;
+  box-sizing: border-box;
+}
+
+/* The striped title bar already shows which window is active. */
+.window:focus {
+  outline: none;
+}
+
+.titleBar {
+  flex: none;
+  touch-action: none; /* dragging a title bar must not scroll the page */
+  cursor: default;
+}
+
+.window[data-collapsed] .titleBar {
+  border-bottom: 0;
+}
+
+.title:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 0;
+}
+
+.body {
+  flex: 1;
+}
+
+.grow {
+  position: absolute;
+  inset: 0;
+  touch-action: none;
+  cursor: nwse-resize;
+}
+
+.growActive {
+  background: var(--art-grow-box) center / 16px 16px no-repeat;
+  image-rendering: pixelated;
+}
+
+/* Fingers need a bigger handle than 15px: extend the hit area outside the corner. */
+@media (pointer: coarse) {
+  .grow {
+    inset: -14px -6px -6px -14px;
+    background-position: 14px 14px;
+  }
+}

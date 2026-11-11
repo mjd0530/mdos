@@ -1,0 +1,129 @@
+.area {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 16px;
+  grid-template-rows: minmax(0, 1fr) 16px;
+  min-width: 0;
+  min-height: 0;
+}
+
+.viewport {
+  overflow: auto;
+  scrollbar-width: none; /* our own bars replace the native ones */
+  overscroll-behavior: contain;
+}
+
+.viewport::-webkit-scrollbar {
+  display: none;
+}
+
+.viewport:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+}
+
+.content {
+  min-width: min-content;
+}
+
+/* ---------- Bars ---------- */
+
+.bar {
+  display: flex;
+  background: var(--color-white);
+  user-select: none;
+  touch-action: none;
+}
+
+.vertical {
+  flex-direction: column;
+  border-left: 1px solid var(--color-black);
+}
+
+.horizontal {
+  flex-direction: row;
+  border-top: 1px solid var(--color-black);
+}
+
+.arrow {
+  flex: none;
+  width: 15px;
+  height: 15px;
+  background: center / 16px 16px no-repeat;
+  image-rendering: pixelated;
+  opacity: 0.4; /* dimmed until there is something to scroll */
+}
+
+.enabled .arrow {
+  opacity: 1;
+}
+
+.enabled .arrow:active {
+  filter: invert(1);
+  background-color: var(--color-white);
+}
+
+.vertical .arrowStart {
+  background-image: var(--art-arrow-up);
+  border-bottom: 1px solid var(--color-black);
+  height: 16px;
+}
+
+.vertical .arrowEnd {
+  background-image: var(--art-arrow-down);
+  border-top: 1px solid var(--color-black);
+  height: 16px;
+}
+
+.horizontal .arrowStart {
+  background-image: var(--art-arrow-left);
+  border-right: 1px solid var(--color-black);
+  width: 16px;
+}
+
+.horizontal .arrowEnd {
+  background-image: var(--art-arrow-right);
+  border-left: 1px solid var(--color-black);
+  width: 16px;
+}
+
+.track {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+
+.enabled .track {
+  background: var(--art-scroll-track) 0 0 / 2px 2px;
+  image-rendering: pixelated;
+}
+
+/* System 7's thumb is a fixed square box, not a proportional bar. */
+.thumb {
+  position: absolute;
+  background: var(--color-white);
+  box-sizing: border-box;
+}
+
+.vertical .thumb {
+  left: 0;
+  width: 15px;
+  height: 16px;
+  border-top: 1px solid var(--color-black);
+  border-bottom: 1px solid var(--color-black);
+}
+
+.horizontal .thumb {
+  top: 0;
+  width: 16px;
+  height: 15px;
+  border-left: 1px solid var(--color-black);
+  border-right: 1px solid var(--color-black);
+}
+
+.corner {
+  position: relative;
+  border-top: 1px solid var(--color-black);
+  border-left: 1px solid var(--color-black);
+  background: var(--color-white);
+}

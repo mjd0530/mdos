@@ -104,3 +104,12 @@ _2026-11-10 · Accepted_
 _2026-11-10 · Deferred to steps 4–5_
 
 System 7 switched apps from the Application menu at the right of the menu bar; there was no dock. With no windows yet there is nothing to switch, so the choice (Application menu, dock, or both) waits for the window manager.
+
+## D-017 Window manager
+_2026-11-11 · Accepted_
+
+- **State:** one Zustand store (`src/os/windows/store.ts`): windows in creation order (DOM order, so restacking never moves focus) plus a separate back-to-front `order`; geometry rules are pure functions with unit tests (`geometry.ts`).
+- **Semantics:** each window is `role="dialog" aria-modal="false"` labelled by its title. Opening focuses the window; closing hands focus to the window beneath, else back to whatever opened it. A polite live region announces opens and closes.
+- **Keyboard:** the title is focusable; arrows move 16px, Shift+arrows resize. **Ctrl+`** cycles windows (Shift reverses). ⌘` belongs to macOS and ⌘W/Ctrl+W close the browser tab before a page sees them, so neither is used; File → Close Window covers closing.
+- **Scroll bars:** custom System 7 bars (arrows, grey track, fixed square thumb) over a natively scrolling, focusable viewport. The bars are pointer-only (`aria-hidden`); keyboard and screen readers scroll natively.
+- **Measuring:** the desktop is measured synchronously on mount and then by ResizeObserver, so a window opened in a background tab still fits the screen.

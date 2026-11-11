@@ -1,0 +1,11 @@
+/* Covers the desktop but lets clicks through to it; windows opt back in. */
+.layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.layer > * {
+  pointer-events: auto;
+}

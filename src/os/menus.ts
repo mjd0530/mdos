@@ -4,13 +4,25 @@ export interface SystemActions {
   about: () => void;
   shortcuts: () => void;
   restart: () => void;
+  newWindow: () => void;
+  closeWindow: () => void;
+  nextWindow: () => void;
+}
+
+export interface SystemState {
+  /** Is there an active window for Close / Next to act on? */
+  hasWindow: boolean;
+  windowCount: number;
 }
 
 /**
  * The system menus. Items that depend on later steps (windows, Files, persistence) are
  * present but disabled so the menu bar already reads like a complete System 7 machine.
  */
-export function systemMenus(actions: SystemActions): MenuDef[] {
+export function systemMenus(
+  actions: SystemActions,
+  state: SystemState,
+): MenuDef[] {
   return [
     {
       id: 'mark',
@@ -37,11 +49,11 @@ export function systemMenus(actions: SystemActions): MenuDef[] {
       label: 'File',
       items: [
         {
+          // Temporary until apps exist (step 5): opens a test window.
           kind: 'command',
-          id: 'new-folder',
-          label: 'New Folder',
-          shortcut: 'N',
-          disabled: true,
+          id: 'new-window',
+          label: 'New Window',
+          onSelect: actions.newWindow,
         },
         {
           kind: 'command',
@@ -52,11 +64,20 @@ export function systemMenus(actions: SystemActions): MenuDef[] {
         },
         { kind: 'separator', id: 'sep1' },
         {
+          // No ⌘W: browsers close the tab before a page can see it.
           kind: 'command',
           id: 'close',
           label: 'Close Window',
-          shortcut: 'W',
-          disabled: true,
+          disabled: !state.hasWindow,
+          onSelect: actions.closeWindow,
+        },
+        {
+          kind: 'command',
+          id: 'next-window',
+          label: 'Next Window',
+          keyHint: { label: 'Ctrl+`', aria: 'Control+`' },
+          disabled: state.windowCount < 2,
+          onSelect: actions.nextWindow,
         },
       ],
     },
