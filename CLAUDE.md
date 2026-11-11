@@ -35,8 +35,8 @@ New project, separate from the Astro portfolio (`~/Documents/GitHub/website`). R
 - Adding an app = adding a folder. Adding content = editing `content/`, never app code.
 
 ## Virtual filesystem and content
-- `content/` holds all content (Markdown + YAML, images). Validated by Zod at build; emits `vfs.json`.
-- Node kinds: folder, file (typed → opened by the app that `handles` it), alias, app, link.
+- `content/` holds all content (Markdown + `fs.yaml` + images); guide: `docs/content.md`. `build/content-plugin.ts` validates it and emits `virtual:vfs` + lazy `virtual:doc/<id>` modules; read them via `src/vfs` (`desktop`, `findNode`, `pathTo`, `loadDoc`).
+- Node kinds: folder (→ Files), doc (→ Notes), app, link. Body headings start at `##`.
 - Read-only for visitors. Required `alt` on every image. Don't invent facts, metrics or quotes; leave `TODO(mike):`.
 
 ## Public content only

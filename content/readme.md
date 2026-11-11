@@ -1,0 +1,20 @@
+---
+title: Read Me
+---
+
+Welcome to Mike OS: Mike DeMar's portfolio, built as a little computer you can explore.
+
+## Getting around
+
+- **Double-click** a folder or file to open it. Folders open in Files; documents open in Notes.
+- **Drag** a window by its title bar. Resize it from the box in its bottom-right corner.
+- The boxes in a title bar close, zoom and collapse the window.
+
+## Using a keyboard
+
+- **Tab** reaches the menu bar, then the desktop.
+- In the menu bar, **← →** move between menus and **↓** opens one.
+- With a window's title focused, the **arrow keys** move it and **Shift + arrows** resize it.
+- **Ctrl + `** switches between open windows.
+
+<!-- TODO(mike): a short personal welcome in your own words. -->

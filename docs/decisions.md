@@ -100,10 +100,10 @@ _2026-11-10 · Accepted_
 **Guardrails.** Playwright tests cover mouse, keyboard (one Tab stop, arrows, Home/End, Enter/Space, Esc with focus return), touch taps, and axe with a menu and an alert open (`tests/e2e/menubar.spec.ts`).
 **Alerts** use native `<dialog>` + `showModal()` (focus trap, inert page, Esc, focus return for free); focus moves to the default button so Return confirms.
 
-## D-016 App switching: decide once windows exist
-_2026-11-10 · Deferred to steps 4–5_
+## D-016 No dock; open things from icons
+_2026-11-11 · Accepted (Mike)_
 
-System 7 switched apps from the Application menu at the right of the menu bar; there was no dock. With no windows yet there is nothing to switch, so the choice (Application menu, dock, or both) waits for the window manager.
+There is no dock and no Application menu. Visitors open files, folders and apps by double-clicking their icons on the desktop and in Files windows (steps 7, 9). Switching between open windows: click a window, **Ctrl+`**, or File → Next Window. Revisit only if testing shows visitors get lost.
 
 ## D-017 Window manager
 _2026-11-11 · Accepted_
@@ -118,3 +118,8 @@ _2026-11-11 · Accepted_
 _2026-11-11 · Accepted_
 
 Apps are folders discovered by `import.meta.glob` (`src/apps/*/index.ts`) and declared with `defineApp` (id, name, icon, instance rule, window size, lazy `load`). `launch(appId, payload)` applies the instance rule (`single` / `multiple` / `per-document`). Each app lazy-loads inside its window behind a crash boundary with Close/Relaunch. Installed apps can list themselves in the M menu, as System 7's Apple menu did. Guide: `docs/application-framework.md`. The throwaway **Hello** app proves it and goes when real apps arrive.
+
+## D-019 Content pipeline
+_2026-11-11 · Accepted_
+
+`content/` (Markdown + `fs.yaml`) is read by a Vite plugin (`build/content-plugin.ts`, logic in `build/content.ts`). It validates with Zod and emits `virtual:vfs` (the tree, metadata only) plus one lazily loaded `virtual:doc/<id>` module per document, which imports its images so Vite hashes them. Markdown is rendered at build time with `marked`; content is Mike's own, so HTML is trusted, not sanitised. Body headings shift down one level (`##` → h3) to nest under the window's h2. Bad content fails the build with file + reason; in dev it shows the error overlay and keeps the last good version. `yaml`, `marked` and `zod` are build-time devDependencies: nothing extra ships. Sketchbook images (with resizing) come in step 10. Guide: `docs/content.md`.

@@ -1,0 +1,33 @@
+# The desktop. Order here is the order icons appear.
+# Entries:
+#   - doc: path/without-.md          (content/<path>.md or content/<path>/index.md;
+#                                     name defaults to the document's title)
+#   - folder: Name                   (children: [...])
+#   - app: app-id                    (name: required)
+#   - link: https://…                (name: required)
+# Any entry can set icon: <name from src/assets/icons/icons.ts>.
+
+desktop:
+  - doc: readme
+    name: Read Me
+
+  - folder: Portfolio
+    children:
+      - doc: portfolio/magic-move
+      - doc: portfolio/vantage
+      - doc: portfolio/hello-design-system
+
+  - folder: About Mike
+    children:
+      - doc: about/biography
+        name: Biography
+
+  - folder: Sketchbook
+    children: []
+
+  - folder: Contact
+    children:
+      - link: https://www.linkedin.com/in/mikedemar/
+        name: LinkedIn
+      - link: https://dribbble.com/mikedemar
+        name: Dribbble
