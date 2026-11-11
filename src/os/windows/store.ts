@@ -49,6 +49,8 @@ interface WindowsState {
   opened: number;
   /** Last rect of each keyed window ("appId:key"), saved between visits. */
   remembered: Record<string, Rect>;
+  /** On phones and tablets new windows open zoomed (D-024). */
+  openZoomed: boolean;
 
   open: (options: OpenOptions) => string;
   close: (id: string) => void;
@@ -63,6 +65,7 @@ interface WindowsState {
   /** Bring the next (1) or previous (-1) window to the front. */
   cycle: (direction?: 1 | -1) => void;
   setBounds: (bounds: Size) => void;
+  setOpenZoomed: (openZoomed: boolean) => void;
   /** Special → Reset Desktop: close every window and forget saved positions. */
   forgetAll: () => void;
   reset: () => void;
@@ -74,6 +77,7 @@ const initial = {
   bounds: { w: 0, h: 0 } as Size,
   opened: 0,
   remembered: {} as Record<string, Rect>,
+  openZoomed: false,
 };
 
 /** Windows with a key (one per document, or single-instance apps) remember their rect. */
@@ -113,7 +117,7 @@ export const useWindows = create<WindowsState>()(
           payload,
           key,
         }) => {
-          const { opened, bounds, remembered } = get();
+          const { opened, bounds, remembered, openZoomed } = get();
           const id = `window-${opened + 1}`;
           const saved =
             key === undefined ? undefined : remembered[`${appId}:${key}`];
@@ -130,6 +134,11 @@ export const useWindows = create<WindowsState>()(
             payload,
             key,
           };
+          if (openZoomed) {
+            win.restoreRect = win.rect;
+            win.rect = zoomedRect(bounds);
+            win.zoomed = true;
+          }
           set((state) => ({
             windows: [...state.windows, win],
             order: [...state.order, id],
@@ -236,6 +245,8 @@ export const useWindows = create<WindowsState>()(
                   })),
                 },
           ),
+
+        setOpenZoomed: (openZoomed) => set({ openZoomed }),
 
         forgetAll: () => set({ windows: [], order: [], remembered: {} }),
 

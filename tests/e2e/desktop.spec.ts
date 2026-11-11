@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
+import { isPhone } from './device.ts';
 
 const WCAG = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
 
@@ -26,7 +27,8 @@ test('the desktop shows the items from content/fs.yaml', async ({ page }) => {
 
 test('clicking selects an icon; clicking the desktop clears it', async ({
   page,
-}) => {
+}, testInfo) => {
+  test.skip(isPhone(testInfo), 'on phones a tap opens (see phone.spec.ts)');
   await icon(page, 'Portfolio').click();
   await expect(icon(page, 'Portfolio')).toHaveAttribute(
     'aria-selected',
@@ -98,15 +100,16 @@ test.describe('keyboard', () => {
   test('arrows move through icons and Enter opens; focus goes into the window', async ({
     page,
   }) => {
+    // The layout differs by screen (a column on desktops, a grid on phones), so follow
+    // wherever ↓ lands and check that icon opens.
     await icon(page, 'Read Me').focus();
     await page.keyboard.press('ArrowDown');
-    await expect(icon(page, 'Portfolio')).toBeFocused();
-    await expect(icon(page, 'Portfolio')).toHaveAttribute(
-      'aria-selected',
-      'true',
-    );
+    const focused = desktopIcons(page).locator('[role="option"]:focus');
+    await expect(focused).toHaveAttribute('aria-selected', 'true');
+    const name = (await focused.textContent()) ?? '';
+    expect(name).not.toBe('Read Me');
     await page.keyboard.press('Enter');
-    await expect(page.getByRole('dialog', { name: 'Portfolio' })).toBeFocused();
+    await expect(page.getByRole('dialog', { name })).toBeFocused();
   });
 
   test('Shift+F10 opens the context menu; Open opens the item', async ({

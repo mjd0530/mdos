@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
+import { isPhone } from './device.ts';
 
 const WCAG = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
 const STUDY = 'Smart Share / Magic Move';
@@ -44,7 +45,9 @@ test('Contents jumps to a section and moves focus there', async ({ page }) => {
   await expect(nav).toBeHidden();
 });
 
-test('a picture opens larger in Viewer, with its caption', async ({ page }) => {
+test('a picture opens larger in Viewer, with its caption', async ({
+  page,
+}, testInfo) => {
   const notes = await openMagicMove(page);
   await notes
     .getByRole('button', { name: /View larger: Planning board/ })
@@ -62,6 +65,7 @@ test('a picture opens larger in Viewer, with its caption', async ({ page }) => {
   await actual.click();
   await expect(actual).toHaveAttribute('aria-pressed', 'true');
 
+  if (isPhone(testInfo)) return; // on phones Notes is behind Viewer; see phone.spec.ts
   // Opening the same picture again brings its window forward instead of a second one.
   await notes
     .getByRole('button', { name: /View larger: Planning board/ })
@@ -72,7 +76,10 @@ test('a picture opens larger in Viewer, with its caption', async ({ page }) => {
   ).toHaveCount(1);
 });
 
-test('no axe violations in a case study and the viewer', async ({ page }) => {
+test('no axe violations in a case study and the viewer', async ({
+  page,
+}, testInfo) => {
+  test.skip(isPhone(testInfo), 'covered for phones in phone.spec.ts');
   const notes = await openMagicMove(page);
   await notes.getByText('Contents', { exact: true }).click();
   let results = await new AxeBuilder({ page }).withTags(WCAG).analyze();
@@ -89,7 +96,9 @@ test('no axe violations in a case study and the viewer', async ({ page }) => {
   expect(results.violations).toEqual([]);
 });
 
-test('Viewer steps through every picture in the document', async ({ page }) => {
+test('Viewer steps through every picture in the document', async ({
+  page,
+}, testInfo) => {
   const notes = await openMagicMove(page);
   await notes
     .getByRole('button', { name: /View larger: Planning board/ })
@@ -112,6 +121,7 @@ test('Viewer steps through every picture in the document', async ({ page }) => {
     page.getByRole('dialog', { name: 'Journey and competitive mapping board' }),
   ).toBeVisible();
 
+  if (isPhone(testInfo)) return; // Notes is behind Viewer on phones
   // Picking another picture in the document switches the same Viewer window.
   await notes
     .getByRole('button', { name: /View larger: Delivery board/ })

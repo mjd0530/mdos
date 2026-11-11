@@ -58,7 +58,8 @@ New project, separate from the Astro portfolio (`~/Documents/GitHub/website`). R
 - Plain HTML view of all public content for no-JS and screen readers.
 
 ## Responsive
-- ≥ 1024 desktop shell; 768–1023 larger, default-maximized windows; < 768 full-screen launcher shell. Same apps and stores; only the shell changes.
+- `useDeviceMode()` (D-024): phone < 768px = launcher grid, single tap, one full-screen window; tablet 768–1023px or coarse pointer = desktop with zoomed windows and long-press menus; desktop otherwise. Same apps and stores everywhere.
+- E2E runs on desktop, Pixel 7 and iPad Mini; use `tests/e2e/device.ts` where behaviour differs.
 
 ## Verify before calling it done
 - Typecheck, lint, unit tests (Vitest), Playwright + axe pass.

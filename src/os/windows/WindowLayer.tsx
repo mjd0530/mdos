@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef } from 'react';
 import { AppHost } from '../../apps/AppHost';
+import { useDeviceMode } from '../device';
 import { useWindows } from './store';
 import { Window } from './Window';
 import styles from './WindowLayer.module.css';
@@ -14,6 +15,7 @@ export function WindowLayer() {
   const order = useWindows((s) => s.order);
   const setBounds = useWindows((s) => s.setBounds);
   const activeId = order.at(-1);
+  const phone = useDeviceMode() === 'phone';
 
   // Measure synchronously on mount (ResizeObserver only reports on rendered frames, which a
   // background tab may never produce), then keep watching for changes.
@@ -41,6 +43,7 @@ export function WindowLayer() {
           win={win}
           active={win.id === activeId}
           z={order.indexOf(win.id) + 1}
+          phone={phone}
         >
           <AppHost win={win} isActive={win.id === activeId} />
         </Window>

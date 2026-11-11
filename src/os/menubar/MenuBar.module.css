@@ -111,3 +111,15 @@
     padding: 0 5px;
   }
 }
+
+/* Touch: a taller bar and wider titles, same look. */
+@media (pointer: coarse) {
+  .bar {
+    height: 32px;
+  }
+  .title {
+    padding: 0 6px;
+    min-width: 40px;
+    justify-content: center;
+  }
+}

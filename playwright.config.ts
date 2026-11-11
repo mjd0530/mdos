@@ -7,6 +7,8 @@ const PORT = 4330;
 export default defineConfig({
   testDir: 'tests/e2e',
   fullyParallel: true,
+  // Leave CPU for the browser: a busy machine otherwise causes timeouts, not real failures.
+  workers: process.env.CI ? undefined : '50%',
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? 'github' : 'list',
@@ -17,6 +19,11 @@ export default defineConfig({
   projects: [
     { name: 'desktop', use: { ...devices['Desktop Chrome'] } },
     { name: 'mobile', use: { ...devices['Pixel 7'] } },
+    // iPad screen and touch, run in Chromium (WebKit isn't installed for tests).
+    {
+      name: 'tablet',
+      use: { ...devices['iPad Mini'], browserName: 'chromium' },
+    },
   ],
   webServer: {
     command: `npm run build && npx vite preview --port ${PORT} --strictPort`,

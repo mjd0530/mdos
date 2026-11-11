@@ -10,6 +10,8 @@ interface WindowProps {
   active: boolean;
   /** Stacking position, 1 = backmost. */
   z: number;
+  /** Phones: full screen, one at a time; no zoom, collapse or resize. */
+  phone?: boolean;
   children: ReactNode;
 }
 
@@ -27,7 +29,13 @@ const ARROWS: Record<string, [number, number] | undefined> = {
  * Mouse/touch: drag the title bar, drag the grow box, double-click the title to collapse.
  * Keyboard: focus the title, then arrows move and Shift+arrows resize.
  */
-export function Window({ win, active, z, children }: WindowProps) {
+export function Window({
+  win,
+  active,
+  z,
+  phone = false,
+  children,
+}: WindowProps) {
   const { id, title, rect, zoomed, collapsed } = win;
   const ref = useRef<HTMLElement>(null);
   const titleId = useId();
@@ -107,6 +115,10 @@ export function Window({ win, active, z, children }: WindowProps) {
       aria-labelledby={titleId}
       tabIndex={-1}
       data-active={active || undefined}
+      data-phone={phone || undefined}
+      // On phones only the front window is shown (and reachable by screen readers).
+      hidden={phone && !active}
+      inert={phone && !active}
       data-collapsed={collapsed || undefined}
       className={`${chrome.window} ${active ? '' : chrome.inactive} ${styles.window}`}
       style={{
@@ -141,29 +153,36 @@ export function Window({ win, active, z, children }: WindowProps) {
           id={titleId}
           className={`${chrome.title} ${styles.title}`}
           tabIndex={0}
-          aria-describedby={hintId}
+          aria-describedby={phone ? undefined : hintId}
           onKeyDown={onTitleKeyDown}
         >
           {title}
         </h2>
-        <button
-          type="button"
-          className={`${chrome.titleBox} ${chrome.zoomBox}`}
-          aria-label={`${zoomed ? 'Restore' : 'Zoom'} ${title}`}
-          aria-pressed={zoomed}
-          onClick={() => actions.toggleZoom(id)}
-        />
-        <button
-          type="button"
-          className={`${chrome.titleBox} ${chrome.collapseBox}`}
-          aria-label={`${collapsed ? 'Expand' : 'Collapse'} ${title}`}
-          aria-expanded={!collapsed}
-          onClick={() => actions.toggleCollapse(id)}
-        />
+        {/* Phones show every window full screen: zoom and collapse don't apply. */}
+        {!phone && (
+          <>
+            <button
+              type="button"
+              className={`${chrome.titleBox} ${chrome.zoomBox}`}
+              aria-label={`${zoomed ? 'Restore' : 'Zoom'} ${title}`}
+              aria-pressed={zoomed}
+              onClick={() => actions.toggleZoom(id)}
+            />
+            <button
+              type="button"
+              className={`${chrome.titleBox} ${chrome.collapseBox}`}
+              aria-label={`${collapsed ? 'Expand' : 'Collapse'} ${title}`}
+              aria-expanded={!collapsed}
+              onClick={() => actions.toggleCollapse(id)}
+            />
+          </>
+        )}
       </div>
-      <span id={hintId} className="visually-hidden">
-        Arrow keys move this window. Shift plus arrow keys resize it.
-      </span>
+      {!phone && (
+        <span id={hintId} className="visually-hidden">
+          Arrow keys move this window. Shift plus arrow keys resize it.
+        </span>
+      )}
 
       {!collapsed && (
         <ScrollArea

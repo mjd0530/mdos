@@ -11,6 +11,7 @@ import { useDesktop } from './desktopStore';
 import { DesktopIcons } from './DesktopIcons';
 import { MenuBar } from './menubar/MenuBar';
 import { clearSaved } from './persist';
+import { useDeviceMode } from './device';
 import { systemMenus } from './menus';
 import styles from './OS.module.css';
 import { useWindows } from './windows/store';
@@ -25,6 +26,12 @@ type OpenAlert = 'about' | 'shortcuts' | 'restart' | 'reset' | null;
 /** The desktop shell: menu bar, patterned desktop and system alerts. */
 export function OS() {
   const [alert, setAlert] = useState<OpenAlert>(null);
+
+  const device = useDeviceMode();
+  // Phones and tablets open windows zoomed; the desktop cascades them.
+  useEffect(() => {
+    useWindows.getState().setOpenZoomed(device !== 'desktop');
+  }, [device]);
 
   const windowCount = useWindows((s) => s.windows.length);
   const activeId = useWindows((s) => s.order.at(-1));
@@ -77,7 +84,7 @@ export function OS() {
   );
 
   return (
-    <div className={styles.screen}>
+    <div className={styles.screen} data-device={device}>
       <MenuBar menus={menus} end={<Clock />} />
 
       <main className={styles.desktop} style={desktopStyle}>

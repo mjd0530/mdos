@@ -9,11 +9,14 @@ import {
 } from './desktopStore';
 import { IconView } from './IconView';
 import { openNode } from './open';
+import { useDeviceMode } from './device';
+import styles from './DesktopIcons.module.css';
 import { useWindows } from './windows/store';
 
 /** The icons on the desktop, from content/fs.yaml. */
 export function DesktopIcons() {
   const bounds = useWindows((s) => s.bounds);
+  const phone = useDeviceMode() === 'phone';
   const { positions, selectedId, select, place, cleanUp } = useDesktop();
   const [menu, setMenu] = useState<{ node: VNode | null; at: Point } | null>(
     null,
@@ -31,10 +34,13 @@ export function DesktopIcons() {
     <>
       <IconView
         label="Desktop"
-        layout="free"
+        // Phones get a launcher grid (single tap); larger screens a free System 7 desktop.
+        layout={phone ? 'grid' : 'free'}
+        openOn={phone ? 'single' : 'double'}
+        className={phone ? styles.launcher : undefined}
         nodes={desktop.children}
-        positionOf={positionOf}
-        onMove={place}
+        positionOf={phone ? undefined : positionOf}
+        onMove={phone ? undefined : place}
         selectedId={selectedId}
         onSelect={select}
         onOpen={openNode}

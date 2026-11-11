@@ -159,3 +159,17 @@ _2026-11-11 · Accepted_
 - **Originals stay in git** (they're the source). If the Sketchbook grows large, consider Git LFS. Pushing several MB over HTTPS may need `git -c http.postBuffer=524288000 push`.
 - **Sketchbook** is a `gallery:` entry in `fs.yaml`, backed by `content/sketchbook/manifest.yaml` (file, title, alt, optional date and description). Drawings show as thumbnails in Files. It starts empty until Mike adds drawings.
 - **Viewer** opens a *set* of pictures (a gallery folder, or every picture in one document) with Previous / Next buttons, ← → while active, and "n of N". One Viewer window per set; opening another picture from the same set switches that window (re-launch passes the new payload).
+
+## D-024 Phones, tablets and desktops
+_2026-11-11 · Accepted_
+
+`useDeviceMode()` (`src/os/device.ts`) picks one of three modes from media queries:
+
+| Mode | When | Behaviour |
+|---|---|---|
+| **phone** | under 768px wide | Desktop icons become a launcher grid; a single tap opens. Windows are full screen and only the front one is shown (`hidden` + `inert` behind it); closing returns to the window behind, then the launcher. No zoom, collapse or resize. |
+| **tablet** | 768–1023px, or any coarse pointer | The System 7 desktop, but windows open zoomed (Restore shrinks them). Long-press an icon for its context menu. |
+| **desktop** | otherwise | As before. |
+
+**Touch targets** keep the 11px System 7 boxes but extend their hit areas (29 × 45px, never overlapping: neighbouring boxes get a 16px gap); the menu bar grows to 32px and menu items to 44px on coarse pointers. The menu bar fits a 360px phone without sideways scroll.
+**Tests** run on desktop Chrome, Pixel 7 and iPad Mini (in Chromium). `tests/e2e/device.ts` helps tests branch where behaviour differs; `phone.spec.ts` and `tablet.spec.ts` cover each mode. Local runs use half the CPU cores so a busy machine doesn't cause timeouts.

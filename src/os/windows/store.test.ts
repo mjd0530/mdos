@@ -165,3 +165,16 @@ describe('remembering where windows were', () => {
     expect(store().remembered).toEqual({});
   });
 });
+
+describe('phones and tablets', () => {
+  it('opens windows zoomed, remembering a normal size to restore to', () => {
+    store().setOpenZoomed(true);
+    const a = open('A');
+    expect(get(a).zoomed).toBe(true);
+    expect(get(a).rect).toEqual({ x: 2, y: 2, w: 995, h: 595 });
+    store().toggleZoom(a);
+    expect(get(a).zoomed).toBe(false);
+    expect(get(a).rect.w).toBeLessThan(995);
+    store().setOpenZoomed(false);
+  });
+});

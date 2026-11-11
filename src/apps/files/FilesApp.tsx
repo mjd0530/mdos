@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { announce } from '../../os/announce';
+import { useDeviceMode } from '../../os/device';
 import { IconView, type IconLayout } from '../../os/IconView';
 import { openNode } from '../../os/open';
 import { findNode, pathTo, type VNode } from '../../vfs';
@@ -22,6 +23,7 @@ export default function FilesApp({
     index: 0,
   });
   const [view, setView] = useState<IconLayout>('grid');
+  const phone = useDeviceMode() === 'phone';
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const folderId = history.stack[history.index] ?? 'desktop';
@@ -136,6 +138,7 @@ export default function FilesApp({
         <IconView
           label={folder.name}
           layout={view}
+          openOn={phone ? 'single' : 'double'}
           nodes={children}
           selectedId={selectedId}
           onSelect={setSelectedId}

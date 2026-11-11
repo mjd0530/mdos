@@ -46,3 +46,13 @@
     background-position: 14px 14px;
   }
 }
+
+/* .window is display:flex, which would override the [hidden] default. */
+.window[hidden] {
+  display: none;
+}
+
+/* Phones: every window is full screen; nothing to drag. */
+.window[data-phone] .titleBar {
+  cursor: default;
+}

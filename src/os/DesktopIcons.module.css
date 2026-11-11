@@ -1,0 +1,10 @@
+/* Phones: the desktop is a scrolling launcher grid of icons. */
+.launcher {
+  position: absolute;
+  inset: 0;
+  overflow: auto;
+  grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+  justify-items: center;
+  gap: 16px 8px;
+  padding: 16px 12px;
+}

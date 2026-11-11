@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Locator, type Page } from '@playwright/test';
+import { isPhone, unzoom } from './device.ts';
 
 const WCAG = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
 
@@ -34,7 +35,12 @@ async function drag(page: Page, from: Locator, dx: number, dy: number) {
   await page.mouse.up();
 }
 
-test.beforeEach(async ({ page }) => {
+test.beforeEach(async ({ page }, testInfo) => {
+  // Phones show one full-screen window at a time; windowing is tested at larger sizes.
+  test.skip(
+    isPhone(testInfo),
+    'phones have no free windows (see phone.spec.ts)',
+  );
   await page.goto('./?e2e');
 });
 
@@ -50,8 +56,11 @@ test('launching an app opens an active, focused, announced window', async ({
 });
 
 test('clicking a back window brings it to the front', async ({ page }) => {
+  // Tablets open windows zoomed (fully covering each other): restore each as it opens.
   await newWindow(page);
+  await unzoom(win(page, 'Hello 1'));
   await newWindow(page);
+  await unzoom(win(page, 'Hello 2'));
   const first = win(page, 'Hello 1');
   await expect(first).not.toHaveAttribute('data-active');
   await first.getByRole('heading').click({ position: { x: 4, y: 4 } });
@@ -109,6 +118,7 @@ test('zoom fills the desktop and zooming again restores it', async ({
 }) => {
   await newWindow(page);
   const w = win(page, 'Hello 1');
+  await unzoom(w);
   const before = await box(w);
   await w.getByRole('button', { name: 'Zoom Hello 1' }).click();
   const desktop = await box(page.getByRole('main'));
@@ -157,6 +167,7 @@ test.describe('keyboard', () => {
   test('arrows on the title move; Shift+arrows resize', async ({ page }) => {
     await newWindow(page);
     const w = win(page, 'Hello 1');
+    await unzoom(w);
     const title = w.getByRole('heading');
     await title.focus();
     const start = await box(w);
@@ -187,6 +198,7 @@ test.describe('keyboard', () => {
   }) => {
     await newWindow(page);
     const w = win(page, 'Hello 1');
+    await w.focus();
     await page.keyboard.press('Tab');
     await expect(
       w.getByRole('button', { name: 'Close Hello 1' }),
@@ -194,7 +206,10 @@ test.describe('keyboard', () => {
     await page.keyboard.press('Tab');
     await expect(w.getByRole('heading')).toBeFocused();
     await page.keyboard.press('Tab');
-    await expect(w.getByRole('button', { name: 'Zoom Hello 1' })).toBeFocused();
+    // "Restore" on tablets, where windows open zoomed.
+    await expect(
+      w.getByRole('button', { name: /^(Zoom|Restore) Hello 1$/ }),
+    ).toBeFocused();
   });
 });
 

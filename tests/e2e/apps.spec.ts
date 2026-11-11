@@ -38,12 +38,12 @@ test('a crashing app shows a message in its window and can relaunch', async ({
 
   const alert = crashed.getByRole('alert');
   await expect(alert).toContainText('“Hello” has unexpectedly quit');
-  // The other window is unaffected.
+  // The other window is unaffected (on phones it's simply behind, so check it exists).
   await expect(
     page
-      .getByRole('dialog', { name: 'Hello 1' })
-      .getByRole('button', { name: 'Simulate a crash' }),
-  ).toBeVisible();
+      .getByRole('dialog', { name: 'Hello 1', includeHidden: true })
+      .getByRole('button', { name: 'Simulate a crash', includeHidden: true }),
+  ).toBeAttached();
 
   await crashed.getByRole('button', { name: 'Relaunch' }).click();
   await expect(alert).toHaveCount(0);

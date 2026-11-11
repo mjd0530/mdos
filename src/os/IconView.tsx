@@ -22,10 +22,13 @@ interface IconViewProps {
   onOpen: (node: VNode) => void;
   /** Right-click or Shift+F10. `node` is null for the empty background. */
   onContextMenu?: (node: VNode | null, at: Point) => void;
+  /** Phones open on a single tap, like a home screen; elsewhere double-click opens. */
+  openOn?: 'single' | 'double';
   className?: string;
 }
 
 const DRAG_THRESHOLD = 4;
+const LONG_PRESS_MS = 550;
 
 const KIND_LABEL: Record<VNode['kind'], string> = {
   folder: 'Folder',
@@ -50,9 +53,20 @@ export function IconView({
   onSelect,
   onOpen,
   onContextMenu,
+  openOn = 'double',
   className,
 }: IconViewProps) {
   const optionRefs = useRef(new Map<string, HTMLDivElement>());
+  // Touch has no right-click: holding a finger on an icon opens its context menu.
+  const longPress = useRef<{ timer: number; x: number; y: number } | null>(
+    null,
+  );
+  const longPressFiredAt = useRef(0);
+  const cancelLongPress = () => {
+    if (longPress.current) window.clearTimeout(longPress.current.timer);
+    longPress.current = null;
+  };
+
   const drag = useRef<{
     id: string;
     startX: number;
@@ -126,6 +140,20 @@ export function IconView({
   const onPointerDown = (event: PointerEvent, node: VNode, index: number) => {
     if (event.button !== 0) return;
     onSelect(node.id);
+    if (event.pointerType === 'touch' && onContextMenu) {
+      cancelLongPress();
+      const { clientX: x, clientY: y } = event;
+      longPress.current = {
+        x,
+        y,
+        timer: window.setTimeout(() => {
+          longPress.current = null;
+          longPressFiredAt.current = Date.now();
+          drag.current = null;
+          onContextMenu(node, { x, y });
+        }, LONG_PRESS_MS),
+      };
+    }
     if (layout === 'free' && positionOf && onMove) {
       event.currentTarget.setPointerCapture(event.pointerId);
       drag.current = {
@@ -139,6 +167,14 @@ export function IconView({
   };
 
   const onPointerMove = (event: PointerEvent) => {
+    const press = longPress.current;
+    if (
+      press &&
+      Math.hypot(event.clientX - press.x, event.clientY - press.y) >
+        DRAG_THRESHOLD * 2
+    ) {
+      cancelLongPress();
+    }
     const d = drag.current;
     if (!d || !onMove) return;
     const dx = event.clientX - d.startX;
@@ -153,7 +189,10 @@ export function IconView({
 
   const endDrag = () => {
     drag.current = null;
+    cancelLongPress();
   };
+
+  useEffect(() => cancelLongPress, []);
 
   return (
     <div
@@ -167,6 +206,8 @@ export function IconView({
       onContextMenu={(event) => {
         if (!onContextMenu) return;
         event.preventDefault();
+        // Android also fires contextmenu on long-press; ours already handled it.
+        if (Date.now() - longPressFiredAt.current < 1000) return;
         const option = (event.target as Element).closest('[role="option"]');
         const node = nodes.find(
           (n) => n.id === option?.getAttribute('data-id'),
@@ -202,7 +243,17 @@ export function IconView({
             onPointerMove={onPointerMove}
             onPointerUp={endDrag}
             onPointerCancel={endDrag}
-            onDoubleClick={() => onOpen(node)}
+            onDoubleClick={() => {
+              if (openOn === 'double') onOpen(node);
+            }}
+            onClick={() => {
+              if (
+                openOn === 'single' &&
+                Date.now() - longPressFiredAt.current > 1000
+              ) {
+                onOpen(node);
+              }
+            }}
             onKeyDown={(event) => onKeyDown(event, node)}
             onFocus={() => {
               if (!selected) onSelect(node.id);

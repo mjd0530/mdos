@@ -21,7 +21,7 @@ _Each step ends with a demo Mike can try plus the checks in CLAUDE.md "Verify be
 |---|---|---|
 | 9 | **Notes + case studies** ✅ 2026-11-11 (D-022; Vantage + Hello Design System await Mike's copy) | Notes app; three case studies ported from the Astro site; Read Me; About |
 | 10 | **Viewer + Sketchbook** ✅ 2026-11-11 (D-023; drawings to come from Mike) | Image pipeline (also resizes case-study images); Viewer prev/next; Sketchbook folder with 10–20 drawings |
-| 11 | **Responsive shells** | Tablet adjustments; phone launcher shell |
+| 11 | **Responsive shells** ✅ 2026-11-11 (D-024) | Tablet adjustments; phone launcher shell |
 | 12 | **Control Panel** | Desktop pattern, sounds, screensaver, cursor clock, reset |
 | 13 | **Weather** | Open-Meteo, default location, opt-in geolocation, error/offline states |
 | 14 | **Screensaver + cursor clock + sounds** | Idle overlay, reduced-motion behaviour, our own sounds |
