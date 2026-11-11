@@ -1,5 +1,5 @@
 import type { ComponentType, ErrorInfo, ReactNode } from 'react';
-import { Component, lazy, Suspense, useState } from 'react';
+import { Component, lazy, Suspense, useCallback, useState } from 'react';
 import { useWindows, type WindowInstance } from '../os/windows/store';
 import { Button } from '../ui/Button';
 import { PixelIcon } from '../ui/PixelIcon';
@@ -23,6 +23,17 @@ export function AppHost({ win, isActive }: AppHostProps) {
   const [generation, setGeneration] = useState(0);
   const app = getApp(win.appId);
   const AppComponent = LAZY_APPS.get(win.appId);
+  const windowId = win.id;
+
+  // Stable callbacks: apps may use them in effect dependencies.
+  const setTitle = useCallback(
+    (title: string) => useWindows.getState().setTitle(windowId, title),
+    [windowId],
+  );
+  const close = useCallback(
+    () => useWindows.getState().close(windowId),
+    [windowId],
+  );
 
   if (!app || !AppComponent) {
     return (
@@ -32,14 +43,12 @@ export function AppHost({ win, isActive }: AppHostProps) {
     );
   }
 
-  const { setTitle, close } = useWindows.getState();
-
   return (
     <CrashBoundary
       key={generation}
       appName={app.name}
       onRelaunch={() => setGeneration((g) => g + 1)}
-      onClose={() => close(win.id)}
+      onClose={close}
     >
       <Suspense fallback={<Loading name={app.name} />}>
         {/* oxlint-disable-next-line react/static-components -- created once in LAZY_APPS; this only picks one */}
@@ -47,8 +56,8 @@ export function AppHost({ win, isActive }: AppHostProps) {
           instanceId={win.id}
           payload={win.payload}
           isActive={isActive}
-          setTitle={(title) => setTitle(win.id, title)}
-          close={() => close(win.id)}
+          setTitle={setTitle}
+          close={close}
         />
       </Suspense>
     </CrashBoundary>

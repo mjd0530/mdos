@@ -7,6 +7,7 @@ export interface SystemActions {
   launch: (appId: string) => void;
   closeWindow: () => void;
   nextWindow: () => void;
+  cleanUp: () => void;
 }
 
 export interface SystemState {
@@ -140,7 +141,7 @@ export function systemMenus(
           kind: 'command',
           id: 'clean-up',
           label: 'Clean Up Desktop',
-          disabled: true,
+          onSelect: actions.cleanUp,
         },
         { kind: 'separator', id: 'sep1' },
         {

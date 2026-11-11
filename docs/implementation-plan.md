@@ -12,7 +12,7 @@ _Each step ends with a demo Mike can try plus the checks in CLAUDE.md "Verify be
 | 4 | **Window manager** ✅ 2026-11-11 (D-017) | Open/close/focus/drag/resize/zoom/collapse, custom System 7 scroll bar with arrow buttons (CSS can't draw them in Chrome/macOS), cascade, keyboard move mode, focus return, announcer; unit tests on the store |
 | 5 | **App framework** ✅ 2026-11-11 (D-018) | `defineApp` registry, lazy loading, error boundary, a throwaway "Hello" app in a window |
 | 6 | **Content pipeline + VFS** ✅ 2026-11-11 (D-019) | Vite plugin validates `content/`, emits vfs + docs + images; build fails on bad content; tests |
-| 7 | **Desktop icons + Files** | Icons from VFS, select/drag/arrange, roving-tabindex grid, context menu; Files app with icon/list views, back/forward |
+| 7 | **Desktop icons + Files** ✅ 2026-11-11 (D-020; Notes minimal until step 9) | Icons from VFS, select/drag/arrange, roving-tabindex grid, context menu; Files app with icon/list views, back/forward |
 | 8 | **Persistence + reset** | Window rects, icon positions, settings persist; Special → Reset Desktop |
 
 ## Apps and content

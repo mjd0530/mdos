@@ -123,3 +123,13 @@ Apps are folders discovered by `import.meta.glob` (`src/apps/*/index.ts`) and de
 _2026-11-11 · Accepted_
 
 `content/` (Markdown + `fs.yaml`) is read by a Vite plugin (`build/content-plugin.ts`, logic in `build/content.ts`). It validates with Zod and emits `virtual:vfs` (the tree, metadata only) plus one lazily loaded `virtual:doc/<id>` module per document, which imports its images so Vite hashes them. Markdown is rendered at build time with `marked`; content is Mike's own, so HTML is trusted, not sanitised. Body headings shift down one level (`##` → h3) to nest under the window's h2. Bad content fails the build with file + reason; in dev it shows the error overlay and keeps the last good version. `yaml`, `marked` and `zod` are build-time devDependencies: nothing extra ships. Sketchbook images (with resizing) come in step 10. Guide: `docs/content.md`.
+
+## D-020 Desktop icons, Files and Notes (first version)
+_2026-11-11 · Accepted_
+
+- **Desktop icons** come from `content/fs.yaml`, laid out System 7 style in a column down the right edge. Click selects (icon and label invert), double-click or Enter opens, icons can be dragged, Special → Clean Up Desktop resets them. Right-click / Shift+F10 opens a context menu.
+- **One way to open things:** `openNode()` (`src/os/open.ts`): folders → Files, docs → Notes, apps → their app, links → a new tab.
+- **IconView** (`src/os/IconView.tsx`) is shared by the desktop and Files: a single-select listbox with a roving tab stop; arrows move to the nearest icon in that direction.
+- **Files** navigates inside its window (Back/Forward, clickable path, icon/list views). One window per folder you open from outside.
+- **Notes** is a minimal reader for now; step 9 adds the case-study layout and image viewer.
+- **Known gap (step 11):** on phones a window covers the desktop icons. The launcher shell replaces windows there.

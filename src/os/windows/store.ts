@@ -121,8 +121,10 @@ export const useWindows = create<WindowsState>((set, get) => {
       announce(`${win.title} window closed`);
     },
 
-    setTitle: (id, title) =>
-      update(id, (win) => (win.title === title ? win : { ...win, title })),
+    setTitle: (id, title) => {
+      if (get().windows.find((w) => w.id === id)?.title === title) return;
+      update(id, (win) => ({ ...win, title }));
+    },
 
     focus: (id) =>
       set((state) =>

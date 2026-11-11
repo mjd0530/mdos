@@ -6,6 +6,8 @@ import { APPS } from '../apps/registry';
 import { launch } from '../apps/launch';
 import { Announcer } from './Announcer';
 import { Clock } from './Clock';
+import { useDesktop } from './desktopStore';
+import { DesktopIcons } from './DesktopIcons';
 import { MenuBar } from './menubar/MenuBar';
 import { systemMenus } from './menus';
 import styles from './OS.module.css';
@@ -37,6 +39,7 @@ export function OS() {
             if (activeId) useWindows.getState().close(activeId);
           },
           nextWindow: () => useWindows.getState().cycle(),
+          cleanUp: () => useDesktop.getState().cleanUp(),
         },
         {
           hasWindow: activeId !== undefined,
@@ -76,6 +79,7 @@ export function OS() {
 
       <main className={styles.desktop} style={desktopStyle}>
         <h1 className="visually-hidden">Mike OS desktop</h1>
+        <DesktopIcons />
         <WindowLayer />
       </main>
       <Announcer />

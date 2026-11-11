@@ -1,0 +1,110 @@
+.view {
+  position: relative;
+  user-select: none;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  cursor: default;
+  touch-action: none;
+}
+
+.item:focus {
+  outline: none; /* the inverted icon + label shows focus and selection */
+}
+
+.item:focus-visible .label {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 1px;
+}
+
+.label {
+  padding: 0 2px;
+  background: var(--color-white);
+  color: var(--color-black);
+  line-height: 16px;
+}
+
+.item[aria-selected='true'] .label {
+  background: var(--color-black);
+  color: var(--color-white);
+}
+
+/* ---------- Free (desktop) and grid (Files) ---------- */
+
+.free {
+  position: absolute;
+  inset: 0;
+}
+
+.free .item,
+.grid .item {
+  flex-direction: column;
+  gap: 2px;
+  width: 88px;
+  padding-top: 4px;
+}
+
+.free .item {
+  position: absolute;
+}
+
+.free .label,
+.grid .label {
+  max-width: 84px;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 88px);
+  gap: 8px 4px;
+  padding: 8px;
+  min-height: 100%;
+  align-content: start;
+}
+
+/* ---------- List ---------- */
+
+.list {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  padding: 2px 0;
+}
+
+.list .item {
+  gap: 8px;
+  padding: 2px 8px;
+}
+
+.list .icon {
+  flex: none;
+}
+
+.list .label {
+  flex: 1;
+  min-width: 0;
+}
+
+.kind {
+  flex: none;
+  width: 9em;
+  color: var(--color-grey-4);
+}
+
+.list .item[aria-selected='true'] {
+  background: var(--color-black);
+}
+
+.list .item[aria-selected='true'] .kind {
+  color: var(--color-white);
+}
+
+@media (pointer: coarse) {
+  .list .item {
+    min-height: 44px;
+  }
+}

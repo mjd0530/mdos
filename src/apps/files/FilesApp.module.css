@@ -1,0 +1,96 @@
+.files {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--color-black);
+  font-family: var(--font-system);
+}
+
+.group {
+  display: flex;
+  gap: 2px;
+}
+
+.tool {
+  min-width: 24px;
+  height: 20px;
+  padding: 0 6px;
+  border: 1px solid var(--color-black);
+  background: var(--color-white);
+  color: var(--color-black);
+  font: inherit;
+  line-height: 16px;
+  cursor: default;
+}
+
+.tool:active:not(:disabled),
+.tool[aria-pressed='true'] {
+  background: var(--color-black);
+  color: var(--color-white);
+}
+
+.tool:disabled {
+  color: var(--color-grey-3);
+  border-color: var(--color-grey-3);
+}
+
+.tool:focus-visible,
+.crumb:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 1px;
+}
+
+.path {
+  flex: 1;
+  min-width: 0;
+}
+
+.path ol {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.path li + li::before {
+  content: '▸';
+  padding: 0 4px;
+}
+
+.crumb {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-decoration: underline;
+  cursor: default;
+}
+
+.status {
+  margin: 0;
+  padding: 2px 8px;
+  border-bottom: 1px solid var(--color-black);
+  color: var(--color-grey-4);
+}
+
+.empty {
+  margin: 0;
+  padding: 12px 16px;
+}
+
+@media (pointer: coarse) {
+  .tool {
+    min-width: 44px;
+    height: 44px;
+  }
+}
