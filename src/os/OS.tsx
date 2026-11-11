@@ -4,11 +4,13 @@ import { Alert } from '../ui/Alert';
 import { patternDataUri } from '../ui/pixels';
 import { APPS } from '../apps/registry';
 import { launch } from '../apps/launch';
+import { announce } from './announce';
 import { Announcer } from './Announcer';
 import { Clock } from './Clock';
 import { useDesktop } from './desktopStore';
 import { DesktopIcons } from './DesktopIcons';
 import { MenuBar } from './menubar/MenuBar';
+import { clearSaved } from './persist';
 import { systemMenus } from './menus';
 import styles from './OS.module.css';
 import { useWindows } from './windows/store';
@@ -18,7 +20,7 @@ const MARK_MENU_APPS = [...APPS.values()]
   .filter((app) => app.inMarkMenu)
   .map(({ id, name }) => ({ id, name }));
 
-type OpenAlert = 'about' | 'shortcuts' | 'restart' | null;
+type OpenAlert = 'about' | 'shortcuts' | 'restart' | 'reset' | null;
 
 /** The desktop shell: menu bar, patterned desktop and system alerts. */
 export function OS() {
@@ -40,6 +42,7 @@ export function OS() {
           },
           nextWindow: () => useWindows.getState().cycle(),
           cleanUp: () => useDesktop.getState().cleanUp(),
+          resetDesktop: () => setAlert('reset'),
         },
         {
           hasWindow: activeId !== undefined,
@@ -111,6 +114,28 @@ export function OS() {
           <li>Ctrl+`: next window (add Shift for the previous one)</li>
           <li>Window title focused: arrows move, Shift+arrows resize</li>
         </ul>
+      </Alert>
+
+      <Alert
+        open={alert === 'reset'}
+        title="Reset the desktop?"
+        buttons={[
+          { value: 'cancel', label: 'Cancel' },
+          { value: 'reset', label: 'Reset', isDefault: true },
+        ]}
+        onClose={(value) => {
+          setAlert(null);
+          if (value !== 'reset') return;
+          useWindows.getState().forgetAll();
+          useDesktop.getState().cleanUp();
+          clearSaved();
+          announce('Desktop reset');
+        }}
+      >
+        <p>
+          All windows close, and icons and windows go back to where they
+          started.
+        </p>
       </Alert>
 
       <Alert

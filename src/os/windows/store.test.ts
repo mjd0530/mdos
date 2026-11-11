@@ -127,3 +127,41 @@ describe('desktop resize', () => {
     expect(get(b).rect).toEqual({ x: 2, y: 2, w: 395, h: 295 });
   });
 });
+
+describe('remembering where windows were', () => {
+  const openDoc = (key: string) =>
+    store().open({ appId: 'notes', title: key, key });
+
+  it('reopens a keyed window where it was closed', () => {
+    const a = openDoc('readme');
+    store().move(a, 300, 120);
+    store().resize(a, 500, 350);
+    store().close(a);
+    const again = openDoc('readme');
+    expect(get(again).rect).toEqual({ x: 300, y: 120, w: 500, h: 350 });
+  });
+
+  it('remembers the un-zoomed rect of a zoomed window', () => {
+    const a = openDoc('about');
+    store().move(a, 50, 60);
+    const before = get(a).rect;
+    store().toggleZoom(a);
+    store().close(a);
+    expect(get(openDoc('about')).rect).toEqual(before);
+  });
+
+  it('does not remember windows without a key', () => {
+    const a = open('Hello');
+    store().move(a, 400, 300);
+    store().close(a);
+    expect(Object.keys(store().remembered)).toEqual([]);
+  });
+
+  it('forgetAll closes windows and clears saved positions', () => {
+    const a = openDoc('readme');
+    store().move(a, 300, 120);
+    store().forgetAll();
+    expect(store().windows).toEqual([]);
+    expect(store().remembered).toEqual({});
+  });
+});

@@ -8,6 +8,7 @@ export interface SystemActions {
   closeWindow: () => void;
   nextWindow: () => void;
   cleanUp: () => void;
+  resetDesktop: () => void;
 }
 
 export interface SystemState {
@@ -148,7 +149,7 @@ export function systemMenus(
           kind: 'command',
           id: 'reset',
           label: 'Reset Desktop…',
-          disabled: true,
+          onSelect: actions.resetDesktop,
         },
         {
           kind: 'command',

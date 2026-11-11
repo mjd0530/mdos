@@ -1,7 +1,12 @@
 import { useCallback, useState } from 'react';
 import { ContextMenu } from '../ui/ContextMenu';
 import { desktop, type VNode } from '../vfs';
-import { defaultPosition, useDesktop, type Point } from './desktopStore';
+import {
+  clampPosition,
+  defaultPosition,
+  useDesktop,
+  type Point,
+} from './desktopStore';
 import { IconView } from './IconView';
 import { openNode } from './open';
 import { useWindows } from './windows/store';
@@ -15,8 +20,12 @@ export function DesktopIcons() {
   );
   const closeMenu = useCallback(() => setMenu(null), []);
 
-  const positionOf = (node: VNode, index: number) =>
-    positions[node.id] ?? defaultPosition(index, bounds);
+  const positionOf = (node: VNode, index: number) => {
+    const saved = positions[node.id];
+    return saved
+      ? clampPosition(saved, bounds)
+      : defaultPosition(index, bounds);
+  };
 
   return (
     <>

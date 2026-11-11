@@ -133,3 +133,12 @@ _2026-11-11 · Accepted_
 - **Files** navigates inside its window (Back/Forward, clickable path, icon/list views). One window per folder you open from outside.
 - **Notes** is a minimal reader for now; step 9 adds the case-study layout and image viewer.
 - **Known gap (step 11):** on phones a window covers the desktop icons. The launcher shell replaces windows there.
+
+## D-021 What Mike OS remembers
+_2026-11-11 · Accepted_
+
+- **Saved (localStorage, versioned keys `mikeos:desktop`, `mikeos:windows`):** where icons were dragged; the last rect of each keyed window (one per document in Files/Notes, or a single-instance app). Multi-instance windows still cascade.
+- **Not saved:** open windows (a visit starts with a clean desktop; an opt-in "reopen windows" can come with Control Panel), selection, anything personal.
+- **Defensive:** storage access never throws (private mode, blocked data); saved values are sanitised on load and bad entries dropped; positions are clamped to the current screen.
+- **Special → Reset Desktop…** (confirm; Reset is the default) closes every window, puts icons back and deletes every `mikeos:` key.
+- Settings (pattern, screensaver, sounds) will use the same `storage` helper in `src/os/persist.ts` (step 12).

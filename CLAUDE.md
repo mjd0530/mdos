@@ -28,7 +28,7 @@ New project, separate from the Astro portfolio (`~/Documents/GitHub/website`). R
 - Node 24 LTS (`.nvmrc`); CI uses it. Local npm 10 has a resolver bug with this tree: install with `npx npm@11 install`.
 
 ## Architecture
-- `src/os/` shell: `OS` (desktop + alerts), `menubar/` (MenuBar, menu types), `menus.ts` (system menus as data), Clock, Announcer (`announce()`), `windows/` (store, geometry, Window, WindowLayer), DesktopIcons + `desktopStore`, IconView (desktop + Files), `open.ts` (`openNode`: the only way to open a VNode). Menus are data (`MenuDef`), not JSX.
+- `src/os/` shell: `OS` (desktop + alerts), `menubar/` (MenuBar, menu types), `menus.ts` (system menus as data), Clock, Announcer (`announce()`), `windows/` (store, geometry, Window, WindowLayer), DesktopIcons + `desktopStore`, IconView (desktop + Files), `open.ts` (`openNode`: the only way to open a VNode), `persist.ts` (safe `storage` for Zustand `persist`; all keys start `mikeos:`; sanitise on load). Menus are data (`MenuDef`), not JSX.
 - `src/apps/<id>/` one folder per app: `index.ts` (`defineApp`), `<Name>App.tsx` (default export), `<Name>App.module.css`. Apps render content only; `Window` owns chrome. How-to: `docs/application-framework.md`. Open with `launch(appId, payload)`.
 - `src/ui/` shared controls (Button, Checkbox, Slider, ListView, IconGrid, ScrollArea, Alert…). Apps use these, never one-off copies.
 - `src/stores/` windows, desktop, settings (+ app stores only when needed).
