@@ -1,23 +1,29 @@
 import { expect, test, type Page } from '@playwright/test';
 
 async function openHello(page: Page) {
+  await page.waitForFunction(() => 'mikeos' in window);
+  await page.evaluate(() =>
+    (
+      window as unknown as { mikeos: { launch: (id: string) => void } }
+    ).mikeos.launch('hello'),
+  );
+}
+
+test.beforeEach(async ({ page }) => {
+  await page.goto('./?e2e');
+});
+
+test('the Hello test fixture is not shown to visitors', async ({ page }) => {
   await page
     .getByRole('menubar')
     .getByRole('menuitem', { name: 'Mike OS', exact: true })
     .click();
-  await page.getByRole('menuitem', { name: 'Hello', exact: true }).click();
-}
-
-test.beforeEach(async ({ page }) => {
-  await page.goto('./');
+  await expect(page.getByRole('menuitem', { name: 'Hello' })).toHaveCount(0);
 });
 
-test('apps are listed in the M menu and open in their own windows', async ({
-  page,
-}) => {
+test('apps open in their own windows', async ({ page }) => {
   await openHello(page);
   const w = page.getByRole('dialog', { name: 'Hello 1' });
-  await expect(w).toBeVisible();
   await expect(w.getByText('is a test app running in window')).toBeVisible();
 });
 

@@ -142,3 +142,12 @@ _2026-11-11 · Accepted_
 - **Defensive:** storage access never throws (private mode, blocked data); saved values are sanitised on load and bad entries dropped; positions are clamped to the current screen.
 - **Special → Reset Desktop…** (confirm; Reset is the default) closes every window, puts icons back and deletes every `mikeos:` key.
 - Settings (pattern, screensaver, sounds) will use the same `storage` helper in `src/os/persist.ts` (step 12).
+
+## D-022 Notes, Viewer and the ported case study
+_2026-11-11 · Accepted_
+
+- **Notes** shows a case-study header (subtitle, summary, Role / Client / Years / Scope, award), a sticky **Contents** menu (native `<details>`, jumps to a section and moves focus to its heading), and the Markdown body.
+- **Pictures are buttons** (made at build time, named "View larger: <alt>") that open **Viewer**: one window per picture, fitted or Actual Size, with the Markdown image title as caption. Viewer is reused by the Sketchbook (step 10).
+- **Magic Move** is ported from the Astro site with all real copy and the six real images; sections still marked Placeholder there are `TODO(mike)` comments, and the two films wait for video support in Notes.
+- **Hello** is now a hidden test fixture: not in any menu; Playwright opens it through a `?e2e` hook to test windows and crash recovery.
+- **Known cost:** case-study PNGs ship at full size (up to ~3 MB each, loaded only when that document is opened and scrolled to). Step 10's image pipeline should resize them along with the Sketchbook.

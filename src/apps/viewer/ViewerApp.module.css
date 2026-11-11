@@ -1,0 +1,64 @@
+.viewer {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  margin: 0;
+}
+
+.toolbar {
+  position: sticky;
+  top: 0;
+  left: 0;
+  display: flex;
+  padding: 4px 8px;
+  background: var(--color-white);
+  border-bottom: 1px solid var(--color-black);
+  font-family: var(--font-system);
+}
+
+.tool {
+  height: 20px;
+  padding: 0 6px;
+  border: 1px solid var(--color-black);
+  background: var(--color-white);
+  color: var(--color-black);
+  font: inherit;
+  line-height: 16px;
+  cursor: default;
+}
+
+.tool[aria-pressed='true'],
+.tool:active {
+  background: var(--color-black);
+  color: var(--color-white);
+}
+
+.tool:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 1px;
+}
+
+.fit {
+  display: block;
+  max-width: calc(100% - 16px);
+  max-height: 70vh;
+  margin: 8px auto;
+  object-fit: contain;
+}
+
+.actual {
+  display: block;
+  max-width: none;
+  margin: 8px;
+}
+
+.caption {
+  padding: 4px 12px 12px;
+  text-align: center;
+}
+
+@media (pointer: coarse) {
+  .tool {
+    height: 44px;
+  }
+}

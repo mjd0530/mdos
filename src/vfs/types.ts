@@ -42,6 +42,8 @@ export interface CaseStudyMeta {
   role: string;
   scope: string[];
   summary: string;
+  subtitle?: string;
+  awards?: string;
 }
 
 /** A document as delivered to Notes when opened. */

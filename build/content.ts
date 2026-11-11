@@ -99,6 +99,8 @@ const frontMatter = z
         role: text,
         scope: z.array(text).min(1),
         summary: text,
+        subtitle: text.optional(),
+        awards: text.optional(),
       })
       .strict()
       .optional(),
@@ -210,8 +212,16 @@ export function renderDoc(
           );
           src = imageToken(images.length - 1);
         }
-        const titleAttr = title ? ` title="${escapeHtml(title)}"` : '';
-        return `<img src="${src}" alt="${escapeHtml(alt)}"${titleAttr} loading="lazy" decoding="async">`;
+        // Every picture is a button that opens it larger in Viewer (Notes wires the click).
+        const caption = title
+          ? `<span class="doc-caption">${escapeHtml(title)}</span>`
+          : '';
+        return (
+          `<button type="button" class="doc-image" data-view-title="${escapeHtml(title ?? '')}">` +
+          `<span class="visually-hidden">View larger: </span>` +
+          `<img src="${src}" alt="${escapeHtml(alt)}" loading="lazy" decoding="async">` +
+          `</button>${caption}`
+        );
       },
       link({ href, title, tokens }: Tokens.Link) {
         const inner = this.parser.parseInline(tokens);

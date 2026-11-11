@@ -28,9 +28,13 @@ Everything visitors read lives in `content/`. You never touch code to add or cha
 
 3. Save. The dev server reloads; a deploy publishes it.
 
+## Pictures
+
+`![Alt text describing the picture](./file.png "Optional caption")`. Every picture can be clicked to open larger in Viewer; the caption shows under it and in Viewer's title.
+
 ## Case studies
 
-Portfolio documents add a `caseStudy` block (all fields required):
+Portfolio documents add a `caseStudy` block (`subtitle` and `awards` optional, the rest required):
 
 ```yaml
 ---
@@ -41,6 +45,8 @@ caseStudy:
   role: Lead UX Designer
   scope: [Interaction design, Prototyping]
   summary: One or two sentences, outcome first.
+  subtitle: Optional one-line headline
+  awards: Optional recognition
 ---
 ```
 

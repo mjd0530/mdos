@@ -3,12 +3,14 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
 
 const WCAG = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
 
+/** Open the Hello test fixture (not in any menu) through the ?e2e hook. */
 async function newWindow(page: Page) {
-  await page
-    .getByRole('menubar')
-    .getByRole('menuitem', { name: 'Mike OS', exact: true })
-    .click();
-  await page.getByRole('menuitem', { name: 'Hello', exact: true }).click();
+  await page.waitForFunction(() => 'mikeos' in window);
+  await page.evaluate(() =>
+    (
+      window as unknown as { mikeos: { launch: (id: string) => void } }
+    ).mikeos.launch('hello'),
+  );
 }
 
 const win = (page: Page, title: string) =>
@@ -33,7 +35,7 @@ async function drag(page: Page, from: Locator, dx: number, dy: number) {
 }
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('./');
+  await page.goto('./?e2e');
 });
 
 test('launching an app opens an active, focused, announced window', async ({
