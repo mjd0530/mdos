@@ -1,10 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styles from './Clock.module.css';
+import { useSettings } from './settings';
 
-const timeFormat = new Intl.DateTimeFormat(undefined, {
-  hour: 'numeric',
-  minute: '2-digit',
-});
 const dateFormat = new Intl.DateTimeFormat(undefined, {
   weekday: 'short',
   month: 'short',
@@ -36,6 +33,16 @@ function useMinute() {
 /** Menu-bar clock. Click (or Enter) toggles between time and date, like the System 7.5 clock. */
 export function Clock() {
   const now = useMinute();
+  const clock24h = useSettings((s) => s.clock24h);
+  const timeFormat = useMemo(
+    () =>
+      new Intl.DateTimeFormat(undefined, {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: !clock24h,
+      }),
+    [clock24h],
+  );
   const [showDate, setShowDate] = useState(false);
 
   return (

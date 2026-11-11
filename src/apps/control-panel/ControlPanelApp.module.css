@@ -1,0 +1,69 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+}
+
+.group {
+  margin: 0;
+  padding: 8px 12px 12px;
+  border: 1px solid var(--color-black);
+}
+
+.legend {
+  padding: 0 4px;
+  font-family: var(--font-system);
+}
+
+.patterns {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 8px;
+}
+
+.pattern {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  cursor: default;
+}
+
+/* The swatch is the visible control; the radio stays for keyboard and screen readers. */
+.patternInput {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.swatch {
+  width: 48px;
+  height: 32px;
+  border: 1px solid var(--color-black);
+  background-size: 8px 8px;
+  image-rendering: pixelated;
+}
+
+.patternInput:checked + .swatch {
+  outline: 3px solid var(--color-black);
+  outline-offset: 2px;
+}
+
+.patternInput:focus-visible + .swatch {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 4px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (pointer: coarse) {
+  .pattern {
+    min-height: 44px;
+  }
+}

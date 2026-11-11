@@ -173,3 +173,11 @@ _2026-11-11 · Accepted_
 
 **Touch targets** keep the 11px System 7 boxes but extend their hit areas (29 × 45px, never overlapping: neighbouring boxes get a 16px gap); the menu bar grows to 32px and menu items to 44px on coarse pointers. The menu bar fits a 360px phone without sideways scroll.
 **Tests** run on desktop Chrome, Pixel 7 and iPad Mini (in Chromium). `tests/e2e/device.ts` helps tests branch where behaviour differs; `phone.spec.ts` and `tablet.spec.ts` cover each mode. Local runs use half the CPU cores so a busy machine doesn't cause timeouts.
+
+## D-025 Control Panel and settings
+_2026-11-11 · Accepted_
+
+- **Settings store** (`src/os/settings.ts`, key `mikeos:settings`): desktop pattern and 12/24-hour clock. Saved values are sanitised (unknown pattern names or wrong types fall back to defaults).
+- **Control Panel** (single-instance app, listed in the M menu like System 7's Control Panels): pattern swatches as a native radio group (arrow keys work), a 24-hour checkbox, Restore Defaults. Changes apply immediately.
+- **Special → Reset Desktop** now also restores settings, so it truly means "start fresh".
+- **Only working settings appear.** Screensaver, sounds and the cursor clock get their Control Panel sections when they're built (step 14).

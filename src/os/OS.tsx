@@ -12,6 +12,7 @@ import { DesktopIcons } from './DesktopIcons';
 import { MenuBar } from './menubar/MenuBar';
 import { clearSaved } from './persist';
 import { useDeviceMode } from './device';
+import { useSettings } from './settings';
 import { systemMenus } from './menus';
 import styles from './OS.module.css';
 import { useWindows } from './windows/store';
@@ -77,10 +78,11 @@ export function OS() {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, []);
 
-  // Pattern choice moves to settings in step 8 / Control Panel in step 12.
+  // The visitor's chosen desktop pattern (Control Panel).
+  const pattern = useSettings((s) => s.pattern);
   const desktopStyle = useMemo(
-    () => ({ backgroundImage: patternDataUri(PATTERNS.grey.rows) }),
-    [],
+    () => ({ backgroundImage: patternDataUri(PATTERNS[pattern].rows) }),
+    [pattern],
   );
 
   return (
@@ -135,13 +137,14 @@ export function OS() {
           if (value !== 'reset') return;
           useWindows.getState().forgetAll();
           useDesktop.getState().cleanUp();
+          useSettings.getState().restoreDefaults();
           clearSaved();
           announce('Desktop reset');
         }}
       >
         <p>
-          All windows close, and icons and windows go back to where they
-          started.
+          All windows close, icons and windows go back to where they started,
+          and Control Panel settings return to their defaults.
         </p>
       </Alert>
 

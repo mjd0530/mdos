@@ -46,12 +46,6 @@ export function systemMenus(
           label: app.name,
           onSelect: () => actions.launch(app.id),
         })),
-        {
-          kind: 'command',
-          id: 'control-panel',
-          label: 'Control Panel',
-          disabled: true,
-        },
       ],
     },
     {
