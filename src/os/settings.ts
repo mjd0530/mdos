@@ -17,13 +17,29 @@ export interface Settings {
   weatherUnit: 'fahrenheit' | 'celsius';
   /** A city the visitor searched for. Never a "Use my location" position (D-026). */
   weatherPlace: SavedPlace | null;
+  screensaver: boolean;
+  /** Idle minutes before the screensaver starts. */
+  screensaverMinutes: ScreensaverMinutes;
+  cursorClock: boolean;
+  sounds: boolean;
+  /** 0–1. */
+  volume: number;
 }
+
+export const SCREENSAVER_MINUTES = [1, 2, 5, 10, 30] as const;
+export type ScreensaverMinutes = (typeof SCREENSAVER_MINUTES)[number];
 
 export const DEFAULT_SETTINGS: Settings = {
   pattern: 'grey',
   clock24h: false,
   weatherUnit: 'fahrenheit',
   weatherPlace: null,
+  screensaver: true,
+  screensaverMinutes: 5,
+  cursorClock: true,
+  // Sound stays off until a visitor turns it on (D-008).
+  sounds: false,
+  volume: 0.5,
 };
 
 function sanitizePlace(value: unknown): SavedPlace | null {
@@ -51,6 +67,9 @@ interface SettingsState extends Settings {
   restoreDefaults: () => void;
 }
 
+const bool = (value: unknown, fallback: boolean) =>
+  typeof value === 'boolean' ? value : fallback;
+
 /** Keep only valid saved values; anything unknown falls back to the default. */
 export function sanitizeSettings(saved: unknown): Settings {
   const value = (saved && typeof saved === 'object' ? saved : {}) as Record<
@@ -71,6 +90,21 @@ export function sanitizeSettings(saved: unknown): Settings {
         ? value.weatherUnit
         : DEFAULT_SETTINGS.weatherUnit,
     weatherPlace: sanitizePlace(value.weatherPlace),
+    screensaver: bool(value.screensaver, DEFAULT_SETTINGS.screensaver),
+    screensaverMinutes: (SCREENSAVER_MINUTES as readonly unknown[]).includes(
+      value.screensaverMinutes,
+    )
+      ? (value.screensaverMinutes as ScreensaverMinutes)
+      : DEFAULT_SETTINGS.screensaverMinutes,
+    cursorClock: bool(value.cursorClock, DEFAULT_SETTINGS.cursorClock),
+    sounds: bool(value.sounds, DEFAULT_SETTINGS.sounds),
+    volume:
+      typeof value.volume === 'number' &&
+      Number.isFinite(value.volume) &&
+      value.volume >= 0 &&
+      value.volume <= 1
+        ? value.volume
+        : DEFAULT_SETTINGS.volume,
   };
 }
 
@@ -85,12 +119,14 @@ export const useSettings = create<SettingsState>()(
       name: 'mikeos:settings',
       version: 1,
       storage,
-      partialize: ({ pattern, clock24h, weatherUnit, weatherPlace }) => ({
-        pattern,
-        clock24h,
-        weatherUnit,
-        weatherPlace,
-      }),
+      // Save every setting, none of the actions.
+      partialize: (state) =>
+        Object.fromEntries(
+          Object.keys(DEFAULT_SETTINGS).map((key) => [
+            key,
+            state[key as keyof Settings],
+          ]),
+        ) as unknown as Settings,
       merge: (saved, current) => ({ ...current, ...sanitizeSettings(saved) }),
     },
   ),

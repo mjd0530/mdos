@@ -1,6 +1,11 @@
 import { PATTERNS, type PatternName } from '../../assets/patterns';
 import { announce } from '../../os/announce';
-import { useSettings } from '../../os/settings';
+import {
+  SCREENSAVER_MINUTES,
+  useSettings,
+  type ScreensaverMinutes,
+} from '../../os/settings';
+import { playSound } from '../../os/sounds';
 import { Button } from '../../ui/Button';
 import { Checkbox } from '../../ui/Checkbox';
 import { patternDataUri } from '../../ui/pixels';
@@ -46,6 +51,84 @@ export default function ControlPanelApp() {
         >
           24-hour time
         </Checkbox>
+      </fieldset>
+
+      <fieldset className={styles.group}>
+        <legend className={styles.legend}>Screensaver</legend>
+        <div className={styles.rows}>
+          <Checkbox
+            checked={settings.screensaver}
+            onChange={(event) =>
+              settings.set('screensaver', event.target.checked)
+            }
+          >
+            Start when idle
+          </Checkbox>
+          <label className={styles.field}>
+            After
+            <select
+              className={styles.select}
+              value={settings.screensaverMinutes}
+              disabled={!settings.screensaver}
+              onChange={(event) =>
+                settings.set(
+                  'screensaverMinutes',
+                  Number(event.target.value) as ScreensaverMinutes,
+                )
+              }
+            >
+              {SCREENSAVER_MINUTES.map((minutes) => (
+                <option key={minutes} value={minutes}>
+                  {minutes === 1 ? '1 minute' : `${minutes} minutes`}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset className={styles.group}>
+        <legend className={styles.legend}>Pointer</legend>
+        <Checkbox
+          checked={settings.cursorClock}
+          onChange={(event) =>
+            settings.set('cursorClock', event.target.checked)
+          }
+        >
+          Clock follows the pointer
+        </Checkbox>
+      </fieldset>
+
+      <fieldset className={styles.group}>
+        <legend className={styles.legend}>Sound</legend>
+        <div className={styles.rows}>
+          <Checkbox
+            checked={settings.sounds}
+            onChange={(event) => {
+              settings.set('sounds', event.target.checked);
+              if (event.target.checked) playSound('test');
+            }}
+          >
+            System sounds
+          </Checkbox>
+          <label className={styles.field}>
+            Volume
+            <input
+              type="range"
+              className={styles.range}
+              min={0}
+              max={1}
+              step={0.1}
+              value={settings.volume}
+              disabled={!settings.sounds}
+              onChange={(event) =>
+                settings.set('volume', Number(event.target.value))
+              }
+              onPointerUp={() => playSound('test')}
+              onKeyUp={() => playSound('test')}
+            />
+          </label>
+        </div>
       </fieldset>
 
       <div className={styles.actions}>

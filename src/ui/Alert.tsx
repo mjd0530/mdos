@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { useEffect, useId, useRef } from 'react';
 import type { IconName } from '../assets/icons/icons';
+import { playSound } from '../os/sounds';
 import { Button } from './Button';
 import { PixelIcon } from './PixelIcon';
 import styles from './Alert.module.css';
@@ -44,6 +45,7 @@ export function Alert({
     if (!dialog) return;
     if (open && !dialog.open) {
       dialog.showModal();
+      playSound('alert');
       // showModal() focuses the first button; System 7 puts Return on the default one.
       dialog.querySelector<HTMLButtonElement>('[data-default]')?.focus();
     }

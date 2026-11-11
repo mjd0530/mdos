@@ -7,6 +7,9 @@ import { launch } from '../apps/launch';
 import { announce } from './announce';
 import { Announcer } from './Announcer';
 import { Clock } from './Clock';
+import { CursorClock } from './CursorClock';
+import { Screensaver } from './Screensaver';
+import { useIdleScreensaver, useScreensaver } from './screensaverState';
 import { useDesktop } from './desktopStore';
 import { DesktopIcons } from './DesktopIcons';
 import { MenuBar } from './menubar/MenuBar';
@@ -29,6 +32,7 @@ export function OS() {
   const [alert, setAlert] = useState<OpenAlert>(null);
 
   const device = useDeviceMode();
+  useIdleScreensaver();
   // Phones and tablets open windows zoomed; the desktop cascades them.
   useEffect(() => {
     useWindows.getState().setOpenZoomed(device !== 'desktop');
@@ -51,6 +55,9 @@ export function OS() {
           nextWindow: () => useWindows.getState().cycle(),
           cleanUp: () => useDesktop.getState().cleanUp(),
           resetDesktop: () => setAlert('reset'),
+          // After this click finishes, so the click itself doesn't wake it.
+          startScreensaver: () =>
+            window.setTimeout(() => useScreensaver.getState().start(), 50),
         },
         {
           hasWindow: activeId !== undefined,
@@ -95,6 +102,8 @@ export function OS() {
         <WindowLayer />
       </main>
       <Announcer />
+      <CursorClock />
+      <Screensaver />
 
       <Alert
         open={alert === 'about'}

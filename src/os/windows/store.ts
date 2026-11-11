@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { isRect, sanitizeRecord, storage } from '../persist';
 import { announce } from '../announce';
+import { playSound } from '../sounds';
 import {
   cascadeRect,
   clampRect,
@@ -145,6 +146,7 @@ export const useWindows = create<WindowsState>()(
             opened: opened + 1,
           }));
           announce(`${title} window opened`);
+          playSound('open');
           return id;
         },
 
@@ -157,6 +159,7 @@ export const useWindows = create<WindowsState>()(
             order: state.order.filter((other) => other !== id),
           }));
           announce(`${win.title} window closed`);
+          playSound('close');
         },
 
         setTitle: (id, title) => {

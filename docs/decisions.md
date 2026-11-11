@@ -190,3 +190,11 @@ _2026-11-11 · Accepted_
 - **Display:** current temperature, condition (WMO code → words + six new 1-bit icons), feels-like, wind, 5-day highs/lows; °F/°C toggle, remembered.
 - **Robustness:** 8 s timeout, malformed responses rejected rather than shown, friendly error with Try Again. Tests mock Open-Meteo entirely.
 - Weather is on the desktop (`fs.yaml`) and in the M menu.
+
+## D-027 Screensaver, cursor clock and sounds
+_2026-11-11 · Accepted_
+
+- **Screensaver** (Mike's pick: drifting icons): twelve Mike OS icons, white on black at 2×, drift and bounce on a canvas. Starts after 1/2/5/10/30 idle minutes (default 5; not on phones, not in hidden tabs) or from Special → Start Screensaver. Any key, click, touch, scroll or real mouse movement (> 6px) ends it, and that input is swallowed so it never acts on what's underneath. Under reduced motion it's a still scene. It's `aria-hidden`: screen-reader users aren't told about decoration.
+- **Cursor clock:** a small time label trailing the mouse pointer. Mouse only (never touch), `pointer-events: none`, `aria-hidden`, hidden while typing, kept inside the screen edges. On by default; switch in Control Panel.
+- **Sounds:** synthesized square-wave blips (window open/close, alerts), no audio files, nothing from Apple (D-003). **Off by default**; enabling plays a confirmation chime. Volume slider in Control Panel.
+- Control Panel gains Screensaver, Pointer and Sound sections; all are saved and reset with the rest.

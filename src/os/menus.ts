@@ -9,6 +9,7 @@ export interface SystemActions {
   nextWindow: () => void;
   cleanUp: () => void;
   resetDesktop: () => void;
+  startScreensaver: () => void;
 }
 
 export interface SystemState {
@@ -137,6 +138,12 @@ export function systemMenus(
           id: 'clean-up',
           label: 'Clean Up Desktop',
           onSelect: actions.cleanUp,
+        },
+        {
+          kind: 'command',
+          id: 'screensaver',
+          label: 'Start Screensaver',
+          onSelect: actions.startScreensaver,
         },
         { kind: 'separator', id: 'sep1' },
         {

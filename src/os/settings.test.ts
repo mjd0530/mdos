@@ -16,6 +16,11 @@ describe('sanitizeSettings', () => {
       clock24h: true,
       weatherUnit: 'celsius',
       weatherPlace: { ...place, region: undefined },
+      screensaver: true,
+      screensaverMinutes: 5,
+      cursorClock: true,
+      sounds: false,
+      volume: 0.5,
     });
   });
 
@@ -26,6 +31,9 @@ describe('sanitizeSettings', () => {
         clock24h: 'yes',
         weatherUnit: 'kelvin',
         weatherPlace: { name: 'Nowhere', latitude: 999, longitude: 0 },
+        screensaver: 'on',
+        screensaverMinutes: 7,
+        volume: 3,
       }),
     ).toEqual(DEFAULT_SETTINGS);
     expect(sanitizeSettings(null)).toEqual(DEFAULT_SETTINGS);
