@@ -1,0 +1,175 @@
+.weather {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 12px 12px;
+}
+
+.weather p {
+  margin: 0;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.place {
+  margin: 0;
+  font-family: var(--font-system);
+  font-size: var(--font-size-title);
+  font-weight: 400;
+}
+
+.region,
+.details,
+.low,
+.credit {
+  color: var(--color-grey-4);
+}
+
+.unitToggle,
+.locationActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.tool {
+  height: 20px;
+  padding: 0 6px;
+  border: 1px solid var(--color-black);
+  background: var(--color-white);
+  color: var(--color-black);
+  font-family: var(--font-system);
+  font-size: var(--font-size-body);
+  line-height: 16px;
+  cursor: default;
+}
+
+.tool[aria-pressed='true'],
+.tool[aria-expanded='true'],
+.tool:active:not(:disabled) {
+  background: var(--color-black);
+  color: var(--color-white);
+}
+
+.tool:disabled {
+  color: var(--color-grey-3);
+  border-color: var(--color-grey-3);
+}
+
+.tool:focus-visible,
+.result:focus-visible,
+.input:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 1px;
+}
+
+.note {
+  color: var(--color-grey-4);
+}
+
+.now {
+  min-height: 72px;
+  padding: 8px 0;
+  border-top: 1px solid var(--color-black);
+  border-bottom: 1px solid var(--color-black);
+}
+
+.current {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.temperature {
+  font-family: var(--font-system);
+  font-size: var(--font-size-display);
+  line-height: 1;
+}
+
+.days {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.day {
+  display: grid;
+  grid-template-columns: 4em 32px 1fr;
+  align-items: center;
+  gap: 12px;
+}
+
+.dayName {
+  font-family: var(--font-system);
+}
+
+.search {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.searchForm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.input {
+  flex: 1;
+  min-width: 8em;
+  height: 22px;
+  padding: 0 4px;
+  border: 1px solid var(--color-black);
+  font: inherit;
+}
+
+.results {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--color-black);
+}
+
+.result {
+  display: block;
+  width: 100%;
+  padding: 2px 8px;
+  border: 0;
+  background: var(--color-white);
+  color: var(--color-black);
+  font: inherit;
+  text-align: left;
+  cursor: default;
+}
+
+.result:hover {
+  background: var(--color-black);
+  color: var(--color-white);
+}
+
+.result:hover .region {
+  color: var(--color-white);
+}
+
+.credit a {
+  color: inherit;
+}
+
+@media (pointer: coarse) {
+  .tool,
+  .result {
+    min-height: 44px;
+  }
+  .input {
+    height: 44px;
+  }
+}

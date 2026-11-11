@@ -181,3 +181,12 @@ _2026-11-11 · Accepted_
 - **Control Panel** (single-instance app, listed in the M menu like System 7's Control Panels): pattern swatches as a native radio group (arrow keys work), a 24-hour checkbox, Restore Defaults. Changes apply immediately.
 - **Special → Reset Desktop** now also restores settings, so it truly means "start fresh".
 - **Only working settings appear.** Screensaver, sounds and the cursor clock get their Control Panel sections when they're built (step 14).
+
+## D-026 Weather
+_2026-11-11 · Accepted_
+
+- **Data:** Open-Meteo forecast + geocoding APIs, called from the browser (free, no key, CORS-enabled; non-commercial use with no ads qualifies). Licence CC BY 4.0: the window always shows "Weather data by Open-Meteo.com" linking to open-meteo.com plus a CC BY 4.0 link.
+- **Default place:** Cary, NC. Visitors can search for a city (remembered in settings) or press **Use my location** (asked only on click; coordinates rounded to two decimals, about 1 km, before they leave the browser; never saved).
+- **Display:** current temperature, condition (WMO code → words + six new 1-bit icons), feels-like, wind, 5-day highs/lows; °F/°C toggle, remembered.
+- **Robustness:** 8 s timeout, malformed responses rejected rather than shown, friendly error with Try Again. Tests mock Open-Meteo entirely.
+- Weather is on the desktop (`fs.yaml`) and in the M menu.

@@ -23,7 +23,7 @@ _Each step ends with a demo Mike can try plus the checks in CLAUDE.md "Verify be
 | 10 | **Viewer + Sketchbook** ✅ 2026-11-11 (D-023; drawings to come from Mike) | Image pipeline (also resizes case-study images); Viewer prev/next; Sketchbook folder with 10–20 drawings |
 | 11 | **Responsive shells** ✅ 2026-11-11 (D-024) | Tablet adjustments; phone launcher shell |
 | 12 | **Control Panel** ✅ 2026-11-11 (D-025): pattern, clock, Restore Defaults; sounds/screensaver/cursor clock settings arrive with step 14 |
-| 13 | **Weather** | Open-Meteo, default location, opt-in geolocation, error/offline states |
+| 13 | **Weather** ✅ 2026-11-11 (D-026) |
 | 14 | **Screensaver + cursor clock + sounds** | Idle overlay, reduced-motion behaviour, our own sounds |
 | 15 | **Plain view + launch QA** | `/plain/` pages; full accessibility audit, visual QA across viewports, Lighthouse, security review; link from the Astro site |
 

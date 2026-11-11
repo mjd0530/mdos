@@ -17,6 +17,12 @@ const ICON_LABELS: Record<IconName, string> = {
   computer: 'Mike OS',
   controlPanel: 'Control Panel',
   link: 'Link',
+  weatherClear: 'Clear',
+  weatherNight: 'Clear night',
+  weatherCloudy: 'Cloudy',
+  weatherRain: 'Rain',
+  weatherSnow: 'Snow',
+  weatherStorm: 'Storm',
 };
 
 const ICON_NAMES = Object.keys(ICONS) as IconName[];

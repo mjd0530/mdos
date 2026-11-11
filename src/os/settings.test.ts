@@ -3,16 +3,31 @@ import { DEFAULT_SETTINGS, sanitizeSettings, useSettings } from './settings';
 
 describe('sanitizeSettings', () => {
   it('keeps valid values', () => {
-    expect(sanitizeSettings({ pattern: 'bricks', clock24h: true })).toEqual({
+    const place = { name: 'Paris', latitude: 48.85, longitude: 2.35 };
+    expect(
+      sanitizeSettings({
+        pattern: 'bricks',
+        clock24h: true,
+        weatherUnit: 'celsius',
+        weatherPlace: place,
+      }),
+    ).toEqual({
       pattern: 'bricks',
       clock24h: true,
+      weatherUnit: 'celsius',
+      weatherPlace: { ...place, region: undefined },
     });
   });
 
   it('replaces unknown or malformed values with defaults', () => {
-    expect(sanitizeSettings({ pattern: 'plaid', clock24h: 'yes' })).toEqual(
-      DEFAULT_SETTINGS,
-    );
+    expect(
+      sanitizeSettings({
+        pattern: 'plaid',
+        clock24h: 'yes',
+        weatherUnit: 'kelvin',
+        weatherPlace: { name: 'Nowhere', latitude: 999, longitude: 0 },
+      }),
+    ).toEqual(DEFAULT_SETTINGS);
     expect(sanitizeSettings(null)).toEqual(DEFAULT_SETTINGS);
     expect(sanitizeSettings('garbage')).toEqual(DEFAULT_SETTINGS);
   });

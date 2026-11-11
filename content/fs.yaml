@@ -27,6 +27,9 @@ desktop:
   - gallery: sketchbook
     name: Sketchbook
 
+  - app: weather
+    name: Weather
+
   - folder: Contact
     children:
       - link: https://www.linkedin.com/in/mikedemar/
