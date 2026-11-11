@@ -113,3 +113,8 @@ _2026-11-11 · Accepted_
 - **Keyboard:** the title is focusable; arrows move 16px, Shift+arrows resize. **Ctrl+`** cycles windows (Shift reverses). ⌘` belongs to macOS and ⌘W/Ctrl+W close the browser tab before a page sees them, so neither is used; File → Close Window covers closing.
 - **Scroll bars:** custom System 7 bars (arrows, grey track, fixed square thumb) over a natively scrolling, focusable viewport. The bars are pointer-only (`aria-hidden`); keyboard and screen readers scroll natively.
 - **Measuring:** the desktop is measured synchronously on mount and then by ResizeObserver, so a window opened in a background tab still fits the screen.
+
+## D-018 App framework
+_2026-11-11 · Accepted_
+
+Apps are folders discovered by `import.meta.glob` (`src/apps/*/index.ts`) and declared with `defineApp` (id, name, icon, instance rule, window size, lazy `load`). `launch(appId, payload)` applies the instance rule (`single` / `multiple` / `per-document`). Each app lazy-loads inside its window behind a crash boundary with Close/Relaunch. Installed apps can list themselves in the M menu, as System 7's Apple menu did. Guide: `docs/application-framework.md`. The throwaway **Hello** app proves it and goes when real apps arrive.

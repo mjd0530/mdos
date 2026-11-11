@@ -6,9 +6,9 @@ const WCAG = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
 async function newWindow(page: Page) {
   await page
     .getByRole('menubar')
-    .getByRole('menuitem', { name: 'File', exact: true })
+    .getByRole('menuitem', { name: 'Mike OS', exact: true })
     .click();
-  await page.getByRole('menuitem', { name: 'New Window' }).click();
+  await page.getByRole('menuitem', { name: 'Hello', exact: true }).click();
 }
 
 const win = (page: Page, title: string) =>
@@ -36,27 +36,25 @@ test.beforeEach(async ({ page }) => {
   await page.goto('./');
 });
 
-test('New Window opens an active, focused, announced window', async ({
+test('launching an app opens an active, focused, announced window', async ({
   page,
 }) => {
   await newWindow(page);
-  const w = win(page, 'Untitled 1');
+  const w = win(page, 'Hello 1');
   await expect(w).toBeVisible();
   await expect(w).toHaveAttribute('data-active', 'true');
   await expect(w).toBeFocused();
-  await expect(page.locator('[aria-live]')).toHaveText(
-    'Untitled 1 window opened',
-  );
+  await expect(page.locator('[aria-live]')).toHaveText('Hello 1 window opened');
 });
 
 test('clicking a back window brings it to the front', async ({ page }) => {
   await newWindow(page);
   await newWindow(page);
-  const first = win(page, 'Untitled 1');
+  const first = win(page, 'Hello 1');
   await expect(first).not.toHaveAttribute('data-active');
   await first.getByRole('heading').click({ position: { x: 4, y: 4 } });
   await expect(first).toHaveAttribute('data-active', 'true');
-  await expect(win(page, 'Untitled 2')).not.toHaveAttribute('data-active');
+  await expect(win(page, 'Hello 2')).not.toHaveAttribute('data-active');
 });
 
 test.describe('mouse', () => {
@@ -64,7 +62,7 @@ test.describe('mouse', () => {
 
   test('dragging the title bar moves the window', async ({ page }) => {
     await newWindow(page);
-    const w = win(page, 'Untitled 1');
+    const w = win(page, 'Hello 1');
     const before = await box(w);
     await drag(page, w.getByRole('heading'), 120, 80);
     const after = await box(w);
@@ -76,7 +74,7 @@ test.describe('mouse', () => {
     page,
   }) => {
     await newWindow(page);
-    const w = win(page, 'Untitled 1');
+    const w = win(page, 'Hello 1');
     await drag(page, w.getByRole('heading'), 0, -500);
     const menubar = await box(page.locator('header'));
     expect((await box(w)).y).toBeGreaterThanOrEqual(menubar.y + menubar.height);
@@ -84,7 +82,7 @@ test.describe('mouse', () => {
 
   test('dragging the grow box resizes the window', async ({ page }) => {
     await newWindow(page);
-    const w = win(page, 'Untitled 1');
+    const w = win(page, 'Hello 1');
     const before = await box(w);
     await drag(page, w.getByTestId('grow-box'), 60, 40);
     const after = await box(w);
@@ -94,8 +92,9 @@ test.describe('mouse', () => {
 
   test('scroll arrows scroll the content', async ({ page }) => {
     await newWindow(page);
-    const w = win(page, 'Untitled 1');
+    const w = win(page, 'Hello 1');
     const viewport = w.locator('[tabindex="0"]:not(h2)');
+    await expect(w.getByText('Line 20.')).toBeAttached(); // app loaded (lazily)
     await w.getByTestId('scroll-down').click();
     await expect
       .poll(() => viewport.evaluate((el) => el.scrollTop))
@@ -107,13 +106,13 @@ test('zoom fills the desktop and zooming again restores it', async ({
   page,
 }) => {
   await newWindow(page);
-  const w = win(page, 'Untitled 1');
+  const w = win(page, 'Hello 1');
   const before = await box(w);
-  await w.getByRole('button', { name: 'Zoom Untitled 1' }).click();
+  await w.getByRole('button', { name: 'Zoom Hello 1' }).click();
   const desktop = await box(page.getByRole('main'));
   const zoomed = await box(w);
   expect(zoomed.width).toBeGreaterThan(desktop.width - 8);
-  await w.getByRole('button', { name: 'Restore Untitled 1' }).click();
+  await w.getByRole('button', { name: 'Restore Hello 1' }).click();
   expect(await box(w)).toEqual(before);
 });
 
@@ -121,8 +120,8 @@ test('collapse shows only the title bar; double-clicking the title expands', asy
   page,
 }) => {
   await newWindow(page);
-  const w = win(page, 'Untitled 1');
-  await w.getByRole('button', { name: 'Collapse Untitled 1' }).click();
+  const w = win(page, 'Hello 1');
+  await w.getByRole('button', { name: 'Collapse Hello 1' }).click();
   await expect(w).toHaveAttribute('data-collapsed', 'true');
   expect((await box(w)).height).toBeLessThan(30);
   await w.getByRole('heading').dblclick();
@@ -134,12 +133,12 @@ test('closing the front window activates the one behind it', async ({
 }) => {
   await newWindow(page);
   await newWindow(page);
-  await win(page, 'Untitled 2')
-    .getByRole('button', { name: 'Close Untitled 2' })
+  await win(page, 'Hello 2')
+    .getByRole('button', { name: 'Close Hello 2' })
     .click();
-  await expect(win(page, 'Untitled 2')).toHaveCount(0);
-  await expect(win(page, 'Untitled 1')).toHaveAttribute('data-active', 'true');
-  await expect(win(page, 'Untitled 1')).toBeFocused();
+  await expect(win(page, 'Hello 2')).toHaveCount(0);
+  await expect(win(page, 'Hello 1')).toHaveAttribute('data-active', 'true');
+  await expect(win(page, 'Hello 1')).toBeFocused();
 });
 
 test('File → Close Window closes the active window', async ({ page }) => {
@@ -155,7 +154,7 @@ test('File → Close Window closes the active window', async ({ page }) => {
 test.describe('keyboard', () => {
   test('arrows on the title move; Shift+arrows resize', async ({ page }) => {
     await newWindow(page);
-    const w = win(page, 'Untitled 1');
+    const w = win(page, 'Hello 1');
     const title = w.getByRole('heading');
     await title.focus();
     const start = await box(w);
@@ -175,33 +174,25 @@ test.describe('keyboard', () => {
     await newWindow(page);
     await newWindow(page);
     await page.keyboard.press('Control+Backquote');
-    await expect(win(page, 'Untitled 1')).toHaveAttribute(
-      'data-active',
-      'true',
-    );
-    await expect(win(page, 'Untitled 1')).toBeFocused();
+    await expect(win(page, 'Hello 1')).toHaveAttribute('data-active', 'true');
+    await expect(win(page, 'Hello 1')).toBeFocused();
     await page.keyboard.press('Control+Backquote');
-    await expect(win(page, 'Untitled 2')).toHaveAttribute(
-      'data-active',
-      'true',
-    );
+    await expect(win(page, 'Hello 2')).toHaveAttribute('data-active', 'true');
   });
 
   test('window controls are reachable with Tab in a sensible order', async ({
     page,
   }) => {
     await newWindow(page);
-    const w = win(page, 'Untitled 1');
+    const w = win(page, 'Hello 1');
     await page.keyboard.press('Tab');
     await expect(
-      w.getByRole('button', { name: 'Close Untitled 1' }),
+      w.getByRole('button', { name: 'Close Hello 1' }),
     ).toBeFocused();
     await page.keyboard.press('Tab');
     await expect(w.getByRole('heading')).toBeFocused();
     await page.keyboard.press('Tab');
-    await expect(
-      w.getByRole('button', { name: 'Zoom Untitled 1' }),
-    ).toBeFocused();
+    await expect(w.getByRole('button', { name: 'Zoom Hello 1' })).toBeFocused();
   });
 });
 

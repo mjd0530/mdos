@@ -21,6 +21,10 @@ export interface WindowInstance {
   collapsed: boolean;
   /** The rect to return to when un-zooming. */
   restoreRect?: Rect;
+  /** What the app was opened with (e.g. a file path). Opaque to the window manager. */
+  payload?: unknown;
+  /** Identity for "one window per document" apps; launch() matches on it. */
+  key?: string;
 }
 
 export interface OpenOptions {
@@ -28,6 +32,8 @@ export interface OpenOptions {
   title: string;
   size?: Size;
   minSize?: Size;
+  payload?: unknown;
+  key?: string;
 }
 
 interface WindowsState {
@@ -42,6 +48,7 @@ interface WindowsState {
 
   open: (options: OpenOptions) => string;
   close: (id: string) => void;
+  setTitle: (id: string, title: string) => void;
   focus: (id: string) => void;
   move: (id: string, x: number, y: number) => void;
   resize: (id: string, w: number, h: number) => void;
@@ -79,6 +86,8 @@ export const useWindows = create<WindowsState>((set, get) => {
       title,
       size = DEFAULT_SIZE,
       minSize = DEFAULT_MIN_SIZE,
+      payload,
+      key,
     }) => {
       const { opened, bounds } = get();
       const id = `window-${opened + 1}`;
@@ -90,6 +99,8 @@ export const useWindows = create<WindowsState>((set, get) => {
         rect: cascadeRect(opened, size, bounds, minSize),
         zoomed: false,
         collapsed: false,
+        payload,
+        key,
       };
       set((state) => ({
         windows: [...state.windows, win],
@@ -109,6 +120,9 @@ export const useWindows = create<WindowsState>((set, get) => {
       }));
       announce(`${win.title} window closed`);
     },
+
+    setTitle: (id, title) =>
+      update(id, (win) => (win.title === title ? win : { ...win, title })),
 
     focus: (id) =>
       set((state) =>

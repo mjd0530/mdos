@@ -2,14 +2,19 @@ import { useEffect, useMemo, useState } from 'react';
 import { PATTERNS } from '../assets/patterns';
 import { Alert } from '../ui/Alert';
 import { patternDataUri } from '../ui/pixels';
+import { APPS } from '../apps/registry';
+import { launch } from '../apps/launch';
 import { Announcer } from './Announcer';
 import { Clock } from './Clock';
 import { MenuBar } from './menubar/MenuBar';
 import { systemMenus } from './menus';
 import styles from './OS.module.css';
 import { useWindows } from './windows/store';
-import { TestWindowContent } from './windows/TestWindowContent';
 import { WindowLayer } from './windows/WindowLayer';
+
+const MARK_MENU_APPS = [...APPS.values()]
+  .filter((app) => app.inMarkMenu)
+  .map(({ id, name }) => ({ id, name }));
 
 type OpenAlert = 'about' | 'shortcuts' | 'restart' | null;
 
@@ -27,16 +32,17 @@ export function OS() {
           about: () => setAlert('about'),
           shortcuts: () => setAlert('shortcuts'),
           restart: () => setAlert('restart'),
-          newWindow: () => {
-            const { opened, open } = useWindows.getState();
-            open({ appId: 'test', title: `Untitled ${opened + 1}` });
-          },
+          launch: (appId) => launch(appId),
           closeWindow: () => {
             if (activeId) useWindows.getState().close(activeId);
           },
           nextWindow: () => useWindows.getState().cycle(),
         },
-        { hasWindow: activeId !== undefined, windowCount },
+        {
+          hasWindow: activeId !== undefined,
+          windowCount,
+          markMenuApps: MARK_MENU_APPS,
+        },
       ),
     [activeId, windowCount],
   );
@@ -70,9 +76,7 @@ export function OS() {
 
       <main className={styles.desktop} style={desktopStyle}>
         <h1 className="visually-hidden">Mike OS desktop</h1>
-        <WindowLayer
-          renderContent={(win) => <TestWindowContent title={win.title} />}
-        />
+        <WindowLayer />
       </main>
       <Announcer />
 

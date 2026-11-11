@@ -1,19 +1,14 @@
-import type { ReactNode } from 'react';
 import { useLayoutEffect, useRef } from 'react';
-import { useWindows, type WindowInstance } from './store';
+import { AppHost } from '../../apps/AppHost';
+import { useWindows } from './store';
 import { Window } from './Window';
 import styles from './WindowLayer.module.css';
-
-interface WindowLayerProps {
-  /** What to show inside each window. Step 5 replaces this with the app registry. */
-  renderContent: (win: WindowInstance) => ReactNode;
-}
 
 /**
  * Fills the desktop and hosts every open window. Windows render in creation order (so
  * focus never jumps when stacking changes) and stack by z-index from the store's order.
  */
-export function WindowLayer({ renderContent }: WindowLayerProps) {
+export function WindowLayer() {
   const ref = useRef<HTMLDivElement>(null);
   const windows = useWindows((s) => s.windows);
   const order = useWindows((s) => s.order);
@@ -47,7 +42,7 @@ export function WindowLayer({ renderContent }: WindowLayerProps) {
           active={win.id === activeId}
           z={order.indexOf(win.id) + 1}
         >
-          {renderContent(win)}
+          <AppHost win={win} isActive={win.id === activeId} />
         </Window>
       ))}
     </div>

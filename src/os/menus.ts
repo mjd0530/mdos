@@ -1,10 +1,10 @@
-import type { MenuDef } from './menubar/types';
+import type { MenuDef, MenuEntry } from './menubar/types';
 
 export interface SystemActions {
   about: () => void;
   shortcuts: () => void;
   restart: () => void;
-  newWindow: () => void;
+  launch: (appId: string) => void;
   closeWindow: () => void;
   nextWindow: () => void;
 }
@@ -13,6 +13,8 @@ export interface SystemState {
   /** Is there an active window for Close / Next to act on? */
   hasWindow: boolean;
   windowCount: number;
+  /** Apps listed in the M menu, like System 7's Apple menu items. */
+  markMenuApps: { id: string; name: string }[];
 }
 
 /**
@@ -36,6 +38,12 @@ export function systemMenus(
           onSelect: actions.about,
         },
         { kind: 'separator', id: 'sep1' },
+        ...state.markMenuApps.map((app): MenuEntry => ({
+          kind: 'command',
+          id: `app-${app.id}`,
+          label: app.name,
+          onSelect: () => actions.launch(app.id),
+        })),
         {
           kind: 'command',
           id: 'control-panel',
@@ -48,13 +56,6 @@ export function systemMenus(
       id: 'file',
       label: 'File',
       items: [
-        {
-          // Temporary until apps exist (step 5): opens a test window.
-          kind: 'command',
-          id: 'new-window',
-          label: 'New Window',
-          onSelect: actions.newWindow,
-        },
         {
           kind: 'command',
           id: 'open',

@@ -1,0 +1,27 @@
+.loading {
+  margin: 0;
+  padding: 12px 16px;
+  cursor: progress;
+}
+
+.message {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: 16px;
+  padding: 16px;
+  max-width: 48ch;
+}
+
+.message p {
+  margin: 0 0 8px;
+}
+
+.messageTitle {
+  font-family: var(--font-system);
+}
+
+.actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+}
