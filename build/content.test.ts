@@ -3,6 +3,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
+  addImageSizes,
   assetToken,
   buildContent,
   ContentError,
@@ -12,6 +13,7 @@ import {
   splitFrontMatter,
   vfsModuleCode,
 } from './content.ts';
+import { plainPages } from './plain.ts';
 
 let root: string;
 let content: string;
@@ -209,6 +211,11 @@ describe('buildContent: broken content fails with a clear message', () => {
       /image not found: \.\/cat\.png/,
     ],
     [
+      'link with a script URL',
+      () => fsWith('  - link: "javascript:alert(1)"\n    name: Bad\n'),
+      /must start with https/,
+    ],
+    [
       'link that is not a URL',
       () => fsWith('  - link: linkedin\n    name: LinkedIn\n'),
       /fs\.yaml/,
@@ -303,5 +310,99 @@ describe('galleries', () => {
   ])('fails on %s', (_name, arrange, message) => {
     arrange();
     expect(build).toThrow(message);
+  });
+});
+
+describe('plain pages', () => {
+  const options = {
+    base: '/mdos/',
+    docImage: (source: string) => `/mdos/assets${source}`,
+    galleryImage: (index: number, variant: string) =>
+      `/mdos/assets/gallery-${index}-${variant}.webp`,
+  };
+
+  beforeEach(() => {
+    write(
+      'fs.yaml',
+      `desktop:
+  - doc: readme
+  - folder: Portfolio
+    children:
+      - doc: portfolio/alpha
+  - gallery: sketchbook
+    name: Sketchbook
+  - app: hello
+    name: Hello
+  - link: https://example.com/
+    name: Example
+`,
+    );
+    write('readme.md', doc('Read <Me>', '## Start\n\nHi.'));
+    write(
+      'portfolio/alpha/index.md',
+      `---
+title: Alpha
+caseStudy:
+  client: Acme
+  years: 2024
+  role: Lead
+  scope: [Research]
+  summary: It went well.
+---
+![A diagram](./diagram.png "The plan")
+`,
+    );
+    write('portfolio/alpha/diagram.png', 'png');
+    write(
+      'sketchbook/manifest.yaml',
+      'drawings:\n  - file: owl.png\n    title: Owl\n    alt: An owl\n',
+    );
+    write('sketchbook/owl.png', 'png');
+  });
+
+  it('lists every document, link and drawing, but not apps', () => {
+    const index = plainPages(build(), options).get('plain/index.html') ?? '';
+    expect(index).toContain(
+      '<a href="/mdos/plain/readme/">Read &lt;Me&gt;</a>',
+    );
+    expect(index).toContain('<a href="/mdos/plain/portfolio/alpha/">Alpha</a>');
+    expect(index).toContain('href="https://example.com/"');
+    expect(index).toContain(
+      'src="/mdos/assets/gallery-0-thumb.webp" alt="An owl"',
+    );
+    expect(index).not.toContain('Hello');
+  });
+
+  it('renders a document page with real image URLs, figures and shifted headings', () => {
+    const pages = plainPages(build(), options);
+    const alpha = pages.get('plain/portfolio/alpha/index.html') ?? '';
+    expect(alpha).toContain('<h1>Alpha</h1>');
+    expect(alpha).toContain('<dt>Role</dt><dd>Lead</dd>');
+    expect(alpha).toContain(
+      '<figure><img src="/mdos/assets/content/portfolio/alpha/diagram.png" alt="A diagram"',
+    );
+    expect(alpha).toContain('<figcaption>The plan</figcaption></figure>');
+    expect(alpha).not.toContain('<button');
+    expect(alpha).not.toContain('__MIKEOS_');
+
+    const readme = pages.get('plain/readme/index.html') ?? '';
+    expect(readme).toContain('<h2 id="start">Start</h2>');
+    expect(readme).toContain('<title>Read &lt;Me&gt; · Mike DeMar</title>');
+  });
+});
+
+describe('addImageSizes', () => {
+  it('adds width and height to a document picture', () => {
+    write('fs.yaml', 'desktop:\n  - doc: a\n');
+    write('a.md', doc('A', '![A cat](./cat.png)'));
+    write('cat.png', 'png');
+    const rendered = build().docs.get('a')!;
+    addImageSizes(
+      rendered,
+      new Map([['/content/cat.png', { width: 800, height: 600 }]]),
+    );
+    expect(rendered.doc.html).toContain(
+      `src="${imageToken(0)}" width="800" height="600" alt="A cat"`,
+    );
   });
 });

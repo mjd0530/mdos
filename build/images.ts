@@ -64,6 +64,15 @@ export async function processImage(
   return '/' + path.relative(rootDir, output).split(path.sep).join('/');
 }
 
+/** Pixel size of a processed image (root-relative path), for width/height attributes. */
+export async function imageSize(
+  rootDir: string,
+  output: string,
+): Promise<{ width: number; height: number }> {
+  const meta = await sharp(path.join(rootDir, output)).metadata();
+  return { width: meta.width ?? 0, height: meta.height ?? 0 };
+}
+
 /** Process many images in parallel; returns source → output for one variant. */
 export async function processAll(
   rootDir: string,

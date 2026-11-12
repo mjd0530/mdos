@@ -2,6 +2,7 @@ import react from '@vitejs/plugin-react';
 import { readFileSync } from 'node:fs';
 import { defineConfig } from 'vitest/config';
 import { contentPlugin } from './build/content-plugin.ts';
+import { cspPlugin } from './build/csp-plugin.ts';
 
 const { version } = JSON.parse(
   readFileSync(new URL('./package.json', import.meta.url), 'utf8'),
@@ -12,7 +13,7 @@ export default defineConfig({
   // Where the site is served from. CI sets BASE_PATH=/mdos/ while the site lives at
   // mjd0530.github.io/mdos/; it becomes '/' once os.mikedemar.com is set up (D-013).
   base: process.env.BASE_PATH ?? '/',
-  plugins: [react(), contentPlugin()],
+  plugins: [react(), contentPlugin(), cspPlugin()],
   define: {
     __APP_VERSION__: JSON.stringify(version),
   },

@@ -10,6 +10,7 @@ export interface SystemActions {
   cleanUp: () => void;
   resetDesktop: () => void;
   startScreensaver: () => void;
+  plainVersion: () => void;
 }
 
 export interface SystemState {
@@ -169,6 +170,12 @@ export function systemMenus(
           id: 'shortcuts',
           label: 'Keyboard Shortcuts…',
           onSelect: actions.shortcuts,
+        },
+        {
+          kind: 'command',
+          id: 'plain',
+          label: 'Plain Version',
+          onSelect: actions.plainVersion,
         },
         {
           kind: 'command',

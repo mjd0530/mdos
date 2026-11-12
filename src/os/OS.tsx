@@ -55,6 +55,9 @@ export function OS() {
           nextWindow: () => useWindows.getState().cycle(),
           cleanUp: () => useDesktop.getState().cleanUp(),
           resetDesktop: () => setAlert('reset'),
+          plainVersion: () => {
+            window.location.href = `${import.meta.env.BASE_URL}plain/`;
+          },
           // After this click finishes, so the click itself doesn't wake it.
           startScreensaver: () =>
             window.setTimeout(() => useScreensaver.getState().start(), 50),

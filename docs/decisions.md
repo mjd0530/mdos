@@ -198,3 +198,14 @@ _2026-11-11 · Accepted_
 - **Cursor clock:** a small time label trailing the mouse pointer. Mouse only (never touch), `pointer-events: none`, `aria-hidden`, hidden while typing, kept inside the screen edges. On by default; switch in Control Panel.
 - **Sounds:** synthesized square-wave blips (window open/close, alerts), no audio files, nothing from Apple (D-003). **Off by default**; enabling plays a confirmation chime. Volume slider in Control Panel.
 - Control Panel gains Screensaver, Pointer and Sound sections; all are saved and reset with the rest.
+
+## D-028 Plain view, security policy and launch QA
+_2026-11-12 · Accepted_
+
+- **Plain view:** the build writes `/plain/` (an index of everything) and `/plain/<doc>/` for every document: static HTML with a few lines of CSS, no JavaScript, real `<figure>`s, headings starting at h1. Linked from the app's `<noscript>` message and Help → Plain Version. Apps (Weather, Control Panel) aren't listed; Sketchbook drawings are. Built only by `npm run build` (not served by the dev server).
+- **Content Security Policy** (meta tag, build only): own files only, images also from `data:` (pixel art), network only to Open-Meteo, no objects, no foreign form targets. A test fails if the app trips it.
+- **Links** in `fs.yaml` must be `https:`, `http:` or `mailto:`.
+- **Images** carry width and height, so pages don't jump while loading.
+- **robots.txt** allows everything (it only takes effect once the site is at a domain root, i.e. `os.mikedemar.com`).
+- **Launch QA results (local production build, 2026-11-12):** Lighthouse 99–100 performance, 100 accessibility, 100 best practices, 100 SEO on the app and a plain case study. axe: zero violations across every tested state on desktop, phone and tablet. `npm audit` (runtime dependencies): 0 vulnerabilities. Review: the only raw-HTML path is build-rendered Markdown from this repo; external links use `noopener noreferrer`; no secrets or keys exist anywhere.
+- **Not verified by tools:** real screen-reader runs (VoiceOver, NVDA), real phones and tablets, Safari and Firefox (tests run in Chromium only), and how the sounds actually sound.

@@ -1,14 +1,16 @@
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import type { Plugin } from 'vite';
 import {
+  addImageSizes,
   buildContent,
   docModuleCode,
   vfsModuleCode,
   type ContentResult,
   type ImageMaps,
 } from './content.ts';
-import { processAll } from './images.ts';
+import { imageSize, processAll } from './images.ts';
+import { plainPages } from './plain.ts';
 
 const VFS_ID = 'virtual:vfs';
 const DOC_PREFIX = 'virtual:doc/';
@@ -24,6 +26,10 @@ export function contentPlugin(): Plugin {
   let isBuild = false;
   let result: ContentResult | undefined;
   let images: ImageMaps | undefined;
+  let base = '/';
+  // Build only: emitted copies of processed images, so plain pages can link to them.
+  const displayRefs = new Map<string, string>();
+  const thumbRefs = new Map<string, string>();
 
   const appExists = (appId: string) =>
     existsSync(path.join(rootDir, 'src', 'apps', appId, 'index.ts'));
@@ -37,6 +43,15 @@ export function contentPlugin(): Plugin {
       processAll(rootDir, next.assets, 'display'),
       processAll(rootDir, next.assets, 'thumb'),
     ]);
+    const sizes = new Map(
+      await Promise.all(
+        [...docDisplay].map(
+          async ([source, output]) =>
+            [source, await imageSize(rootDir, output)] as const,
+        ),
+      ),
+    );
+    for (const doc of next.docs.values()) addImageSizes(doc, sizes);
     result = next;
     images = {
       display: new Map([...docDisplay, ...galleryDisplay]),
@@ -51,6 +66,7 @@ export function contentPlugin(): Plugin {
       rootDir = config.root;
       contentDir = path.join(rootDir, 'content');
       isBuild = config.command === 'build';
+      base = config.base;
     },
 
     async buildStart() {
@@ -61,6 +77,22 @@ export function contentPlugin(): Plugin {
         this.warn(String(error));
       }
       for (const file of result?.files ?? []) this.addWatchFile(file);
+      if (isBuild && images) {
+        const emit = (from: Map<string, string>, to: Map<string, string>) => {
+          for (const [source, output] of from) {
+            to.set(
+              source,
+              this.emitFile({
+                type: 'asset',
+                name: path.basename(output),
+                source: readFileSync(path.join(rootDir, output)),
+              }),
+            );
+          }
+        };
+        emit(images.display, displayRefs);
+        emit(images.thumb, thumbRefs);
+      }
     },
 
     resolveId(id) {
@@ -83,6 +115,27 @@ export function contentPlugin(): Plugin {
         if (rendered) return docModuleCode(rendered, images?.display);
       }
       return undefined;
+    },
+
+    // The plain view (D-028): static pages for every document, written into the build.
+    generateBundle() {
+      if (!result) return;
+      const url = (refs: Map<string, string>, source: string) => {
+        const ref = refs.get(source);
+        return ref ? base + this.getFileName(ref) : source;
+      };
+      const pages = plainPages(result, {
+        base,
+        docImage: (source) => url(displayRefs, source),
+        galleryImage: (index, variant) =>
+          url(
+            variant === 'thumb' ? thumbRefs : displayRefs,
+            result?.assets[index] ?? '',
+          ),
+      });
+      for (const [fileName, source] of pages) {
+        this.emitFile({ type: 'asset', fileName, source });
+      }
     },
 
     configureServer(devServer) {

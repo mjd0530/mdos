@@ -25,7 +25,7 @@ _Each step ends with a demo Mike can try plus the checks in CLAUDE.md "Verify be
 | 12 | **Control Panel** ✅ 2026-11-11 (D-025): pattern, clock, Restore Defaults; sounds/screensaver/cursor clock settings arrive with step 14 |
 | 13 | **Weather** ✅ 2026-11-11 (D-026) |
 | 14 | **Screensaver + cursor clock + sounds** ✅ 2026-11-11 (D-027) |
-| 15 | **Plain view + launch QA** | `/plain/` pages; full accessibility audit, visual QA across viewports, Lighthouse, security review; link from the Astro site |
+| 15 | **Plain view + launch QA** ✅ 2026-11-12 (D-028; DNS + link from mikedemar.com remain for Mike) | `/plain/` pages; full accessibility audit, visual QA across viewports, Lighthouse, security review; link from the Astro site |
 
 ## Still to decide (asked when we reach the step)
 - Your menu-bar mark, app names, Mike OS name (step 2–3)

@@ -46,7 +46,18 @@ const entrySchemas = {
     .strict(),
   app: z.object({ app: text, name: text, icon: iconName.optional() }).strict(),
   link: z
-    .object({ link: z.string().url(), name: text, icon: iconName.optional() })
+    .object({
+      // Web and email links only: never javascript: or data: URLs.
+      link: z
+        .string()
+        .url()
+        .regex(
+          /^(https?:\/\/|mailto:)/i,
+          'must start with https://, http:// or mailto:',
+        ),
+      name: text,
+      icon: iconName.optional(),
+    })
     .strict(),
   /** A folder of pictures described by content/<gallery>/manifest.yaml. */
   gallery: z
@@ -469,6 +480,21 @@ export function buildContent({
 }
 
 // ---------- Module code ----------
+
+/** Give a document's pictures width and height so the page doesn't jump as they load. */
+export function addImageSizes(
+  rendered: RenderedDoc,
+  sizes: Map<string, { width: number; height: number }>,
+) {
+  rendered.images.forEach((source, i) => {
+    const size = sizes.get(source);
+    if (!size?.width || !size.height) return;
+    rendered.doc.html = rendered.doc.html.replaceAll(
+      `src="${imageToken(i)}"`,
+      `src="${imageToken(i)}" width="${size.width}" height="${size.height}"`,
+    );
+  });
+}
 
 export interface ImageMaps {
   display: Map<string, string>;

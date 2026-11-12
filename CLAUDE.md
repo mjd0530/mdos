@@ -55,7 +55,8 @@ New project, separate from the Astro portfolio (`~/Documents/GitHub/website`). R
 - Focus moves into opened windows and returns on close. Live region announces window changes.
 - Real buttons for window controls; labelled windows; ≥ 44px targets on touch.
 - Respect `prefers-reduced-motion`. No autoplay audio. Decorative cursor clock is `aria-hidden` and never intercepts input.
-- Plain HTML view of all public content for no-JS and screen readers.
+- Plain HTML view (`/plain/`, written by the build from the same content; `build/plain.ts`) for no-JS, search engines and anyone who prefers it.
+- The build adds a Content Security Policy (`build/csp-plugin.ts`): a new external host or inline script must be added there, or it will be blocked.
 
 ## Responsive
 - `useDeviceMode()` (D-024): phone < 768px = launcher grid, single tap, one full-screen window; tablet 768–1023px or coarse pointer = desktop with zoomed windows and long-press menus; desktop otherwise. Same apps and stores everywhere.
