@@ -1,7 +1,7 @@
 import { useSettings } from './settings';
 
 // System sounds are synthesized square-wave blips (original, no audio files; D-003).
-// Off by default; nothing plays until a visitor turns sounds on in Control Panel.
+// On by default (D-029); Control Panel → Sound turns them off or changes the volume.
 
 export type SoundName = 'open' | 'close' | 'alert' | 'test';
 

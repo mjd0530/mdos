@@ -11,7 +11,7 @@ Welcome to Mike OS: Mike DeMar's portfolio, built as a little computer you can e
 - **Drag** a window by its title bar. Resize it from the box in its bottom-right corner.
 - The boxes in a title bar close, zoom and collapse the window. On a phone, close takes you back.
 - On a tablet, **press and hold** an icon for more options.
-- Open **Control Panel** from the menu in the top-left corner to change the desktop pattern, the clock, the screensaver and sounds.
+- Open **Control Panel** from the menu in the top-left corner to change the desktop pattern, the clock and the screensaver, or to turn sounds off.
 
 ## Using a keyboard
 

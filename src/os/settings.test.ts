@@ -19,7 +19,7 @@ describe('sanitizeSettings', () => {
       screensaver: true,
       screensaverMinutes: 5,
       cursorClock: true,
-      sounds: false,
+      sounds: true,
       volume: 0.5,
     });
   });

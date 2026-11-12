@@ -209,3 +209,8 @@ _2026-11-12 · Accepted_
 - **robots.txt** allows everything (it only takes effect once the site is at a domain root, i.e. `os.mikedemar.com`).
 - **Launch QA results (local production build, 2026-11-12):** Lighthouse 99–100 performance, 100 accessibility, 100 best practices, 100 SEO on the app and a plain case study. axe: zero violations across every tested state on desktop, phone and tablet. `npm audit` (runtime dependencies): 0 vulnerabilities. Review: the only raw-HTML path is build-rendered Markdown from this repo; external links use `noopener noreferrer`; no secrets or keys exist anywhere.
 - **Not verified by tools:** real screen-reader runs (VoiceOver, NVDA), real phones and tablets, Safari and Firefox (tests run in Chromium only), and how the sounds actually sound.
+
+## D-029 Sounds on by default
+_2026-11-12 · Accepted (Mike); supersedes "off by default" in D-008 and D-027_
+
+System sounds are on for new visitors. They are short blips (under a quarter of a second) and only ever follow a visitor's own action (opening or closing a window, an alert), so nothing plays on page load; browsers also block audio until the first click or key press. Control Panel → Sound turns them off or adjusts volume, and that choice is remembered. Visitors who already have saved settings keep whatever they had.

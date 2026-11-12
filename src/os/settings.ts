@@ -37,8 +37,8 @@ export const DEFAULT_SETTINGS: Settings = {
   screensaver: true,
   screensaverMinutes: 5,
   cursorClock: true,
-  // Sound stays off until a visitor turns it on (D-008).
-  sounds: false,
+  // On by default (Mike, D-029): short blips, only ever in response to a visitor's action.
+  sounds: true,
   volume: 0.5,
 };
 

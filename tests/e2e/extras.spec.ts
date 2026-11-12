@@ -114,28 +114,36 @@ test.describe('sounds', () => {
   const notes = (page: Page) =>
     page.evaluate(() => (window as unknown as { notes: number }).notes);
 
-  test('are silent by default', async ({ page }) => {
+  test('play by default when a window opens and closes', async ({ page }) => {
     await countNotes(page);
     await page.goto('./');
+    expect(await notes(page)).toBe(0); // nothing plays on load
+    await chooseMenu(page, 'Mike OS', 'Control Panel');
+    const panel = page.getByRole('dialog', { name: 'Control Panel' });
+    await expect(panel).toBeVisible();
+    const afterOpen = await notes(page);
+    expect(afterOpen).toBeGreaterThan(0);
+    await panel.getByRole('button', { name: 'Close Control Panel' }).click();
+    expect(await notes(page)).toBeGreaterThan(afterOpen);
+  });
+
+  test('can be turned off in Control Panel, and stay off', async ({ page }) => {
+    await countNotes(page);
+    await page.goto('./');
+    await chooseMenu(page, 'Mike OS', 'Control Panel');
+    const panel = page.getByRole('dialog', { name: 'Control Panel' });
+    await expect(panel.getByRole('slider', { name: 'Volume' })).toBeEnabled();
+    await panel.getByText('System sounds').click();
+    await expect(panel.getByRole('slider', { name: 'Volume' })).toBeDisabled();
+    const afterOff = await notes(page);
+    await panel.getByRole('button', { name: 'Close Control Panel' }).click();
+    expect(await notes(page)).toBe(afterOff);
+
+    await page.reload();
     await chooseMenu(page, 'Mike OS', 'Control Panel');
     await expect(
       page.getByRole('dialog', { name: 'Control Panel' }),
     ).toBeVisible();
     expect(await notes(page)).toBe(0);
-  });
-
-  test('play once turned on in Control Panel', async ({ page }) => {
-    await countNotes(page);
-    await page.goto('./');
-    await chooseMenu(page, 'Mike OS', 'Control Panel');
-    const panel = page.getByRole('dialog', { name: 'Control Panel' });
-    await expect(panel.getByRole('slider', { name: 'Volume' })).toBeDisabled();
-    await panel.getByText('System sounds').click();
-    await expect(panel.getByRole('slider', { name: 'Volume' })).toBeEnabled();
-    const afterEnable = await notes(page);
-    expect(afterEnable).toBeGreaterThan(0); // the confirmation chime
-
-    await panel.getByRole('button', { name: 'Close Control Panel' }).click();
-    expect(await notes(page)).toBeGreaterThan(afterEnable); // the close sound
   });
 });
