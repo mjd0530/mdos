@@ -35,19 +35,21 @@ export function Pocket({
   const track = currentTrack(s);
   const [stack, setStack] = useState<View[]>([{ kind: 'main' }]);
   const view = stack.at(-1) ?? { kind: 'main' };
-  const [selected, setSelected] = useState(0);
+  // The highlighted row, by item id, so a row appearing above it (Now Playing, once a
+  // song starts) doesn't move the highlight onto a different item.
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const listRef = useRef<HTMLUListElement>(null);
   const lyricsRef = useRef<HTMLDivElement>(null);
   const screenRef = useRef<HTMLElement>(null);
 
   const push = (next: View) => {
     setStack((st) => [...st, next]);
-    setSelected(0);
+    setSelectedId(null);
   };
   const back = () => {
     if (stack.length > 1) {
       setStack((st) => st.slice(0, -1));
-      setSelected(0);
+      setSelectedId(null);
     }
   };
 
@@ -121,7 +123,10 @@ export function Pocket({
   }
 
   const isList = view.kind !== 'now' && view.kind !== 'lyrics';
-  const clamped = Math.min(selected, Math.max(0, items.length - 1));
+  const clamped = Math.max(
+    0,
+    items.findIndex((item) => item.id === selectedId),
+  );
 
   // Keep the selected row in view; move focus with it when focus is in the list.
   useEffect(() => {
@@ -138,12 +143,20 @@ export function Pocket({
 
   /** One click of the wheel (or an arrow key). */
   const step = (direction: 1 | -1) => {
+    // Several clicks can land in one pointer move, so each builds on the latest state,
+    // not on this render's.
     if (isList) {
-      setSelected((i) =>
-        Math.min(Math.max(0, i + direction), items.length - 1),
-      );
+      setSelectedId((prev) => {
+        const at = Math.max(
+          0,
+          items.findIndex((item) => item.id === prev),
+        );
+        const to = Math.min(Math.max(0, at + direction), items.length - 1);
+        return items[to]?.id ?? prev;
+      });
     } else if (view.kind === 'now') {
-      s.setVolume(s.volume + direction * 0.05);
+      const { volume, setVolume } = usePlayer.getState();
+      setVolume(volume + direction * 0.05);
     } else {
       lyricsRef.current?.scrollBy({ top: direction * 20 });
     }
@@ -244,7 +257,7 @@ export function Pocket({
                     tabIndex={i === clamped ? 0 : -1}
                     aria-current={i === clamped || undefined}
                     onClick={() => {
-                      setSelected(i);
+                      setSelectedId(item.id);
                       item.onSelect();
                     }}
                   >
