@@ -209,3 +209,14 @@ test('a song that fails to load says so', async ({ page }) => {
   await expect(player.getByText("Low Tone couldn't be played.")).toBeVisible();
   await expect(player.getByRole('button', { name: 'Play' })).toBeVisible();
 });
+
+test('Space plays straight after opening, without clicking first', async ({
+  page,
+}) => {
+  await page.goto('./');
+  const player = await openPlayer(page);
+  await expect(player.getByRole('button', { name: 'Play' })).toBeVisible();
+  await page.keyboard.press('Space');
+  await expect(player.getByRole('button', { name: 'Pause' })).toBeVisible();
+  await expect(nowPlaying(page)).toBeVisible();
+});

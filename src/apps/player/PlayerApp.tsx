@@ -1,5 +1,5 @@
 import type { KeyboardEvent } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { albums } from 'virtual:music';
 import { useWindowFrame } from '../../os/windows/frame';
 import { useWindows } from '../../os/windows/store';
@@ -38,6 +38,17 @@ export default function PlayerApp({ instanceId, isActive }: AppProps) {
     }
   }, [skin, instanceId]);
 
+  // Opening or activating the window focuses the window itself, which is outside this
+  // element and so never sees the player's keys. Step inside, so Space works at once.
+  const rootRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const root = rootRef.current;
+    const win = root?.closest('[role="dialog"]');
+    if (isActive && root && win && document.activeElement === win) {
+      root.focus({ preventScroll: true });
+    }
+  }, [isActive]);
+
   // Keys that work anywhere in the player (sliders and buttons keep their own).
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey) return;
@@ -67,7 +78,12 @@ export default function PlayerApp({ instanceId, isActive }: AppProps) {
   };
 
   return (
-    <div className={styles.player} onKeyDown={onKeyDown}>
+    <div
+      ref={rootRef}
+      className={styles.player}
+      tabIndex={-1}
+      onKeyDown={onKeyDown}
+    >
       {albums.length === 0 ? (
         <div className={styles.empty} {...frame?.grip}>
           <p>No music yet.</p>
