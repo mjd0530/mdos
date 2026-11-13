@@ -1,6 +1,8 @@
 ---
-title: Biography
+title: About Mike
 ---
+
+![Mike DeMar smiling outdoors, wearing dark rectangular glasses and a grey plaid flannel shirt, with autumn leaves behind him](./portrait.jpg)
 
 A designer from the Concentrated Area of Relocated Yankees, Cary NC.
 

@@ -31,6 +31,23 @@ const safeLocalStorage: StateStorage = {
 
 export const storage = createJSONStorage(() => safeLocalStorage);
 
+const FIRST_VISIT_KEY = `${STORAGE_PREFIX}visited`;
+
+/**
+ * True only the first time this browser opens MDOS (and again after Reset Desktop).
+ * Marks the visit as it answers. Blocked storage counts as a return visit, so nothing
+ * reopens on every load.
+ */
+export function takeFirstVisit(): boolean {
+  try {
+    if (window.localStorage.getItem(FIRST_VISIT_KEY)) return false;
+    window.localStorage.setItem(FIRST_VISIT_KEY, '1');
+    return window.localStorage.getItem(FIRST_VISIT_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
 /** Forget everything Mike OS has saved in this browser. */
 export function clearSaved() {
   try {

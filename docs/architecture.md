@@ -54,8 +54,9 @@ desktop:
       - doc: portfolio/hello-design-system
   - folder: Sketchbook
     source: sketchbook/manifest.yaml   # each entry becomes an image file
-  - folder: About Mike
-    children: [ { doc: about/biography }, { doc: about/philosophy } ]
+  - doc: about/biography               # "About Mike" on the desktop
+    opensOnFirstVisit: true            # opens by itself on a first visit
+  - image: about/portrait.jpg          # a single picture (needs name + alt); opens in Viewer
   - doc: readme                        # "Read Me" on the desktop
   - app: weather
   - link: { name: LinkedIn, href: "https://www.linkedin.com/in/mikedemar/" }

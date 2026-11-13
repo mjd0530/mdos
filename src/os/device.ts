@@ -11,7 +11,8 @@ export type DeviceMode = 'phone' | 'tablet' | 'desktop';
 const PHONE = '(max-width: 767px)';
 const TABLET = '(max-width: 1023px), (pointer: coarse)';
 
-function currentMode(): DeviceMode {
+/** The mode right now, outside React (e.g. a one-off decision at start-up). */
+export function currentMode(): DeviceMode {
   if (typeof window === 'undefined' || !window.matchMedia) return 'desktop';
   if (window.matchMedia(PHONE).matches) return 'phone';
   if (window.matchMedia(TABLET).matches) return 'tablet';

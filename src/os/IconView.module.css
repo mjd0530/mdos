@@ -3,6 +3,13 @@
   user-select: none;
 }
 
+/* The desktop's icon cells fit a 32px icon, like the pixel icons beside it. */
+.free .thumb,
+.list .thumb {
+  width: 32px;
+  height: 32px;
+}
+
 .item {
   display: flex;
   align-items: center;

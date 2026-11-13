@@ -75,8 +75,11 @@ caseStudy:
 | `link:` | `- link: https://…` + `name:` | A new browser tab |
 | `app:` | `- app: weather` + `name:` | That app |
 | `gallery:` | `- gallery: sketchbook` + `name:` | Files, showing thumbnails; pictures open in Viewer |
+| `image:` | `- image: about/portrait.jpg` + `name:` + `alt:` | Viewer (one picture; PNG or JPG) |
 
 Any entry can take `icon:` with a name from `src/assets/icons/icons.ts`. Order in the file is the order on screen.
+
+A `doc:` or `image:` on the desktop (not inside a folder) can add `opensOnFirstVisit: true` to open by itself the first time someone visits, on desktops and tablets. Phones start at the launcher instead. Reset Desktop counts as a fresh visit. About Mike uses this.
 
 ## Writing rules (the build checks these)
 

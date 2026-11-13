@@ -27,7 +27,14 @@ const text = z.string().trim().min(1);
 type FsEntry =
   | { folder: string; icon?: string; children: FsEntry[] }
   | { gallery: string; name: string; icon?: string }
-  | { doc: string; name?: string; icon?: string }
+  | {
+      image: string;
+      name: string;
+      alt: string;
+      icon?: string;
+      opensOnFirstVisit?: boolean;
+    }
+  | { doc: string; name?: string; icon?: string; opensOnFirstVisit?: boolean }
   | { app: string; name: string; icon?: string }
   | { link: string; name: string; icon?: string };
 
@@ -42,7 +49,12 @@ const entrySchemas = {
     })
     .strict(),
   doc: z
-    .object({ doc: text, name: text.optional(), icon: iconName.optional() })
+    .object({
+      doc: text,
+      name: text.optional(),
+      icon: iconName.optional(),
+      opensOnFirstVisit: z.literal(true).optional(),
+    })
     .strict(),
   app: z.object({ app: text, name: text, icon: iconName.optional() }).strict(),
   link: z
@@ -62,6 +74,16 @@ const entrySchemas = {
   /** A folder of pictures described by content/<gallery>/manifest.yaml. */
   gallery: z
     .object({ gallery: text, name: text, icon: iconName.optional() })
+    .strict(),
+  /** One picture on its own (e.g. a portrait on the desktop); opens in Viewer. */
+  image: z
+    .object({
+      image: text.regex(/\.(png|jpe?g)$/i, 'must be a .png or .jpg file'),
+      name: text,
+      alt: text,
+      icon: iconName.optional(),
+      opensOnFirstVisit: z.literal(true).optional(),
+    })
     .strict(),
 };
 
@@ -121,6 +143,12 @@ function parseEntries(raw: unknown, where: string, file: string): FsEntry[] {
         ...folder,
         children: parseEntries(folder.children, `${at}.children`, file),
       };
+    }
+    if (where !== 'desktop' && 'opensOnFirstVisit' in parsed.data) {
+      throw new ContentError(
+        file,
+        `${at} (${kind}): opensOnFirstVisit only works on desktop items`,
+      );
     }
     return parsed.data as FsEntry;
   });
@@ -363,6 +391,14 @@ export function buildContent({
     return docs.get(docId) as RenderedDoc;
   };
 
+  /** Register a picture for resizing; returns its asset index. */
+  const addAsset = (absolute: string) => {
+    assets.push(
+      '/' + path.relative(rootDir, absolute).split(path.sep).join('/'),
+    );
+    return assets.length - 1;
+  };
+
   const loadGallery = (galleryDir: string, parentId: string): ImageNode[] => {
     const dir = path.join(contentDir, galleryDir);
     const manifestPath = path.join(dir, 'manifest.yaml');
@@ -391,10 +427,7 @@ export function buildContent({
           `image not found: ${drawing.file}`,
         );
       }
-      assets.push(
-        '/' + path.relative(rootDir, absolute).split(path.sep).join('/'),
-      );
-      const index = assets.length - 1;
+      const index = addAsset(absolute);
       return {
         kind: 'image',
         id: uniqueId(
@@ -433,6 +466,7 @@ export function buildContent({
           name,
           icon: entry.icon as VNode['icon'],
           docId: entry.doc,
+          ...(entry.opensOnFirstVisit && { opensOnFirstVisit: true }),
         };
       }
       if ('app' in entry) {
@@ -459,6 +493,25 @@ export function buildContent({
           children: loadGallery(entry.gallery, id),
         };
       }
+      if ('image' in entry) {
+        const absolute = path.join(contentDir, entry.image);
+        if (!existsSync(absolute)) {
+          throw new ContentError(fsPath, `image not found: ${entry.image}`);
+        }
+        const index = addAsset(absolute);
+        return {
+          kind: 'image',
+          id: uniqueId(
+            parent ? `${parent}/${slug(entry.name)}` : slug(entry.name),
+          ),
+          name: entry.name,
+          icon: entry.icon as VNode['icon'],
+          alt: entry.alt,
+          src: assetToken('display', index),
+          thumb: assetToken('thumb', index),
+          ...(entry.opensOnFirstVisit && { opensOnFirstVisit: true }),
+        };
+      }
       return {
         kind: 'link',
         id: uniqueId(
@@ -481,7 +534,10 @@ export function buildContent({
 
 // ---------- Module code ----------
 
-/** Give a document's pictures width and height so the page doesn't jump as they load. */
+/**
+ * Give a document's pictures width and height so the page doesn't jump as they load, and
+ * mark square or tall ones (a portrait) so Notes shows them smaller than the full width.
+ */
 export function addImageSizes(
   rendered: RenderedDoc,
   sizes: Map<string, { width: number; height: number }>,
@@ -491,7 +547,8 @@ export function addImageSizes(
     if (!size?.width || !size.height) return;
     rendered.doc.html = rendered.doc.html.replaceAll(
       `src="${imageToken(i)}"`,
-      `src="${imageToken(i)}" width="${size.width}" height="${size.height}"`,
+      `src="${imageToken(i)}" width="${size.width}" height="${size.height}"` +
+        (size.height >= size.width ? ' data-upright' : ''),
     );
   });
 }

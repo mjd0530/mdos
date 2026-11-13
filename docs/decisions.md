@@ -214,3 +214,12 @@ _2026-11-12 · Accepted_
 _2026-11-12 · Accepted (Mike); supersedes "off by default" in D-008 and D-027_
 
 System sounds are on for new visitors. They are short blips (under a quarter of a second) and only ever follow a visitor's own action (opening or closing a window, an alert), so nothing plays on page load; browsers also block audio until the first click or key press. Control Panel → Sound turns them off or adjusts volume, and that choice is remembered. Visitors who already have saved settings keep whatever they had.
+
+## D-031 About Mike on the desktop, open on first visit
+_2026-11-12 · Accepted (Mike)_
+
+- **About Mike** (`content/about/biography.md`) sits on the desktop, right after Read Me. The "About Mike" folder is gone; it held only the biography.
+- **Portrait** (from the Astro site) heads the About Mike note. Square and tall document pictures are marked `data-upright` at build time and shown at most 240px wide in Notes, so the portrait doesn't fill the window and hide the text. Clicking opens it full size in Viewer. A separate Mike.jpg desktop icon was tried and dropped (Mike): one place for it is enough.
+- `fs.yaml` gains an `image:` entry for a single picture (PNG or JPG, `name` and `alt` required), resized like Sketchbook drawings and opened in Viewer. Unused for now; desktop icons show such pictures as 32px thumbnails.
+- **First visit:** desktop items marked `opensOnFirstVisit: true` (About Mike) open by themselves the first time a browser loads MDOS, so a visitor meets Mike before exploring. Return visits start on a clean desktop. Remembered with `mikeos:visited`; Reset Desktop forgets it. Phones skip it: their launcher is the front door and a full-screen window would hide it. Blocked storage counts as a return visit, so nothing reopens on every load.
+- E2E tests start as returning visitors (Playwright `storageState`); `first-visit.spec.ts` covers the first visit.

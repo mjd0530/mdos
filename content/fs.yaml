@@ -7,22 +7,24 @@
 #   - link: https://…                (name: required)
 #   - gallery: folder-name           (name: required; pictures listed in
 #                                     content/<folder-name>/manifest.yaml)
+#   - image: path/to/picture.jpg     (name: and alt: required; opens in Viewer)
 # Any entry can set icon: <name from src/assets/icons/icons.ts>.
+# A doc or image on the desktop can set opensOnFirstVisit: true to open by itself the
+# first time someone visits (desktops and tablets; phones start at the launcher).
 
 desktop:
   - doc: readme
     name: Read Me
+
+  - doc: about/biography
+    name: About Mike
+    opensOnFirstVisit: true
 
   - folder: Portfolio
     children:
       - doc: portfolio/magic-move
       - doc: portfolio/vantage
       - doc: portfolio/hello-design-system
-
-  - folder: About Mike
-    children:
-      - doc: about/biography
-        name: Biography
 
   - gallery: sketchbook
     name: Sketchbook

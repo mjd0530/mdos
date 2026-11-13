@@ -13,8 +13,10 @@ import { useIdleScreensaver, useScreensaver } from './screensaverState';
 import { useDesktop } from './desktopStore';
 import { DesktopIcons } from './DesktopIcons';
 import { MenuBar } from './menubar/MenuBar';
-import { clearSaved } from './persist';
-import { useDeviceMode } from './device';
+import { desktop } from '../vfs';
+import { openNode } from './open';
+import { clearSaved, takeFirstVisit } from './persist';
+import { currentMode, useDeviceMode } from './device';
 import { useSettings } from './settings';
 import { systemMenus } from './menus';
 import styles from './OS.module.css';
@@ -37,6 +39,15 @@ export function OS() {
   useEffect(() => {
     useWindows.getState().setOpenZoomed(device !== 'desktop');
   }, [device]);
+
+  // First visit: open the desktop items content/fs.yaml marks (About Mike). Phones skip
+  // it: their launcher is the front door and a window would cover it.
+  useEffect(() => {
+    if (currentMode() === 'phone' || !takeFirstVisit()) return;
+    for (const node of desktop.children) {
+      if (node.opensOnFirstVisit) openNode(node);
+    }
+  }, []);
 
   const windowCount = useWindows((s) => s.windows.length);
   const activeId = useWindows((s) => s.order.at(-1));

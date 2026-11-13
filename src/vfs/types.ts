@@ -10,6 +10,8 @@ interface NodeBase {
   name: string;
   /** Override the default icon for this kind. */
   icon?: IconName;
+  /** Desktop items only: open by themselves the first time someone visits. */
+  opensOnFirstVisit?: boolean;
 }
 
 export interface FolderNode extends NodeBase {

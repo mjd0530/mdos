@@ -229,6 +229,44 @@ describe('buildContent: broken content fails with a clear message', () => {
   });
 });
 
+describe('single pictures', () => {
+  it('puts a picture straight on the desktop', () => {
+    write(
+      'fs.yaml',
+      'desktop:\n  - image: about/me.jpg\n    name: Me.jpg\n    alt: A portrait\n',
+    );
+    write('about/me.jpg', 'jpg');
+    const { tree, assets } = build();
+    expect(tree.children[0]).toEqual({
+      kind: 'image',
+      id: 'me-jpg',
+      name: 'Me.jpg',
+      alt: 'A portrait',
+      src: assetToken('display', 0),
+      thumb: assetToken('thumb', 0),
+      icon: undefined,
+    });
+    expect(assets).toEqual(['/content/about/me.jpg']);
+  });
+
+  it.each([
+    [
+      'a missing file',
+      'image: me.jpg\n    name: Me\n    alt: A portrait',
+      /image not found: me\.jpg/,
+    ],
+    ['no alt text', 'image: me.jpg\n    name: Me', /alt/],
+    [
+      'a non-picture file',
+      'image: me.gif\n    name: Me\n    alt: A portrait',
+      /\.png or \.jpg/,
+    ],
+  ])('fails on %s', (_name, entry, message) => {
+    write('fs.yaml', `desktop:\n  - ${entry}\n`);
+    expect(build).toThrow(message);
+  });
+});
+
 describe('galleries', () => {
   const setup = (manifest: string, files: string[] = ['owl.png']) => {
     write(
@@ -403,6 +441,20 @@ describe('addImageSizes', () => {
     );
     expect(rendered.doc.html).toContain(
       `src="${imageToken(0)}" width="800" height="600" alt="A cat"`,
+    );
+  });
+
+  it('marks square and tall pictures so Notes shows them smaller', () => {
+    write('fs.yaml', 'desktop:\n  - doc: a\n');
+    write('a.md', doc('A', '![A portrait](./me.jpg)'));
+    write('me.jpg', 'jpg');
+    const rendered = build().docs.get('a')!;
+    addImageSizes(
+      rendered,
+      new Map([['/content/me.jpg', { width: 800, height: 800 }]]),
+    );
+    expect(rendered.doc.html).toContain(
+      `width="800" height="800" data-upright alt="A portrait"`,
     );
   });
 });

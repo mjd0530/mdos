@@ -15,6 +15,17 @@ export default defineConfig({
   use: {
     baseURL: `http://localhost:${PORT}`,
     trace: 'on-first-retry',
+    // Tests start as returning visitors, so About Mike doesn't open over the desktop;
+    // first-visit.spec.ts clears this to test the first visit.
+    storageState: {
+      cookies: [],
+      origins: [
+        {
+          origin: `http://localhost:${PORT}`,
+          localStorage: [{ name: 'mikeos:visited', value: '1' }],
+        },
+      ],
+    },
   },
   projects: [
     { name: 'desktop', use: { ...devices['Desktop Chrome'] } },
