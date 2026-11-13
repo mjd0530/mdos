@@ -53,6 +53,13 @@ describe('sanitizeSettings', () => {
   });
 });
 
+describe('pattern setting', () => {
+  it('defaults to random and keeps random when saved', () => {
+    expect(DEFAULT_SETTINGS.pattern).toBe('random');
+    expect(sanitizeSettings({ pattern: 'random' }).pattern).toBe('random');
+  });
+});
+
 describe('useSettings', () => {
   it('changes one setting and restores defaults', () => {
     useSettings.getState().set('pattern', 'weave');

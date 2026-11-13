@@ -29,24 +29,36 @@ test.beforeEach(async ({ page }) => {
   await page.goto('./');
 });
 
+test('the desktop starts on Random: a different pattern each visit', async ({
+  page,
+}) => {
+  const first = await desktopPattern(page);
+  await page.reload();
+  // The last pattern shown is never picked twice in a row.
+  expect(await desktopPattern(page)).not.toBe(first);
+  const panel = await openControlPanel(page);
+  await expect(patternRadio(panel, 'Random')).toBeChecked();
+});
+
 test('choosing a pattern changes the desktop and is remembered', async ({
   page,
 }) => {
-  const before = await desktopPattern(page);
   const panel = await openControlPanel(page);
   await patternRadio(panel, 'Bricks').check({ force: true });
   const bricks = await desktopPattern(page);
-  expect(bricks).not.toBe(before);
+  await patternRadio(panel, 'Weave').check({ force: true });
+  const weave = await desktopPattern(page);
+  expect(weave).not.toBe(bricks);
 
   await page.reload();
-  expect(await desktopPattern(page)).toBe(bricks);
+  expect(await desktopPattern(page)).toBe(weave);
 });
 
 test('the pattern group works with arrow keys', async ({ page }) => {
   const panel = await openControlPanel(page);
-  await patternRadio(panel, 'Grey').focus();
+  await patternRadio(panel, 'Random').focus();
   await page.keyboard.press('ArrowRight');
-  await expect(patternRadio(panel, 'Light')).toBeChecked();
+  await expect(patternRadio(panel, 'Grey')).toBeChecked();
 });
 
 test('24-hour time changes the menu-bar clock', async ({ page }) => {
@@ -87,7 +99,9 @@ test('Special → Reset Desktop also resets settings', async ({ page }) => {
     .click();
   expect(await desktopPattern(page)).toBe(original);
   await page.reload();
-  expect(await desktopPattern(page)).toBe(original);
+  await expect(
+    patternRadio(await openControlPanel(page), 'Random'),
+  ).toBeChecked();
 });
 
 test('no axe violations in Control Panel', async ({ page }) => {

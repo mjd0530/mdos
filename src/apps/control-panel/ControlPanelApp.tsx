@@ -18,6 +18,8 @@ import { Radio } from '../../ui/Radio';
 import styles from './ControlPanelApp.module.css';
 
 const PATTERN_NAMES = Object.keys(PATTERNS) as PatternName[];
+/** Four patterns shown together on the Random swatch. */
+const RANDOM_SWATCH: PatternName[] = ['bricks', 'stars', 'gingham', 'weave'];
 const HIGHLIGHT_NAMES = Object.keys(HIGHLIGHTS) as HighlightName[];
 
 /** Visitor preferences. Every change applies immediately and is remembered (D-025). */
@@ -81,6 +83,30 @@ export default function ControlPanelApp() {
       <fieldset className={styles.group}>
         <legend className={styles.legend}>Desktop Pattern</legend>
         <div className={styles.patterns}>
+          <label className={styles.pattern}>
+            <input
+              type="radio"
+              name="desktop-pattern"
+              value="random"
+              checked={settings.pattern === 'random'}
+              onChange={() => settings.set('pattern', 'random')}
+              className={styles.patternInput}
+            />
+            <span
+              className={`${styles.swatch} ${styles.randomSwatch}`}
+              aria-hidden="true"
+            >
+              {RANDOM_SWATCH.map((name) => (
+                <span
+                  key={name}
+                  style={{
+                    backgroundImage: patternImage(name, settings.display),
+                  }}
+                />
+              ))}
+            </span>
+            <span>Random</span>
+          </label>
           {PATTERN_NAMES.map((name) => (
             <label key={name} className={styles.pattern}>
               <input

@@ -18,6 +18,7 @@ import { clearSaved, takeFirstVisit } from './persist';
 import { currentMode, useDeviceMode } from './device';
 import { useApplyDisplay } from './display';
 import { useSettings } from './settings';
+import { useDesktopPattern } from './visitPattern';
 import { systemMenus } from './menus';
 import styles from './OS.module.css';
 import { useWindows } from './windows/store';
@@ -100,8 +101,8 @@ export function OS() {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, []);
 
-  // The visitor's chosen desktop pattern (Control Panel).
-  const pattern = useSettings((s) => s.pattern);
+  // The visitor's chosen desktop pattern (Control Panel), or this visit's random one.
+  const pattern = useDesktopPattern();
   const display = useSettings((s) => s.display);
   const desktopStyle = useMemo(
     () => ({ backgroundImage: patternImage(pattern, display) }),

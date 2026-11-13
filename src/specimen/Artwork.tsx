@@ -69,8 +69,8 @@ export function Artwork() {
           Desktop patterns
         </h2>
         <p className={styles.note}>
-          Six original 8×8 patterns. Choose one to preview it behind desktop
-          icons.
+          Ten original 8×8 patterns. Choose one to preview it behind desktop
+          icons. The desktop defaults to Random: a different one each visit.
         </p>
 
         <fieldset className={styles.patternPicker}>
