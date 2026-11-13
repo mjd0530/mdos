@@ -18,16 +18,27 @@ src="$1"
 out="content/music/$2"
 mkdir -p "$out"
 
+# A plain glob lists files in name order on every system (no GNU-only sort -z), and any
+# ffmpeg failure stops the script.
+shopt -s nullglob
 n=0
-while IFS= read -r -d '' file; do
+for file in "$src"/*; do
+  [[ -f "$file" ]] || continue
+  ext="$(printf '%s' "${file##*.}" | tr '[:upper:]' '[:lower:]')"
+  case "$ext" in
+    wav | aif | aiff | flac | mp3 | m4a) ;;
+    *) continue ;;
+  esac
   n=$((n + 1))
   target="$out/$(printf '%02d' "$n").m4a"
   echo "$(basename "$file") → $target"
   # -map_metadata -1: drop embedded tags and art; titles come from album.yaml.
-  ffmpeg -loglevel error -y -i "$file" -map 0:a:0 -map_metadata -1 \
+  ffmpeg -nostdin -loglevel error -y -i "$file" -map 0:a:0 -map_metadata -1 \
     -c:a aac -b:a 160k -movflags +faststart "$target"
-done < <(find "$src" -maxdepth 1 -type f \
-  \( -iname '*.wav' -o -iname '*.aif' -o -iname '*.aiff' -o -iname '*.flac' -o -iname '*.mp3' -o -iname '*.m4a' \) \
-  -print0 | sort -z)
+done
 
+if [[ $n -eq 0 ]]; then
+  echo "No audio files (wav, aif, aiff, flac, mp3, m4a) found in $src" >&2
+  exit 1
+fi
 echo "Encoded $n tracks into $out"

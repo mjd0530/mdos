@@ -84,6 +84,8 @@ export const currentTrack = (s: {
 // One audio element for the whole app, outside React: collapsing the window, switching
 // skins or re-rendering never interrupts the music.
 let audio: HTMLAudioElement | undefined;
+/** True while one song is being swapped for the next during playback. */
+let switching = false;
 
 function element(): HTMLAudioElement {
   if (audio) return audio;
@@ -98,10 +100,18 @@ function element(): HTMLAudioElement {
       usePlayer.setState({ duration: el.duration });
     }
   });
-  el.addEventListener('play', () => usePlayer.setState({ playing: true }));
-  el.addEventListener('pause', () => usePlayer.setState({ playing: false }));
+  el.addEventListener('play', () => {
+    switching = false;
+    usePlayer.setState({ playing: true });
+  });
+  el.addEventListener('pause', () => {
+    // Changing songs while playing fires a pause before the new song plays; ignore it so
+    // the player doesn't flash to paused between songs.
+    if (!switching) usePlayer.setState({ playing: false });
+  });
   el.addEventListener('ended', () => advance(true));
   el.addEventListener('error', () => {
+    switching = false;
     if (!el.getAttribute('src')) return;
     const title = currentTrack(usePlayer.getState())?.title ?? 'This song';
     usePlayer.setState({
@@ -123,6 +133,7 @@ function start(el: HTMLAudioElement) {
   ensureAnalyser(el);
   el.play().catch((error: unknown) => {
     if ((error as { name?: string } | null)?.name !== 'AbortError') {
+      switching = false;
       usePlayer.setState({ playing: false });
     }
   });
@@ -139,6 +150,8 @@ function load(pos: number, play: boolean) {
     duration: track.duration,
     error: null,
   });
+  // Going straight on to another song: the pause the src change fires isn't real.
+  switching = play && !el.paused;
   el.src = track.src;
   if (play) start(el);
   announce(`${play ? 'Now playing' : 'Selected'}: ${track.title}`);
@@ -247,6 +260,7 @@ export const usePlayer = create<PlayerState>()(
       },
       setSkin: (skin) => set({ skin }),
       stop: () => {
+        switching = false;
         if (audio) {
           audio.pause();
           audio.removeAttribute('src');
