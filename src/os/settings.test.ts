@@ -22,7 +22,6 @@ describe('sanitizeSettings', () => {
     ).toEqual({
       display: 'bw',
       highlight: 'gold',
-      pattern: 'bricks',
       clock24h: true,
       weatherUnit: 'celsius',
       weatherPlace: { ...place, region: undefined },
@@ -53,19 +52,12 @@ describe('sanitizeSettings', () => {
   });
 });
 
-describe('pattern setting', () => {
-  it('defaults to random and keeps random when saved', () => {
-    expect(DEFAULT_SETTINGS.pattern).toBe('random');
-    expect(sanitizeSettings({ pattern: 'random' }).pattern).toBe('random');
-  });
-});
-
 describe('useSettings', () => {
   it('changes one setting and restores defaults', () => {
-    useSettings.getState().set('pattern', 'weave');
-    expect(useSettings.getState().pattern).toBe('weave');
+    useSettings.getState().set('clock24h', true);
+    expect(useSettings.getState().clock24h).toBe(true);
     useSettings.getState().restoreDefaults();
-    expect(useSettings.getState().pattern).toBe(DEFAULT_SETTINGS.pattern);
+    expect(useSettings.getState().clock24h).toBe(DEFAULT_SETTINGS.clock24h);
   });
 });
 

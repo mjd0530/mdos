@@ -47,18 +47,6 @@
   image-rendering: pixelated;
 }
 
-/* Random: four patterns in quarters, a different one each visit. */
-.randomSwatch {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-}
-
-.randomSwatch > span {
-  background-size: 8px 8px;
-  image-rendering: pixelated;
-}
-
 .patternInput:checked + .swatch {
   outline: 3px solid var(--color-black);
   outline-offset: 2px;

@@ -101,8 +101,8 @@ export function OS() {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, []);
 
-  // The visitor's chosen desktop pattern (Control Panel), or this visit's random one.
-  const pattern = useDesktopPattern();
+  // A random pattern each visit, or one chosen in Control Panel for this visit (D-033).
+  const pattern = useDesktopPattern((s) => s.pattern);
   const display = useSettings((s) => s.display);
   const desktopStyle = useMemo(
     () => ({ backgroundImage: patternImage(pattern, display) }),
@@ -164,6 +164,7 @@ export function OS() {
           useWindows.getState().forgetAll();
           useDesktop.getState().cleanUp();
           useSettings.getState().restoreDefaults();
+          useDesktopPattern.getState().reset();
           clearSaved();
           announce('Desktop reset');
         }}

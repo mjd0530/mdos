@@ -92,7 +92,7 @@ Zustand stores, each persisted under a versioned key; any parse failure falls ba
 |---|---|---|
 | `windows` | instances, z-order, focus, rect, state, payload | rects per app; open windows only if "Reopen windows" is on |
 | `desktop` | icon positions, selection, label editing | positions only |
-| `settings` | desktop pattern (or Random, D-033), sounds, screensaver delay/enabled, cursor clock, weather location | all |
+| `settings` | sounds, screensaver delay/enabled, cursor clock, weather location | all |
 
 Special → Reset Desktop clears every `mikeos:*` key and reloads to defaults.
 
@@ -124,7 +124,7 @@ export default defineApp({
 | Notes | doc | Case studies, About, Read Me, Personal, Contact (D-009) |
 | Viewer | image | Single image, prev/next within its folder, title/date/description |
 | Weather | app | Open-Meteo; default Cary, NC; location only on explicit request |
-| Control Panel | app | Desktop pattern (Random by default), sounds, screensaver, cursor clock, reset |
+| Control Panel | app | Desktop pattern (this visit only; random each visit, D-033), sounds, screensaver, cursor clock, reset |
 | Screensaver | system | Not a window; idle overlay owned by the shell |
 
 ## 6. Window manager

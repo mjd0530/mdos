@@ -12,19 +12,20 @@ import {
   type ScreensaverMinutes,
 } from '../../os/settings';
 import { playSound } from '../../os/sounds';
+import { useDesktopPattern } from '../../os/visitPattern';
 import { Button } from '../../ui/Button';
 import { Checkbox } from '../../ui/Checkbox';
 import { Radio } from '../../ui/Radio';
 import styles from './ControlPanelApp.module.css';
 
 const PATTERN_NAMES = Object.keys(PATTERNS) as PatternName[];
-/** Four patterns shown together on the Random swatch. */
-const RANDOM_SWATCH: PatternName[] = ['bricks', 'stars', 'gingham', 'weave'];
 const HIGHLIGHT_NAMES = Object.keys(HIGHLIGHTS) as HighlightName[];
 
 /** Visitor preferences. Every change applies immediately and is remembered (D-025). */
 export default function ControlPanelApp() {
   const settings = useSettings();
+  const pattern = useDesktopPattern((s) => s.pattern);
+  const choosePattern = useDesktopPattern((s) => s.choose);
 
   return (
     <div className={styles.panel}>
@@ -83,38 +84,14 @@ export default function ControlPanelApp() {
       <fieldset className={styles.group}>
         <legend className={styles.legend}>Desktop Pattern</legend>
         <div className={styles.patterns}>
-          <label className={styles.pattern}>
-            <input
-              type="radio"
-              name="desktop-pattern"
-              value="random"
-              checked={settings.pattern === 'random'}
-              onChange={() => settings.set('pattern', 'random')}
-              className={styles.patternInput}
-            />
-            <span
-              className={`${styles.swatch} ${styles.randomSwatch}`}
-              aria-hidden="true"
-            >
-              {RANDOM_SWATCH.map((name) => (
-                <span
-                  key={name}
-                  style={{
-                    backgroundImage: patternImage(name, settings.display),
-                  }}
-                />
-              ))}
-            </span>
-            <span>Random</span>
-          </label>
           {PATTERN_NAMES.map((name) => (
             <label key={name} className={styles.pattern}>
               <input
                 type="radio"
                 name="desktop-pattern"
                 value={name}
-                checked={settings.pattern === name}
-                onChange={() => settings.set('pattern', name)}
+                checked={pattern === name}
+                onChange={() => choosePattern(name)}
                 className={styles.patternInput}
               />
               <span
@@ -222,6 +199,7 @@ export default function ControlPanelApp() {
         <Button
           onClick={() => {
             settings.restoreDefaults();
+            useDesktopPattern.getState().reset();
             announce('Settings restored to their defaults');
           }}
         >

@@ -243,9 +243,9 @@ _2026-11-12 · Accepted (Mike); supersedes D-004's "colour sparingly, never for 
 - Verified: axe clean in both modes with menus, alerts and windows open; Lighthouse unchanged (99–100 / 100 / 100 / 100).
 
 
-## D-033 Random desktop pattern each visit
-_2026-11-12 · Accepted (Mike)_
+## D-033 A random desktop pattern each visit
+_2026-11-12 · Accepted (Mike); the desktop pattern is no longer a saved setting (was D-025)_
 
-- **Random is the default desktop pattern.** Each page load picks one of the ten patterns, never the one shown last time, so a return visit always looks a little different. Remembered as `mikeos:lastPattern` (`src/os/visitPattern.ts`); the pick itself is never saved as a setting.
-- **A visitor's choice wins.** Control Panel → Desktop Pattern lists **Random** first (a swatch of four patterns in quarters); picking any named pattern keeps it on every visit, as before. Restore Defaults and Reset Desktop go back to Random.
-- Visitors who already saved a named pattern keep it. Blocked storage still gets a random pattern; repeats just become possible.
+- **Every visit starts on a random pattern**, one of the ten, never the one shown last time, so a return visit always looks a little different. Only the last pattern shown is stored (`mikeos:lastPattern`, `src/os/visitPattern.ts`).
+- **Control Panel → Desktop Pattern changes it for this visit only.** The choice isn't saved and there is no Random option; the next visit picks again. Restore Defaults and Reset Desktop go back to the pattern the visit started with.
+- A `pattern` left in older saved settings is ignored. Blocked storage still gets a random pattern; repeats just become possible.
