@@ -274,6 +274,7 @@ export const usePlayer = create<PlayerState>()(
       setSkin: (skin) => set({ skin }),
       stop: () => {
         switching = false;
+        set({ error: null });
         if (audio) {
           audio.pause();
           audio.removeAttribute('src');

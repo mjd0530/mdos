@@ -345,3 +345,12 @@
   background: none;
   cursor: zoom-in;
 }
+
+.error {
+  margin: 0;
+  padding: 2px 6px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-black);
+  font-family: var(--font-document);
+}

@@ -19,14 +19,17 @@ export function Spectrum({ className }: { className?: string }) {
     if (!canvas || !ctx) return;
     const levels = new Array<number>(BARS).fill(0);
     const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const node = playing ? getAnalyser() : undefined;
-    if (node?.context.state === 'suspended')
-      void (node.context as AudioContext).resume();
-    const data = new Uint8Array(node?.frequencyBinCount ?? 0);
+    let data = new Uint8Array(0);
     let frame = 0;
     let tick = 0;
 
     const draw = () => {
+      // Looked up each frame: in Safari and Firefox the analyser attaches a moment
+      // after playback starts.
+      const node = playing ? getAnalyser() : undefined;
+      if (node && data.length !== node.frequencyBinCount) {
+        data = new Uint8Array(node.frequencyBinCount);
+      }
       if (playing && node) {
         node.getByteFrequencyData(data);
         for (let i = 0; i < BARS; i++) levels[i] = (data[i + 1] ?? 0) / 255;

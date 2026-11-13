@@ -301,7 +301,7 @@ export function Pocket({
           {view.kind === 'now' && track && s.album && (
             <div className={styles.now}>
               <p className={styles.count}>
-                {s.pos + 1} of {s.order.length}
+                {s.error ?? `${s.pos + 1} of ${s.order.length}`}
               </p>
               <div className={styles.nowBody}>
                 <img

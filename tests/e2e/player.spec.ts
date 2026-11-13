@@ -199,3 +199,13 @@ test('both looks pass axe on the Black & White display', async ({ page }) => {
   await player.getByRole('button', { name: 'Switch to Pocket' }).click();
   await axe(page);
 });
+
+test('a song that fails to load says so', async ({ page }) => {
+  await page.route('**/*.m4a', (route) => route.abort());
+  await page.goto('./');
+  const player = await openPlayer(page);
+  const songs = await showTestTones(player);
+  await songs.getByRole('button', { name: /Low Tone/ }).click();
+  await expect(player.getByText("Low Tone couldn't be played.")).toBeVisible();
+  await expect(player.getByRole('button', { name: 'Play' })).toBeVisible();
+});

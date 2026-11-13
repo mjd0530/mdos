@@ -112,6 +112,11 @@ export function Deck({
         </div>
       </div>
 
+      {s.error && (
+        // Screen readers already hear it through announce() in the store.
+        <p className={styles.error}>{s.error}</p>
+      )}
+
       <label className={styles.seek}>
         <span className="visually-hidden">Position</span>
         <input
