@@ -12,6 +12,8 @@ interface WindowProps {
   z: number;
   /** Phones: full screen, one at a time; no zoom, collapse or resize. */
   phone?: boolean;
+  /** The app fills the window instead of scrolling inside it. */
+  fill?: boolean;
   children: ReactNode;
 }
 
@@ -34,6 +36,7 @@ export function Window({
   active,
   z,
   phone = false,
+  fill = false,
   children,
 }: WindowProps) {
   const { id, title, rect, zoomed, collapsed } = win;
@@ -188,6 +191,7 @@ export function Window({
         <ScrollArea
           active={active}
           className={styles.body}
+          fill={fill}
           corner={
             !zoomed && (
               <div

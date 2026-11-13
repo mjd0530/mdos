@@ -9,6 +9,8 @@ interface ScrollAreaProps {
   /** Goes in the square where the two bars meet (a window's resize box). */
   corner?: ReactNode;
   className?: string;
+  /** Content takes the viewport's exact height (for apps that scroll their own parts). */
+  fill?: boolean;
 }
 
 interface Metrics {
@@ -33,6 +35,7 @@ export function ScrollArea({
   active = true,
   corner,
   className,
+  fill = false,
 }: ScrollAreaProps) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -78,7 +81,10 @@ export function ScrollArea({
         tabIndex={0}
         onScroll={measure}
       >
-        <div ref={contentRef} className={styles.content}>
+        <div
+          ref={contentRef}
+          className={fill ? `${styles.content} ${styles.fill}` : styles.content}
+        >
           {children}
         </div>
       </div>

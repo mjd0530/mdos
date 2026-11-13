@@ -357,6 +357,8 @@ describe('plain pages', () => {
     docImage: (source: string) => `/mdos/assets${source}`,
     galleryImage: (index: number, variant: string) =>
       `/mdos/assets/gallery-${index}-${variant}.webp`,
+    music: [],
+    musicFile: (token: string) => token,
   };
 
   beforeEach(() => {

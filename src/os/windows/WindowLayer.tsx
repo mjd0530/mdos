@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef } from 'react';
 import { AppHost } from '../../apps/AppHost';
+import { getApp } from '../../apps/registry';
 import { useDeviceMode } from '../device';
 import { useWindows } from './store';
 import { Window } from './Window';
@@ -44,6 +45,7 @@ export function WindowLayer() {
           active={win.id === activeId}
           z={order.indexOf(win.id) + 1}
           phone={phone}
+          fill={getApp(win.appId)?.window?.fill}
         >
           <AppHost win={win} isActive={win.id === activeId} />
         </Window>

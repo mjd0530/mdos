@@ -29,6 +29,7 @@
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.3.0",
     "marked": "^18.2.0",
+    "music-metadata": "^12.5.0",
     "oxlint": "^1.93.0",
     "prettier": "^3.9.10",
     "sharp": "^0.35.5",

@@ -66,6 +66,42 @@ caseStudy:
 ---
 ```
 
+## Music
+
+The music player (D-034) reads `content/music/`. Audio is stored with **Git LFS**: install it once with `brew install git-lfs && git lfs install` before committing audio.
+
+1. Put full-quality masters (WAV, AIFF, FLAC, MP3 or M4A) in `music-masters/<album>/` at the project root. That folder is git-ignored; masters never go in the repo.
+2. Encode web-sized copies (AAC, 160 kbps), numbered in file-name order:
+
+   ```bash
+   scripts/encode-music.sh music-masters/first-album first-album
+   ```
+
+3. Add the cover (PNG or JPG, any size; the build resizes it) and one `.txt` file of lyrics per song to `content/music/first-album/`. Lyrics are plain text; a blank line starts a new verse.
+4. Describe the album in `content/music/first-album/album.yaml`:
+
+   ```yaml
+   title: First Album
+   artist: Mixed Solution
+   year: 2004                  # optional
+   cover: cover.jpg
+   coverAlt: What the cover shows, for people who can't see it
+   credits: Optional line of credits.
+   tracks:                     # play order
+     - file: 01.m4a
+       title: Song Title
+       lyrics: 01.txt          # optional
+   ```
+
+5. List the album folder in `content/music/music.yaml` (order there is the order in the player):
+
+   ```yaml
+   albums:
+     - first-album
+   ```
+
+Song lengths are read from the files. The build stops if a file is missing, a cover has no `coverAlt`, or audio isn't `.m4a`/`.mp3`. `test-tones/` is a placeholder album: delete it (and its line in `music.yaml`) once real albums are in.
+
 ## fs.yaml entries
 
 | Entry | Example | Opens |

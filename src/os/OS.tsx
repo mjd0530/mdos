@@ -12,6 +12,7 @@ import { useIdleScreensaver, useScreensaver } from './screensaverState';
 import { useDesktop } from './desktopStore';
 import { DesktopIcons } from './DesktopIcons';
 import { MenuBar } from './menubar/MenuBar';
+import { NowPlaying } from './NowPlaying';
 import { desktop } from '../vfs';
 import { openNode } from './open';
 import { clearSaved, takeFirstVisit } from './persist';
@@ -111,7 +112,15 @@ export function OS() {
 
   return (
     <div className={styles.screen} data-device={device}>
-      <MenuBar menus={menus} end={<Clock />} />
+      <MenuBar
+        menus={menus}
+        end={
+          <>
+            <NowPlaying />
+            <Clock />
+          </>
+        }
+      />
 
       <main className={styles.desktop} style={desktopStyle}>
         <h1 className="visually-hidden">MDOS desktop</h1>

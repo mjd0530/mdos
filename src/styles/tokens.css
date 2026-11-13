@@ -55,10 +55,22 @@
   /* Chrome. */
   --border-window: 1px solid var(--color-black);
   --shadow-window: 1px 1px 0 var(--color-black);
+
+  /* Music player (D-034): the Deck's LCD and the Pocket's shell and screen. */
+  --player-lcd: var(--color-black);
+  --player-lcd-text: var(--color-white);
+  --player-shell: var(--color-white);
+  --player-wheel: var(--color-white);
+  --player-screen: var(--color-white);
 }
 
 /* ---------- Colour display: System 7 on the Color Classic (D-031) ---------- */
 :root[data-display='color'] {
+  --player-lcd: #0a1f0a;
+  --player-lcd-text: #55ff88;
+  --player-shell: #99ccff;
+  --player-wheel: #dddddd;
+  --player-screen: #d8e8f0;
   --color-chrome-face: #dddddd;
   --color-title-stripe: #999999;
   --color-title-stripe-light: #ffffff;

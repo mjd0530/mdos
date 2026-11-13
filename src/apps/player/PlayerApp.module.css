@@ -1,0 +1,33 @@
+.player {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.player > :first-child {
+  flex: 1;
+  min-height: 0;
+}
+
+.empty {
+  margin: 0;
+  padding: 16px;
+}
+
+.skin {
+  align-self: flex-end;
+  margin: 0 8px 6px;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--color-text);
+  font-family: var(--font-system);
+  font-size: var(--font-size-body);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+:global([data-device='phone']) .skin,
+:global([data-device='tablet']) .skin {
+  min-height: 44px;
+}

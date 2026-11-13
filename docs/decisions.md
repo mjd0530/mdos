@@ -48,7 +48,7 @@ _2026-11-10 · Accepted_
 Mike AI is removed from scope. No chat app, API keys, server functions or knowledge base. This also removes the only reason for a server, so the site is fully static.
 
 ## D-008 No music player
-_2026-11-10 · Accepted_
+_2026-11-10 · Superseded by D-034_
 
 The music player is removed from scope. No audio files, playlist or licensing questions. System sounds (our own, D-003) stay, off or quiet by default.
 
@@ -249,3 +249,21 @@ _2026-11-12 · Accepted (Mike); the desktop pattern is no longer a saved setting
 - **Every visit starts on a random pattern**, one of the ten, never the one shown last time, so a return visit always looks a little different. Only the last pattern shown is stored (`mikeos:lastPattern`, `src/os/visitPattern.ts`).
 - **Control Panel → Desktop Pattern changes it for this visit only.** The choice isn't saved and there is no Random option; the next visit picks again. Restore Defaults and Reset Desktop go back to the pattern the visit started with.
 - A `pattern` left in older saved settings is ignored. Blocked storage still gets a random pattern; repeats just become possible.
+
+## D-034 Music player for Mixed Solution
+_2026-11-12 · Accepted (Mike); supersedes D-008_
+
+Mike was in Mixed Solution and made its visuals; the band owns the music. MDOS gets a music player for two of its albums.
+
+- **Our own design, two looks.** Mike asked for an iPod, then Winamp, feel, but both names and their distinctive looks are other companies' trademarks and trade dress (D-003). So: **Deck**, a late-90s desktop player (LCD time, scrolling title, spectrum, seek and volume, Playlist / Lyrics / Album tabs), and **Pocket**, an early-2000s handheld (menu screen and a scroll wheel with Back, Previous, Next, Play/Pause and a centre Select). One engine, switchable, remembered. Pocket is pale blue in colour so it doesn't read as a copy of any real device. The app is called "Music" until Mike names it.
+- **Content** in `content/music/` (`music.yaml` lists album folders; each has `album.yaml`, cover, `.m4a` files and optional `.txt` lyrics). Validated at build; durations read with `music-metadata` (devDependency, build only; the alternative was typing every length by hand). Emitted as lazy `virtual:music`, so nothing loads until the player opens.
+- **Audio files:** AAC 160 kbps (`scripts/encode-music.sh`, ffmpeg), roughly 3–4 MB a song. Masters stay out of git (`music-masters/` is ignored). The encoded copies are stored with **Git LFS**; CI caches the LFS objects so each run doesn't use up the free LFS bandwidth. Each file is emitted once as a hashed asset. No CSP change: audio comes from our own origin. The songs can be downloaded by anyone (public repo, any web player). TODO(mike): confirm that's fine with the band.
+- **Playback:** nothing plays until the visitor presses Play (no autoplay). Music keeps playing while the window is collapsed or behind others and **stops when it closes**. A note in the menu bar shows while music plays and brings the player forward. Media Session gives lock-screen and media-key controls. Previous restarts the song after 3 seconds; Shuffle never repeats a song; Repeat cycles Off / All / One.
+- **Remembered:** volume, shuffle, repeat and look (`mikeos:player`), never the song or position. Reset Desktop forgets them (`onClearSaved`).
+- **Spectrum:** a real Web Audio analyser on desktops; phones and tablets get a decorative stand-in, because routing audio through Web Audio stops background playback on iOS. Hidden from screen readers; still under reduced motion (the title stops scrolling and wraps instead).
+- **Accessibility:** real buttons and native range inputs with spoken times ("1:23 of 3:45"); Space play/pause, ←/→ previous/next, Shift+←/→ seek 5 s, ↑/↓ volume (Deck) or menu (Pocket), Enter select, Escape back; song changes announced. Inactive LCD flags are hidden, not dimmed (dimmed text failed contrast). axe clean in both looks and both displays.
+- **Still to come:** the Deck's Mixed Solution skin from Mike's band artwork, and both looks on `/specimen.html`.
+- **Windows** gain `window.fill` in `defineApp`: the app fills its window and scrolls its own parts.
+- **Plain view:** `/plain/music/` lists each album with a native `<audio controls>` per song and lyrics.
+- **Not verified:** real iOS lock-screen behaviour and background play, Safari and Firefox, and how real songs sound at 160 kbps.
+

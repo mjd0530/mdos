@@ -9,3 +9,9 @@ declare module 'virtual:vfs' {
   export const tree: FolderNode;
   export const docLoaders: Record<string, () => Promise<{ default: Doc }>>;
 }
+
+/** The music player's library, built from content/music/ (build/music.ts, D-034). */
+declare module 'virtual:music' {
+  import type { Album } from './music/types';
+  export const albums: Album[];
+}

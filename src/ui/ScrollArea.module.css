@@ -25,6 +25,17 @@
   min-width: min-content;
 }
 
+.fill {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.fill > * {
+  flex: 1;
+  min-height: 0;
+}
+
 /* ---------- Bars ---------- */
 
 .bar {

@@ -10,10 +10,12 @@ import {
   type ImageMaps,
 } from './content.ts';
 import { imageSize, processAll } from './images.ts';
+import { buildMusic, musicModuleCode, type MusicResult } from './music.ts';
 import { plainPages } from './plain.ts';
 
 const VFS_ID = 'virtual:vfs';
 const DOC_PREFIX = 'virtual:doc/';
+const MUSIC_ID = 'virtual:music';
 
 /**
  * Turns content/ into `virtual:vfs` (the tree + lazy doc loaders) and one
@@ -26,10 +28,18 @@ export function contentPlugin(): Plugin {
   let isBuild = false;
   let result: ContentResult | undefined;
   let images: ImageMaps | undefined;
+  let music: MusicResult | undefined;
+  let covers: { cover: Map<string, string>; thumb: Map<string, string> } = {
+    cover: new Map(),
+    thumb: new Map(),
+  };
   let base = '/';
   // Build only: emitted copies of processed images, so plain pages can link to them.
   const displayRefs = new Map<string, string>();
   const thumbRefs = new Map<string, string>();
+  const coverRefs = new Map<string, string>();
+  // Build only: each audio file emitted once, by audio index (D-034).
+  let audioRefs: string[] = [];
 
   const appExists = (appId: string) =>
     existsSync(path.join(rootDir, 'src', 'apps', appId, 'index.ts'));
@@ -37,6 +47,11 @@ export function contentPlugin(): Plugin {
   // Validate synchronously, then resize every referenced image (cached by content).
   const rebuild = async () => {
     const next = buildContent({ contentDir, rootDir, appExists });
+    const nextMusic = await buildMusic({ contentDir, rootDir });
+    const [coverDisplay, coverThumb] = await Promise.all([
+      processAll(rootDir, nextMusic.covers, 'cover'),
+      processAll(rootDir, nextMusic.covers, 'thumb'),
+    ]);
     const docImages = [...next.docs.values()].flatMap((doc) => doc.images);
     const [docDisplay, galleryDisplay, thumb] = await Promise.all([
       processAll(rootDir, docImages, 'display'),
@@ -53,6 +68,8 @@ export function contentPlugin(): Plugin {
     );
     for (const doc of next.docs.values()) addImageSizes(doc, sizes);
     result = next;
+    music = nextMusic;
+    covers = { cover: coverDisplay, thumb: coverThumb };
     images = {
       display: new Map([...docDisplay, ...galleryDisplay]),
       thumb,
@@ -76,7 +93,9 @@ export function contentPlugin(): Plugin {
         if (isBuild) throw error;
         this.warn(String(error));
       }
-      for (const file of result?.files ?? []) this.addWatchFile(file);
+      for (const file of [...(result?.files ?? []), ...(music?.files ?? [])]) {
+        this.addWatchFile(file);
+      }
       if (isBuild && images) {
         const emit = (from: Map<string, string>, to: Map<string, string>) => {
           for (const [source, output] of from) {
@@ -92,17 +111,39 @@ export function contentPlugin(): Plugin {
         };
         emit(images.display, displayRefs);
         emit(images.thumb, thumbRefs);
+        emit(covers.cover, coverRefs);
+        audioRefs = (music?.audio ?? []).map((source) =>
+          this.emitFile({
+            type: 'asset',
+            name: path.basename(source),
+            source: readFileSync(path.join(rootDir, source)),
+          }),
+        );
       }
     },
 
     resolveId(id) {
-      if (id === VFS_ID || id.startsWith(DOC_PREFIX)) return `\0${id}`;
+      if (id === VFS_ID || id === MUSIC_ID || id.startsWith(DOC_PREFIX)) {
+        return `\0${id}`;
+      }
       return undefined;
     },
 
     load(id) {
       if (!id.startsWith('\0')) return undefined;
       const virtualId = id.slice(1);
+      if (virtualId === MUSIC_ID) {
+        if (!music) return 'export const albums = [];\n';
+        const current = music;
+        return musicModuleCode(
+          current,
+          (source, variant) => covers[variant].get(source) ?? source,
+          (index) =>
+            isBuild
+              ? `import.meta.ROLLUP_FILE_URL_${audioRefs[index]}`
+              : JSON.stringify(base + (current.audio[index] ?? '').slice(1)),
+        );
+      }
       if (!result) {
         if (virtualId === VFS_ID) {
           return 'export const tree = { kind: "folder", id: "desktop", name: "Desktop", children: [] };\nexport const docLoaders = {};\n';
@@ -126,6 +167,16 @@ export function contentPlugin(): Plugin {
       };
       const pages = plainPages(result, {
         base,
+        music: music?.albums ?? [],
+        musicFile: (token) => {
+          const audio = /^__MIKEOS_AUDIO_(\d+)__$/.exec(token);
+          if (audio) {
+            const ref = audioRefs[Number(audio[1])];
+            return ref ? base + this.getFileName(ref) : '';
+          }
+          const cover = /^__MIKEOS_COVER_\w+_(\d+)__$/.exec(token);
+          return url(coverRefs, music?.covers[Number(cover?.[1])] ?? '');
+        },
         docImage: (source) => url(displayRefs, source),
         galleryImage: (index, variant) =>
           url(

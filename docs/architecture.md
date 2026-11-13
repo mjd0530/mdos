@@ -68,7 +68,8 @@ desktop:
 - `virtual:vfs`: the tree as metadata only (ids, names, icons, kinds, sizes for list view). Imported at boot; small.
 - `docs/<id>.json`: each document's rendered HTML and metadata, **fetched when opened**, so case studies don't slow the first load.
 - Images: hashed URLs; drawings get a thumbnail (~240px) and a display size (~1600px).
-- `/plain/`: static HTML pages of every public document plus an index.
+- `/plain/`: static HTML pages of every public document plus an index, and `/plain/music/` (albums with `<audio controls>` and lyrics).
+- `virtual:music` (`build/music.ts`, D-034): the music library from `content/music/` (albums, tracks, durations read with `music-metadata`, lyrics, cover URLs). Imported only by the player, so it loads when the player opens. Audio files are emitted once each as hashed assets.
 
 **Node kinds.**
 ```ts
@@ -93,8 +94,10 @@ Zustand stores, each persisted under a versioned key; any parse failure falls ba
 | `windows` | instances, z-order, focus, rect, state, payload | rects per app; open windows only if "Reopen windows" is on |
 | `desktop` | icon positions, selection, label editing | positions only |
 | `settings` | sounds, screensaver delay/enabled, cursor clock, weather location | all |
+| `player` (`src/apps/player/playerStore.ts`) | album, play order, position, playing; owns the one `<audio>` element | volume, shuffle, repeat, look only (`mikeos:player`) |
+| `nowPlaying` (`src/os/nowPlayingStore.ts`) | title, artist, playing, for the menu-bar indicator | no |
 
-Special → Reset Desktop clears every `mikeos:*` key and reloads to defaults.
+Special → Reset Desktop clears every `mikeos:*` key and reloads to defaults. Stores that load later (an app's own preferences) register with `onClearSaved()` in `src/os/persist.ts` to reset themselves.
 
 ## 5. Application framework
 
@@ -126,6 +129,7 @@ export default defineApp({
 | Weather | app | Open-Meteo; default Cary, NC; location only on explicit request |
 | Control Panel | app | Desktop pattern (this visit only; random each visit, D-033), sounds, screensaver, cursor clock, reset |
 | Screensaver | system | Not a window; idle overlay owned by the shell |
+| Music | app | Mixed Solution albums (D-034): two looks (Deck, Pocket), lyrics, Media Session; plays while the window is open, stops when it closes. `window.fill` so it fills its window |
 
 ## 6. Window manager
 

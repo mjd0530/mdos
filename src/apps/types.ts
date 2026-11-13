@@ -25,7 +25,13 @@ export interface AppDefinition<Payload = unknown> {
   name: string;
   icon: IconName;
   instances: InstanceRule;
-  window?: { size?: Size; minSize?: Size };
+  window?: {
+    size?: Size;
+    minSize?: Size;
+    /** The app fills the window and scrolls its own parts (the music player); the
+     *  window's scroll bars stay as empty frames. */
+    fill?: boolean;
+  };
   /** Listed in the M menu (like System 7's Apple menu items). */
   inMarkMenu?: boolean;
   /** For per-document apps: a stable key for a payload (e.g. its file id). */

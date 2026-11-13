@@ -26,6 +26,7 @@ New project, separate from the Astro portfolio (`~/Documents/GitHub/website`). R
 - No new dependency without stating why and the alternative.
 - Commands: `npm run dev` · `build` · `preview` · `check` (tsc) · `lint` (oxlint + Prettier) · `test` (Vitest) · `e2e` (Playwright + axe, builds first, port 4330).
 - Node 24 LTS (`.nvmrc`); CI uses it. Local npm 10 has a resolver bug with this tree: install with `npx npm@11 install`.
+- Music audio (D-034) is in **Git LFS** (`.gitattributes`); install `git-lfs` before committing audio. Encode masters with `scripts/encode-music.sh`; masters (`music-masters/`) never go in git.
 
 ## Architecture
 - `src/os/` shell: `OS` (desktop + alerts), `menubar/` (MenuBar, menu types), `menus.ts` (system menus as data), Clock, Announcer (`announce()`), `windows/` (store, geometry, Window, WindowLayer), DesktopIcons + `desktopStore`, IconView (desktop + Files), `open.ts` (`openNode`: the only way to open a VNode), `persist.ts` (safe `storage` for Zustand `persist`; all keys start `mikeos:`; sanitise on load), `settings.ts` (visitor preferences shown in Control Panel; add a setting only with the feature it controls). Menus are data (`MenuDef`), not JSX.
@@ -37,6 +38,7 @@ New project, separate from the Astro portfolio (`~/Documents/GitHub/website`). R
 ## Virtual filesystem and content
 - `content/` holds all content (Markdown + `fs.yaml` + images); guide: `docs/content.md`. `build/content-plugin.ts` validates it and emits `virtual:vfs` + lazy `virtual:doc/<id>` modules; read them via `src/vfs` (`desktop`, `findNode`, `pathTo`, `loadDoc`).
 - Node kinds: folder (→ Files), doc (→ Notes), app, link. Body headings start at `##`.
+- Music: `content/music/` (`music.yaml` + one `album.yaml` per album) → `virtual:music`, read only by the player (`src/apps/player/`).
 - Read-only for visitors. Required `alt` on every image. Don't invent facts, metrics or quotes; leave `TODO(mike):`.
 
 ## Public content only

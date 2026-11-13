@@ -17,6 +17,7 @@ const ICON_LABELS: Record<IconName, string> = {
   computer: 'MDOS',
   controlPanel: 'Control Panel',
   link: 'Link',
+  player: 'Music player',
   weatherClear: 'Clear',
   weatherNight: 'Clear night',
   weatherCloudy: 'Cloudy',

@@ -26,3 +26,7 @@ dist-ssr
 # Tests
 test-results
 playwright-report
+
+# Full-quality music masters: encode with scripts/encode-music.sh, never commit (D-034)
+music-masters
+.lfs-assets-id

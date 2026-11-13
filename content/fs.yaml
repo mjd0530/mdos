@@ -32,6 +32,10 @@ desktop:
   - app: weather
     name: Weather
 
+  # TODO(mike): the player's name.
+  - app: player
+    name: Music
+
   - folder: Contact
     children:
       - link: https://www.linkedin.com/in/mikedemar/

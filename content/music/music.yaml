@@ -1,0 +1,4 @@
+# The music player's library. List album folders (content/music/<folder>/album.yaml) in
+# the order they should appear. How to add an album: docs/content.md → Music.
+albums:
+  - test-tones

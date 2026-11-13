@@ -1,6 +1,7 @@
 // The plain view: every public document as a simple static HTML page under /plain/, for
 // visitors without JavaScript, search engines, and anyone who prefers reading to exploring.
 
+import type { Album } from '../src/music/types.ts';
 import type { FolderNode, VNode } from '../src/vfs/types.ts';
 import { imageToken, type ContentResult, type RenderedDoc } from './content.ts';
 
@@ -11,6 +12,10 @@ export interface PlainOptions {
   docImage: (source: string) => string;
   /** Final URL of a gallery image, from its asset index. */
   galleryImage: (index: number, variant: 'display' | 'thumb') => string;
+  /** The music player's albums (D-034); file URLs are still tokens. */
+  music: Album[];
+  /** Final URL of an album's audio or cover token. */
+  musicFile: (token: string) => string;
 }
 
 const escapeHtml = (value: string) =>
@@ -34,6 +39,9 @@ const STYLE = `
   nav { margin-bottom: 2rem; }
   .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
     gap: 1rem; padding: 0; list-style: none; }
+  .tracks li { margin-bottom: 1rem; }
+  audio { display: block; width: 100%; margin-top: 0.25rem; }
+  .lyrics { white-space: pre-line; }
 `.replace(/\s+/g, ' ');
 
 function page(
@@ -146,6 +154,45 @@ function listing(nodes: VNode[], options: PlainOptions): string {
   return `${items ? `<ul>\n${items}\n</ul>` : ''}${gallery ? `<ul class="gallery">\n${gallery}\n</ul>` : ''}`;
 }
 
+const time = (seconds: number) =>
+  `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
+
+function musicPage(options: PlainOptions): string {
+  const albums = options.music
+    .map((album) => {
+      const tracks = album.tracks
+        .map(
+          (
+            track,
+          ) => `<li>${escapeHtml(track.title)}${track.duration ? ` (${time(track.duration)})` : ''}
+<audio controls preload="none" src="${options.musicFile(track.src)}"></audio>
+${track.lyrics ? `<details><summary>Lyrics</summary><p class="lyrics">${escapeHtml(track.lyrics)}</p></details>` : ''}</li>`,
+        )
+        .join('\n');
+      const byline = [album.artist, album.year].filter(Boolean).join(', ');
+      return `<section>
+<h2>${escapeHtml(album.title)}</h2>
+<p>${escapeHtml(byline)}</p>
+<img src="${options.musicFile(album.cover)}" alt="${escapeHtml(album.coverAlt)}" width="300" height="300" loading="lazy">
+${album.credits ? `<p>${escapeHtml(album.credits)}</p>` : ''}
+<ol class="tracks">
+${tracks}
+</ol>
+</section>`;
+    })
+    .join('\n');
+  return page(
+    options,
+    'Music · Mike DeMar',
+    'Albums from the music player in MDOS, with lyrics.',
+    `<nav><a href="${options.base}plain/">← All pages</a> · <a href="${options.base}">Open MDOS</a></nav>
+<main>
+<h1>Music</h1>
+${albums}
+</main>`,
+  );
+}
+
 function indexPage(tree: FolderNode, options: PlainOptions) {
   return page(
     options,
@@ -156,6 +203,7 @@ function indexPage(tree: FolderNode, options: PlainOptions) {
 <p>This is the plain version of <a href="${options.base}">MDOS</a>, my portfolio built as a
 little desktop computer. Everything in it is listed here as ordinary pages.</p>
 ${listing(tree.children, options)}
+${options.music.length > 0 ? `<p><a href="${options.base}plain/music/">Music</a>: the albums in the music player, with lyrics.</p>` : ''}
 </main>`,
   );
 }
@@ -167,6 +215,9 @@ export function plainPages(
 ): Map<string, string> {
   const pages = new Map<string, string>();
   pages.set('plain/index.html', indexPage(result.tree, options));
+  if (options.music.length > 0) {
+    pages.set('plain/music/index.html', musicPage(options));
+  }
   for (const [docId, rendered] of result.docs) {
     pages.set(plainDocPath(docId), docPage(rendered, options));
   }
