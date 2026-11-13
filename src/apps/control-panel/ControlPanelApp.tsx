@@ -1,17 +1,24 @@
-import { PATTERNS, type PatternName } from '../../assets/patterns';
+import {
+  PATTERNS,
+  patternImage,
+  type PatternName,
+} from '../../assets/patterns';
 import { announce } from '../../os/announce';
 import {
+  HIGHLIGHTS,
   SCREENSAVER_MINUTES,
   useSettings,
+  type HighlightName,
   type ScreensaverMinutes,
 } from '../../os/settings';
 import { playSound } from '../../os/sounds';
 import { Button } from '../../ui/Button';
 import { Checkbox } from '../../ui/Checkbox';
-import { patternDataUri } from '../../ui/pixels';
+import { Radio } from '../../ui/Radio';
 import styles from './ControlPanelApp.module.css';
 
 const PATTERN_NAMES = Object.keys(PATTERNS) as PatternName[];
+const HIGHLIGHT_NAMES = Object.keys(HIGHLIGHTS) as HighlightName[];
 
 /** Visitor preferences. Every change applies immediately and is remembered (D-025). */
 export default function ControlPanelApp() {
@@ -19,6 +26,58 @@ export default function ControlPanelApp() {
 
   return (
     <div className={styles.panel}>
+      <fieldset className={styles.group}>
+        <legend className={styles.legend}>Monitors</legend>
+        <div className={styles.rows}>
+          <Radio
+            name="display"
+            checked={settings.display === 'color'}
+            onChange={() => {
+              settings.set('display', 'color');
+              announce('Colors');
+            }}
+          >
+            Colors
+          </Radio>
+          <Radio
+            name="display"
+            checked={settings.display === 'bw'}
+            onChange={() => {
+              settings.set('display', 'bw');
+              announce('Black and white');
+            }}
+          >
+            Black &amp; White
+          </Radio>
+        </div>
+      </fieldset>
+
+      {settings.display === 'color' && (
+        <fieldset className={styles.group}>
+          <legend className={styles.legend}>Highlight Color</legend>
+          <div className={styles.patterns}>
+            {HIGHLIGHT_NAMES.map((name) => (
+              <label key={name} className={styles.pattern}>
+                <input
+                  type="radio"
+                  name="highlight"
+                  value={name}
+                  checked={settings.highlight === name}
+                  onChange={() => settings.set('highlight', name)}
+                  className={styles.patternInput}
+                />
+                <span
+                  className={`${styles.swatch} ${styles.highlightSwatch}`}
+                  style={{ backgroundColor: HIGHLIGHTS[name].color }}
+                  aria-hidden="true"
+                />
+                <span>{HIGHLIGHTS[name].name}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      )}
+
       <fieldset className={styles.group}>
         <legend className={styles.legend}>Desktop Pattern</legend>
         <div className={styles.patterns}>
@@ -34,7 +93,9 @@ export default function ControlPanelApp() {
               />
               <span
                 className={styles.swatch}
-                style={{ backgroundImage: patternDataUri(PATTERNS[name].rows) }}
+                style={{
+                  backgroundImage: patternImage(name, settings.display),
+                }}
                 aria-hidden="true"
               />
               <span>{PATTERNS[name].name}</span>

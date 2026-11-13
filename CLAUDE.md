@@ -1,4 +1,4 @@
-# Mike OS: working draft
+# MDOS: working draft
 
 > Decisions: `docs/decisions.md`. Design: `docs/architecture.md`. Build order: `docs/implementation-plan.md`.
 
@@ -43,7 +43,7 @@ New project, separate from the Astro portfolio (`~/Documents/GitHub/website`). R
 - All portfolio content is public; there is no NDA work (D-006). Still, this repo is public: if anything looks internal or unreleased, flag it and ask before committing.
 
 ## Visual direction
-- System 7 (D-004): black and white plus a short grey ramp for bevels, title-bar stripes and frames. Grey is for chrome only; text stays black on white. Colour sparingly, never for chrome.
+- Two looks (D-032): **Colors** (default, System 7 on the Color Classic) and **Black & White** (the original 1-bit look). Everything takes colour from tokens in `tokens.css`; colour values live under `[data-display='color']`. New art needs both a 1-bit drawing and a colour one (palette in `src/ui/pixels.ts`). Text on highlights stays black and must pass 4.5:1.
 - Pixel-exact. Bitmap fonts, crisp edges (`image-rendering: pixelated`), no smooth gradients, blurs or soft shadows.
 - Lives at `os.mikedemar.com` beside the Astro site (D-002).
 - Original Mike-specific 1-bit icons and 8×8 desktop patterns, drawn as text rows (`src/assets/icons/icons.ts`, `src/assets/patterns.ts`; key in `src/ui/pixels.ts`) and rendered by `PixelIcon` / `patternDataUri`. Selected icons invert. Fonts (D-014): Pixel Operator HB for system chrome, Pixel Operator for text, CC0; 16px or whole multiples only.

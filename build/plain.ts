@@ -106,7 +106,7 @@ ${study.awards ? `<dt>Award</dt><dd>${escapeHtml(study.awards)}</dd>` : ''}
     options,
     `${doc.title} · Mike DeMar`,
     study?.summary ?? `${doc.title}, from Mike DeMar's portfolio.`,
-    `<nav><a href="${options.base}plain/">← All pages</a> · <a href="${options.base}">Open Mike OS</a></nav>
+    `<nav><a href="${options.base}plain/">← All pages</a> · <a href="${options.base}">Open MDOS</a></nav>
 <main>
 <h1>${escapeHtml(doc.title)}</h1>
 ${header}
@@ -149,11 +149,11 @@ function listing(nodes: VNode[], options: PlainOptions): string {
 function indexPage(tree: FolderNode, options: PlainOptions) {
   return page(
     options,
-    'Mike DeMar · plain version of Mike OS',
+    'Mike DeMar · plain version of MDOS',
     "Mike DeMar's portfolio as plain pages: case studies, about, sketchbook and contact.",
     `<main>
 <h1>Mike DeMar</h1>
-<p>This is the plain version of <a href="${options.base}">Mike OS</a>, my portfolio built as a
+<p>This is the plain version of <a href="${options.base}">MDOS</a>, my portfolio built as a
 little desktop computer. Everything in it is listed here as ordinary pages.</p>
 ${listing(tree.children, options)}
 </main>`,

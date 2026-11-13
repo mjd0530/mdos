@@ -7,12 +7,12 @@ test('desktop loads with a menu bar, clock and page heading', async ({
   page,
 }) => {
   await page.goto('./');
-  await expect(page).toHaveTitle('Mike OS');
+  await expect(page).toHaveTitle('MDOS');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-    'Mike OS desktop',
+    'MDOS desktop',
   );
   const menubar = page.getByRole('menubar', { name: 'Menu bar' });
-  for (const name of ['Mike OS', 'File', 'Edit', 'View', 'Special', 'Help']) {
+  for (const name of ['MDOS', 'File', 'Edit', 'View', 'Special', 'Help']) {
     await expect(
       menubar.getByRole('menuitem', { name, exact: true }),
     ).toBeVisible();

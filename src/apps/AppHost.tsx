@@ -132,7 +132,7 @@ class CrashBoundary extends Component<
           </>
         }
       >
-        The rest of Mike OS is fine.
+        The rest of MDOS is fine.
       </Message>
     );
   }

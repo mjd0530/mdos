@@ -52,8 +52,8 @@
 .tool[aria-pressed='true'],
 .tool[aria-expanded='true'],
 .tool:active:not(:disabled) {
-  background: var(--color-black);
-  color: var(--color-white);
+  background: var(--color-highlight);
+  color: var(--color-highlight-text);
 }
 
 .tool:disabled {
@@ -152,12 +152,12 @@
 }
 
 .result:hover {
-  background: var(--color-black);
-  color: var(--color-white);
+  background: var(--color-highlight);
+  color: var(--color-highlight-text);
 }
 
 .result:hover .region {
-  color: var(--color-white);
+  color: var(--color-highlight-text);
 }
 
 .credit a {

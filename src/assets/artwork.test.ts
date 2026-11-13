@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { parsePixels } from '../ui/pixels';
-import { ICONS } from './icons/icons';
+import { ICONS, ICONS_COLOR } from './icons/icons';
 import { PATTERNS } from './patterns';
 
 describe('icons', () => {
@@ -12,10 +12,22 @@ describe('icons', () => {
   });
 });
 
+describe('colour icons', () => {
+  it.each(Object.keys(ICONS))('%s has a 32x32 colour version', (name) => {
+    const art = parsePixels(ICONS_COLOR[name as keyof typeof ICONS]);
+    expect([art.width, art.height]).toEqual([32, 32]);
+  });
+});
+
 describe('patterns', () => {
   it.each(Object.entries(PATTERNS))('%s is 8x8 and parses', (_key, pattern) => {
-    const art = parsePixels(pattern.rows);
-    expect(art.width).toBe(8);
-    expect(art.height).toBe(8);
+    for (const rows of [
+      pattern.rows,
+      'colorRows' in pattern ? pattern.colorRows : pattern.rows,
+    ]) {
+      const art = parsePixels(rows);
+      expect(art.width).toBe(8);
+      expect(art.height).toBe(8);
+    }
   });
 });

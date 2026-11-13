@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CHROME_ART } from './chromeArt';
+import { CHROME_ART, CHROME_ART_COLOR_ENTRIES } from './chromeArt';
 import { parsePixels } from './pixels';
 
 describe('chrome art', () => {
@@ -33,4 +33,15 @@ describe('chrome art', () => {
       expect(art.width % 2).toBe(1);
     }
   });
+});
+
+describe('colour chrome art', () => {
+  it.each(CHROME_ART_COLOR_ENTRIES)(
+    '%s parses and matches its 1-bit size',
+    (name, rows) => {
+      const colour = parsePixels(rows ?? []);
+      const bw = parsePixels(CHROME_ART[name as keyof typeof CHROME_ART]);
+      expect([colour.width, colour.height]).toEqual([bw.width, bw.height]);
+    },
+  );
 });

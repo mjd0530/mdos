@@ -8,7 +8,7 @@ _Each step ends with a demo Mike can try plus the checks in CLAUDE.md "Verify be
 |---|---|---|
 | 1 | **Scaffold** ✅ 2026-11-10 | Vite 8 + React 19 + TS 7 strict, oxlint + Prettier, Vitest, Playwright + axe (desktop + mobile), GitHub Actions deploying a placeholder page to `os.mikedemar.com` |
 | 2 | **Design foundations** ✅ 2026-11-10: fonts (D-014), 10 icons, 6 patterns, buttons/checkbox/radio, menu + window chrome | Tokens, chosen fonts (licenses recorded), first 8–10 icons, desktop patterns, a static System 7 "specimen" page for Mike to review |
-| 3 | **Desktop + menu bar** ✅ 2026-11-10 (D-015, D-016) | Patterned desktop; menu bar with keyboard-accessible menus (Radix vs hand-rolled decided here); clock; About Mike OS alert; app-switching decision (Application menu / dock) |
+| 3 | **Desktop + menu bar** ✅ 2026-11-10 (D-015, D-016) | Patterned desktop; menu bar with keyboard-accessible menus (Radix vs hand-rolled decided here); clock; About MDOS alert; app-switching decision (Application menu / dock) |
 | 4 | **Window manager** ✅ 2026-11-11 (D-017) | Open/close/focus/drag/resize/zoom/collapse, custom System 7 scroll bar with arrow buttons (CSS can't draw them in Chrome/macOS), cascade, keyboard move mode, focus return, announcer; unit tests on the store |
 | 5 | **App framework** ✅ 2026-11-11 (D-018) | `defineApp` registry, lazy loading, error boundary, a throwaway "Hello" app in a window |
 | 6 | **Content pipeline + VFS** ✅ 2026-11-11 (D-019) | Vite plugin validates `content/`, emits vfs + docs + images; build fails on bad content; tests |
@@ -28,6 +28,6 @@ _Each step ends with a demo Mike can try plus the checks in CLAUDE.md "Verify be
 | 15 | **Plain view + launch QA** ✅ 2026-11-12 (D-028; DNS + link from mikedemar.com remain for Mike) | `/plain/` pages; full accessibility audit, visual QA across viewports, Lighthouse, security review; link from the Astro site |
 
 ## Still to decide (asked when we reach the step)
-- Your menu-bar mark, app names, Mike OS name (step 2–3)
+- Your menu-bar mark, app names, MDOS name (step 2–3)
 - Drawing export format (Procreate?) (step 10), screensaver concept (step 14)
-- How mikedemar.com links to Mike OS (step 15)
+- How mikedemar.com links to MDOS (step 15)

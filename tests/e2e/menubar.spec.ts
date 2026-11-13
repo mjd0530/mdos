@@ -50,7 +50,7 @@ test.describe('mouse', () => {
     await title(page, 'Special').click();
     await page.getByRole('menuitem', { name: 'Restart…' }).click();
 
-    const dialog = page.getByRole('dialog', { name: 'Restart Mike OS?' });
+    const dialog = page.getByRole('dialog', { name: 'Restart MDOS?' });
     await expect(dialog).toBeVisible();
     await expect(dialog.getByRole('button', { name: 'Restart' })).toBeFocused();
 
@@ -69,7 +69,7 @@ test.describe('keyboard', () => {
     page,
   }) => {
     await page.keyboard.press('Tab');
-    await expect(title(page, 'Mike OS')).toBeFocused();
+    await expect(title(page, 'MDOS')).toBeFocused();
     await page.keyboard.press('ArrowRight');
     await expect(title(page, 'File')).toBeFocused();
     await page.keyboard.press('ArrowLeft');
@@ -94,11 +94,11 @@ test.describe('keyboard', () => {
 
     await page.keyboard.press('End');
     await expect(
-      page.getByRole('menuitem', { name: 'About Mike OS…' }),
+      page.getByRole('menuitem', { name: 'About MDOS…' }),
     ).toBeFocused();
 
     await page.keyboard.press('Enter');
-    const dialog = page.getByRole('dialog', { name: 'Mike OS' });
+    const dialog = page.getByRole('dialog', { name: 'MDOS' });
     await expect(dialog).toBeVisible();
     await expect(dialog.getByRole('button', { name: 'OK' })).toBeFocused();
 
@@ -112,10 +112,10 @@ test.describe('keyboard', () => {
   }) => {
     await page.keyboard.press('Tab');
     await page.keyboard.press('ArrowDown');
-    await expect(page.getByRole('menu', { name: 'Mike OS' })).toBeVisible();
+    await expect(page.getByRole('menu', { name: 'MDOS' })).toBeVisible();
     await page.keyboard.press('Escape');
     await expect(page.getByRole('menu')).toHaveCount(0);
-    await expect(title(page, 'Mike OS')).toBeFocused();
+    await expect(title(page, 'MDOS')).toBeFocused();
   });
 
   test('Escape closes an alert', async ({ page }) => {
@@ -148,7 +148,7 @@ test.describe('touch', () => {
     test.skip(!testInfo.project.use.hasTouch, 'touch devices only');
     await title(page, 'Help').tap();
     await expect(page.getByRole('menu', { name: 'Help' })).toBeVisible();
-    await page.getByRole('menuitem', { name: 'About Mike OS…' }).tap();
-    await expect(page.getByRole('dialog', { name: 'Mike OS' })).toBeVisible();
+    await page.getByRole('menuitem', { name: 'About MDOS…' }).tap();
+    await expect(page.getByRole('dialog', { name: 'MDOS' })).toBeVisible();
   });
 });

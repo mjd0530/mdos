@@ -1,6 +1,6 @@
 # Application framework
 
-How apps plug into Mike OS. Decisions: D-017 (windows), D-018 (apps).
+How apps plug into MDOS. Decisions: D-017 (windows), D-018 (apps).
 
 ## Adding an app
 

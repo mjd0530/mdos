@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { PATTERNS } from '../assets/patterns';
+import { patternImage } from '../assets/patterns';
 import { Alert } from '../ui/Alert';
-import { patternDataUri } from '../ui/pixels';
 import { APPS } from '../apps/registry';
 import { launch } from '../apps/launch';
 import { announce } from './announce';
@@ -17,6 +16,7 @@ import { desktop } from '../vfs';
 import { openNode } from './open';
 import { clearSaved, takeFirstVisit } from './persist';
 import { currentMode, useDeviceMode } from './device';
+import { useApplyDisplay } from './display';
 import { useSettings } from './settings';
 import { systemMenus } from './menus';
 import styles from './OS.module.css';
@@ -35,6 +35,7 @@ export function OS() {
 
   const device = useDeviceMode();
   useIdleScreensaver();
+  useApplyDisplay();
   // Phones and tablets open windows zoomed; the desktop cascades them.
   useEffect(() => {
     useWindows.getState().setOpenZoomed(device !== 'desktop');
@@ -101,9 +102,10 @@ export function OS() {
 
   // The visitor's chosen desktop pattern (Control Panel).
   const pattern = useSettings((s) => s.pattern);
+  const display = useSettings((s) => s.display);
   const desktopStyle = useMemo(
-    () => ({ backgroundImage: patternDataUri(PATTERNS[pattern].rows) }),
-    [pattern],
+    () => ({ backgroundImage: patternImage(pattern, display) }),
+    [pattern, display],
   );
 
   return (
@@ -111,7 +113,7 @@ export function OS() {
       <MenuBar menus={menus} end={<Clock />} />
 
       <main className={styles.desktop} style={desktopStyle}>
-        <h1 className="visually-hidden">Mike OS desktop</h1>
+        <h1 className="visually-hidden">MDOS desktop</h1>
         <DesktopIcons />
         <WindowLayer />
       </main>
@@ -121,7 +123,7 @@ export function OS() {
 
       <Alert
         open={alert === 'about'}
-        title="Mike OS"
+        title="MDOS"
         onClose={() => setAlert(null)}
       >
         <p>Version {__APP_VERSION__}</p>
@@ -173,7 +175,7 @@ export function OS() {
 
       <Alert
         open={alert === 'restart'}
-        title="Restart Mike OS?"
+        title="Restart MDOS?"
         buttons={[
           { value: 'cancel', label: 'Cancel' },
           { value: 'restart', label: 'Restart', isDefault: true },

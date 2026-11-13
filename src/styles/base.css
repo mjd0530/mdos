@@ -53,3 +53,8 @@ a {
   white-space: nowrap;
   border: 0;
 }
+
+::selection {
+  background: var(--color-highlight);
+  color: var(--color-highlight-text);
+}

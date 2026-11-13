@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 
 const WCAG = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
 
-test('the plain index lists the content and links back to Mike OS', async ({
+test('the plain index lists the content and links back to MDOS', async ({
   page,
 }) => {
   await page.goto('./plain/');
@@ -13,7 +13,7 @@ test('the plain index lists the content and links back to Mike OS', async ({
   await expect(page.getByRole('link', { name: 'Read Me' })).toBeVisible();
   await expect(page.getByRole('link', { name: 'LinkedIn' })).toBeVisible();
   await expect(
-    page.getByRole('link', { name: 'Mike OS', exact: true }),
+    page.getByRole('link', { name: 'MDOS', exact: true }),
   ).toBeVisible();
 });
 

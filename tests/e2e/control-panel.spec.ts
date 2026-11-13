@@ -1,12 +1,12 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
 
 const WCAG = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
 
 async function openControlPanel(page: Page) {
   await page
     .getByRole('menubar')
-    .getByRole('menuitem', { name: 'Mike OS', exact: true })
+    .getByRole('menuitem', { name: 'MDOS', exact: true })
     .click();
   await page.getByRole('menuitem', { name: 'Control Panel' }).click();
   const panel = page.getByRole('dialog', { name: 'Control Panel' });
@@ -15,6 +15,12 @@ async function openControlPanel(page: Page) {
   ).toBeVisible();
   return panel;
 }
+
+// Pattern swatches, not the Highlight Color swatches (both have a "Grey").
+const patternRadio = (panel: Locator, name: string) =>
+  panel
+    .getByRole('group', { name: 'Desktop Pattern' })
+    .getByRole('radio', { name, exact: true });
 
 const desktopPattern = (page: Page) =>
   page.getByRole('main').evaluate((el) => getComputedStyle(el).backgroundImage);
@@ -28,7 +34,7 @@ test('choosing a pattern changes the desktop and is remembered', async ({
 }) => {
   const before = await desktopPattern(page);
   const panel = await openControlPanel(page);
-  await panel.getByRole('radio', { name: 'Bricks' }).check({ force: true });
+  await patternRadio(panel, 'Bricks').check({ force: true });
   const bricks = await desktopPattern(page);
   expect(bricks).not.toBe(before);
 
@@ -38,9 +44,9 @@ test('choosing a pattern changes the desktop and is remembered', async ({
 
 test('the pattern group works with arrow keys', async ({ page }) => {
   const panel = await openControlPanel(page);
-  await panel.getByRole('radio', { name: 'Grey' }).focus();
+  await patternRadio(panel, 'Grey').focus();
   await page.keyboard.press('ArrowRight');
-  await expect(panel.getByRole('radio', { name: 'Light' })).toBeChecked();
+  await expect(patternRadio(panel, 'Light')).toBeChecked();
 });
 
 test('24-hour time changes the menu-bar clock', async ({ page }) => {
@@ -54,7 +60,7 @@ test('24-hour time changes the menu-bar clock', async ({ page }) => {
 test('Restore Defaults puts settings back', async ({ page }) => {
   const original = await desktopPattern(page);
   const panel = await openControlPanel(page);
-  await panel.getByRole('radio', { name: 'Weave' }).check({ force: true });
+  await patternRadio(panel, 'Weave').check({ force: true });
   await panel.getByText('24-hour time').click();
   await panel.getByRole('button', { name: 'Restore Defaults' }).click();
   expect(await desktopPattern(page)).toBe(original);
@@ -69,7 +75,7 @@ test('Restore Defaults puts settings back', async ({ page }) => {
 test('Special → Reset Desktop also resets settings', async ({ page }) => {
   const original = await desktopPattern(page);
   const panel = await openControlPanel(page);
-  await panel.getByRole('radio', { name: 'Pixels' }).check({ force: true });
+  await patternRadio(panel, 'Pixels').check({ force: true });
   await page
     .getByRole('menubar')
     .getByRole('menuitem', { name: 'Special', exact: true })

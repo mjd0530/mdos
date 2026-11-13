@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
-import { ICONS, type IconName } from '../assets/icons/icons';
-import { parsePixels } from '../ui/pixels';
+import { ICONS, ICONS_COLOR, type IconName } from '../assets/icons/icons';
+import { invert, parsePixels } from '../ui/pixels';
+import { useSettings } from './settings';
 import {
   ACTIVITY,
   step,
@@ -27,28 +28,23 @@ const SPRITE_ICONS: IconName[] = [
 ];
 const MOVE_TO_WAKE = 6; // px: ignore jitter from a resting mouse
 
-/** Pre-draw an icon white-on-black (inverted, like a selected icon) at 2×. */
-function renderSprite(name: IconName): HTMLCanvasElement {
-  const art = parsePixels(ICONS[name]);
+/** Pre-draw an icon at 2×: inverted white-on-black in 1-bit, its own colours in colour. */
+function renderSprite(name: IconName, color: boolean): HTMLCanvasElement {
+  const art = parsePixels(color ? ICONS_COLOR[name] : ICONS[name]);
   const canvas = document.createElement('canvas');
   canvas.width = art.width * SCALE;
   canvas.height = art.height * SCALE;
   const ctx = canvas.getContext('2d');
   if (ctx) {
     for (const run of art.runs) {
-      ctx.fillStyle =
-        run.color === 'black'
-          ? '#fff'
-          : run.color === 'white'
-            ? '#000'
-            : '#888';
+      ctx.fillStyle = color ? run.color : invert(run.color);
       ctx.fillRect(run.x * SCALE, run.y * SCALE, run.width * SCALE, SCALE);
     }
   }
   return canvas;
 }
 
-/** Drifting Mike OS icons on black. Any key, click, touch or real mouse movement ends it. */
+/** Drifting MDOS icons (on black, or deep blue in colour). Any key, click, touch or real mouse movement ends it. */
 export function Screensaver() {
   const active = useScreensaver((s) => s.active);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -90,7 +86,9 @@ export function Screensaver() {
 
     const w = (canvas.width = window.innerWidth);
     const h = (canvas.height = window.innerHeight);
-    const images = SPRITE_ICONS.map(renderSprite);
+    const color = useSettings.getState().display === 'color';
+    const images = SPRITE_ICONS.map((name) => renderSprite(name, color));
+    const background = color ? '#222244' : '#000';
     let sprites: Sprite[] = images.map(() => {
       const speed = 25 + Math.random() * 35;
       const angle = Math.random() * Math.PI * 2;
@@ -103,7 +101,7 @@ export function Screensaver() {
     });
 
     const draw = () => {
-      ctx.fillStyle = '#000';
+      ctx.fillStyle = background;
       ctx.fillRect(0, 0, w, h);
       ctx.imageSmoothingEnabled = false;
       sprites.forEach((sprite, i) => {

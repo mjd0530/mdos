@@ -258,8 +258,63 @@ const toKebab = (name: string) =>
   name.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
 
 /** Expose every drawing as `--art-<kebab-name>` on :root. Call once at boot. */
-export function installChromeArt(root: HTMLElement = document.documentElement) {
+// ---------- Colour variants (D-031) ----------
+
+/** A System 7 colour box: black frame, light top-left bevel, dark bottom-right, grey face. */
+function bevelBox(size: number): string[] {
+  const inner = size - 2;
+  return Array.from({ length: size }, (_, y) => {
+    if (y === 0 || y === size - 1) return '#'.repeat(size);
+    if (y === 1) return `#${'o'.repeat(inner - 1)}+#`;
+    if (y === size - 2) return `#o${'+'.repeat(inner - 1)}#`;
+    return `#o${'g'.repeat(inner - 2)}+#`;
+  });
+}
+
+/** Paint black pixels onto a drawing. */
+function draw(rows: string[], pixels: [number, number][]): string[] {
+  const grid = rows.map((row) => [...row]);
+  for (const [x, y] of pixels) {
+    const line = grid[y];
+    if (line && x < line.length) line[x] = '#';
+  }
+  return grid.map((line) => line.join(''));
+}
+
+const range = (from: number, to: number) =>
+  Array.from({ length: to - from + 1 }, (_, i) => from + i);
+
+const CHROME_ART_COLOR: Partial<Record<ChromeArtName, readonly string[]>> = {
+  closeBox: bevelBox(11),
+  // A small box in the top-left corner, like the 1-bit zoom box.
+  zoomBox: draw(bevelBox(11), [
+    ...range(1, 6).map((y): [number, number] => [6, y]),
+    ...range(1, 6).map((x): [number, number] => [x, 6]),
+  ]),
+  // Two lines across: the window-shade box.
+  collapseBox: draw(bevelBox(11), [
+    ...range(1, 9).map((x): [number, number] => [x, 4]),
+    ...range(1, 9).map((x): [number, number] => [x, 6]),
+  ]),
+  growBox: CHROME_ART.growBox.map((row) => row.replace(/o/g, 'g')),
+  scrollTrack: ['gs', 'sg'],
+  mark: CHROME_ART.mark.map((row) => row.replace(/o/g, 'l')),
+};
+
+/** Expose every drawing as `--art-<kebab-name>` on :root, in the colour or 1-bit set.
+ *  Call at boot and whenever the display mode changes. */
+export function installChromeArt(
+  display: 'color' | 'bw' = 'bw',
+  root: HTMLElement = document.documentElement,
+) {
   for (const [name, rows] of Object.entries(CHROME_ART)) {
-    root.style.setProperty(`--art-${toKebab(name)}`, patternDataUri(rows));
+    const art =
+      display === 'color'
+        ? (CHROME_ART_COLOR[name as ChromeArtName] ?? rows)
+        : rows;
+    root.style.setProperty(`--art-${toKebab(name)}`, patternDataUri(art));
   }
 }
+
+/** Every colour variant, for tests and the specimen. */
+export const CHROME_ART_COLOR_ENTRIES = Object.entries(CHROME_ART_COLOR);

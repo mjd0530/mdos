@@ -17,6 +17,18 @@
   --color-desktop: var(--color-white);
   --color-focus: var(--color-black);
 
+  /* Chrome and selection (D-031). The 1-bit values below reproduce the original look;
+     [data-display='color'] swaps in System 7 colour. Highlight colours are set on :root
+     by src/os/display.ts from the visitor's choice. */
+  --color-chrome-face: var(--color-white);
+  --color-title-stripe: var(--color-black);
+  --color-title-stripe-light: transparent;
+  --color-bevel-light: transparent;
+  --color-bevel-dark: transparent;
+  --color-scroll-thumb: var(--color-white);
+  --color-highlight: var(--color-black);
+  --color-highlight-text: var(--color-white);
+
   /* 50% checkerboard: the classic grey desktop, drawn as 1px black dots. */
   --pattern-desktop: conic-gradient(
     var(--color-black) 25%,
@@ -43,4 +55,18 @@
   /* Chrome. */
   --border-window: 1px solid var(--color-black);
   --shadow-window: 1px 1px 0 var(--color-black);
+}
+
+/* ---------- Colour display: System 7 on the Color Classic (D-031) ---------- */
+:root[data-display='color'] {
+  --color-chrome-face: #dddddd;
+  --color-title-stripe: #999999;
+  --color-title-stripe-light: #ffffff;
+  --color-bevel-light: #ffffff;
+  --color-bevel-dark: #888888;
+  --color-scroll-thumb: var(--color-highlight);
+  --color-focus: #3366cc;
+  /* Defaults until display.ts sets the visitor's choice. */
+  --color-highlight: #ccccff;
+  --color-highlight-text: #000000;
 }

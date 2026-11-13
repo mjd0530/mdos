@@ -1,6 +1,6 @@
 import type { Plugin } from 'vite';
 
-// A Content Security Policy for the built app (D-028). Mike OS loads only its own files
+// A Content Security Policy for the built app (D-028). MDOS loads only its own files
 // and talks only to Open-Meteo, so everything else is refused. Build only: Vite's dev
 // server needs inline scripts for hot reload.
 const POLICY = [

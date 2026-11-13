@@ -3,13 +3,6 @@
   user-select: none;
 }
 
-/* The desktop's icon cells fit a 32px icon, like the pixel icons beside it. */
-.free .thumb,
-.list .thumb {
-  width: 32px;
-  height: 32px;
-}
-
 .item {
   display: flex;
   align-items: center;
@@ -34,8 +27,8 @@
 }
 
 .item[aria-selected='true'] .label {
-  background: var(--color-black);
-  color: var(--color-white);
+  background: var(--color-highlight);
+  color: var(--color-highlight-text);
 }
 
 /* ---------- Free (desktop) and grid (Files) ---------- */
@@ -103,11 +96,11 @@
 }
 
 .list .item[aria-selected='true'] {
-  background: var(--color-black);
+  background: var(--color-highlight);
 }
 
 .list .item[aria-selected='true'] .kind {
-  color: var(--color-white);
+  color: var(--color-highlight-text);
 }
 
 @media (pointer: coarse) {
@@ -130,6 +123,8 @@
   outline-offset: 1px;
 }
 
+/* The desktop's icon cells fit a 32px icon, like the pixel icons beside it. */
+.free .thumb,
 .list .thumb {
   width: 32px;
   height: 32px;

@@ -38,8 +38,8 @@
 }
 
 .titleOpen {
-  background: var(--color-black);
-  color: var(--color-white);
+  background: var(--color-highlight);
+  color: var(--color-highlight-text);
 }
 
 .title:focus-visible {
@@ -48,7 +48,7 @@
 }
 
 .titleOpen:focus-visible {
-  outline-color: var(--color-white);
+  outline-color: var(--color-highlight-text);
 }
 
 .mark {
@@ -59,7 +59,7 @@
   image-rendering: pixelated;
 }
 
-.titleOpen .mark {
+:global([data-display='bw']) .titleOpen .mark {
   filter: invert(1);
 }
 
@@ -89,7 +89,7 @@
 }
 
 /* The shortcut glyph inverts with its highlighted row. */
-[data-highlighted] .command {
+:global([data-display='bw']) [data-highlighted] .command {
   filter: invert(1);
 }
 

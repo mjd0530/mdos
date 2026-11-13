@@ -1,17 +1,27 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_SETTINGS, sanitizeSettings, useSettings } from './settings';
+import { contrastRatio } from '../ui/pixels';
+import {
+  DEFAULT_SETTINGS,
+  HIGHLIGHTS,
+  sanitizeSettings,
+  useSettings,
+} from './settings';
 
 describe('sanitizeSettings', () => {
   it('keeps valid values', () => {
     const place = { name: 'Paris', latitude: 48.85, longitude: 2.35 };
     expect(
       sanitizeSettings({
+        display: 'bw',
+        highlight: 'gold',
         pattern: 'bricks',
         clock24h: true,
         weatherUnit: 'celsius',
         weatherPlace: place,
       }),
     ).toEqual({
+      display: 'bw',
+      highlight: 'gold',
       pattern: 'bricks',
       clock24h: true,
       weatherUnit: 'celsius',
@@ -27,6 +37,8 @@ describe('sanitizeSettings', () => {
   it('replaces unknown or malformed values with defaults', () => {
     expect(
       sanitizeSettings({
+        display: 'sepia',
+        highlight: 'neon',
         pattern: 'plaid',
         clock24h: 'yes',
         weatherUnit: 'kelvin',
@@ -48,4 +60,13 @@ describe('useSettings', () => {
     useSettings.getState().restoreDefaults();
     expect(useSettings.getState().pattern).toBe(DEFAULT_SETTINGS.pattern);
   });
+});
+
+describe('highlight colours', () => {
+  it.each(Object.entries(HIGHLIGHTS))(
+    '%s keeps black text readable (4.5:1 or more)',
+    (_key, { color }) => {
+      expect(contrastRatio(color, '#000000')).toBeGreaterThanOrEqual(4.5);
+    },
+  );
 });

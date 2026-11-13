@@ -1,4 +1,7 @@
 import type { CSSProperties } from 'react';
+import { useApplyDisplay } from '../os/display';
+import { useSettings } from '../os/settings';
+import { Radio } from '../ui/Radio';
 import { Artwork } from './Artwork';
 import { Controls } from './Controls';
 import styles from './Specimen.module.css';
@@ -44,10 +47,30 @@ function vars(option: Option): CSSProperties {
 }
 
 export function Specimen() {
+  useApplyDisplay();
+  const display = useSettings((s) => s.display);
+  const set = useSettings((s) => s.set);
   return (
     <main className={styles.page}>
       <header className={styles.intro}>
-        <h1>Mike OS design specimen</h1>
+        <h1>MDOS design specimen</h1>
+        <fieldset className={styles.displaySwitch}>
+          <legend>Monitors</legend>
+          <Radio
+            name="specimen-display"
+            checked={display === 'color'}
+            onChange={() => set('display', 'color')}
+          >
+            Colors
+          </Radio>
+          <Radio
+            name="specimen-display"
+            checked={display === 'bw'}
+            onChange={() => set('display', 'bw')}
+          >
+            Black &amp; White
+          </Radio>
+        </fieldset>
         <p>
           The System 7 building blocks, shown in context. Fonts first; icons,
           patterns and controls are added as step 2 continues. View at 100%
@@ -103,7 +126,7 @@ export function Specimen() {
 
               <div className={styles.dialog} aria-hidden="true">
                 <p className={styles.dialogText}>
-                  Restart Mike OS? Your open windows will close.
+                  Restart MDOS? Your open windows will close.
                 </p>
                 <div className={styles.buttons}>
                   <span className={styles.button}>Cancel</span>

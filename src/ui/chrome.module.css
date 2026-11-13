@@ -22,10 +22,11 @@
   padding: 0 8px;
   border-bottom: 1px solid var(--color-black);
   /* Six 1px stripes, inset 2px top and sides. */
+  background-color: var(--color-chrome-face);
   background-image: repeating-linear-gradient(
     to bottom,
-    var(--color-black) 0 1px,
-    transparent 1px 2px
+    var(--color-title-stripe) 0 1px,
+    var(--color-title-stripe-light) 1px 2px
   );
   background-size: calc(100% - 4px) 11px;
   background-position: 2px 4px;
@@ -39,7 +40,7 @@
   margin: 0 auto;
   padding: 0 8px;
   overflow: hidden;
-  background: var(--color-white);
+  background: var(--color-chrome-face);
   font-family: var(--font-system);
   font-size: var(--font-size-title);
   font-weight: 400;
@@ -56,7 +57,7 @@
   margin: 0;
   padding: 0;
   border: 0;
-  background: var(--color-white) center / 11px 11px no-repeat;
+  background: var(--color-chrome-face) center / 11px 11px no-repeat;
   image-rendering: pixelated;
   cursor: default;
 }
@@ -175,8 +176,8 @@
 /* Highlight = inversion, the System 7 way. */
 .menuItem[data-highlighted],
 .menuItemActive {
-  background: var(--color-black);
-  color: var(--color-white);
+  background: var(--color-highlight);
+  color: var(--color-highlight-text);
 }
 
 .menuItem[aria-disabled='true'] {

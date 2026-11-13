@@ -1,6 +1,6 @@
 # Architecture
 
-_Source of truth for how Mike OS is built. Decisions referenced as D-xxx live in `docs/decisions.md`._
+_Source of truth for how MDOS is built. Decisions referenced as D-xxx live in `docs/decisions.md`._
 
 ## 1. Shape of the system
 

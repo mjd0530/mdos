@@ -4,9 +4,14 @@ import './styles/fonts.css';
 import './styles/tokens.css';
 import './styles/base.css';
 import { OS } from './os/OS';
-import { installChromeArt } from './ui/chromeArt';
+import { applyDisplay } from './os/display';
+import { useSettings } from './os/settings';
 
-installChromeArt();
+// Saved settings load synchronously, so the first paint is already in the right look.
+{
+  const { display, highlight } = useSettings.getState();
+  applyDisplay(display, highlight);
+}
 
 // Test hook: Playwright loads ?e2e to open fixture apps directly. Harmless otherwise.
 if (new URLSearchParams(window.location.search).has('e2e')) {

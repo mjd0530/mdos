@@ -1,7 +1,7 @@
 import { useSyncExternalStore } from 'react';
 
 /**
- * How Mike OS adapts (D-024):
+ * How MDOS adapts (D-024):
  * - phone: under 768px wide. A launcher: grid of icons, one full-screen window at a time.
  * - tablet: 768–1023px, or any touch-first screen. The desktop, with windows opening zoomed.
  * - desktop: everything else.

@@ -223,3 +223,22 @@ _2026-11-12 · Accepted (Mike)_
 - `fs.yaml` gains an `image:` entry for a single picture (PNG or JPG, `name` and `alt` required), resized like Sketchbook drawings and opened in Viewer. Unused for now; desktop icons show such pictures as 32px thumbnails.
 - **First visit:** desktop items marked `opensOnFirstVisit: true` (About Mike) open by themselves the first time a browser loads MDOS, so a visitor meets Mike before exploring. Return visits start on a clean desktop. Remembered with `mikeos:visited`; Reset Desktop forgets it. Phones skip it: their launcher is the front door and a full-screen window would hide it. Blocked storage counts as a return visit, so nothing reopens on every load.
 - E2E tests start as returning visitors (Playwright `storageState`); `first-visit.spec.ts` covers the first visit.
+
+## D-030 The name is MDOS
+_2026-11-12 · Accepted (Mike)_
+
+The product is **MDOS** (one word), not "Mike OS": tab titles, the menu ("About MDOS…"), alerts, plain pages, content and tests. Earlier entries in this log keep the old name where they were written. **Storage keys stay `mikeos:*`** on purpose: renaming them would silently wipe every returning visitor's settings and icon positions. The `?e2e` hook, plugin names and the image cache folder keep the old spelling too; none are visible.
+
+## D-032 Colour display: System 7 on the Color Classic
+_2026-11-12 · Accepted (Mike); supersedes D-004's "colour sparingly, never for chrome"_
+
+- **Two looks, colour by default.** Control Panel → **Monitors** switches between **Colors** and **Black & White** (the original 1-bit look, unchanged). `data-display` on `<html>` drives `tokens.css`; set before first paint from saved settings.
+- **Palette** (`src/ui/pixels.ts`): one character per colour, shared by icons, chrome art and patterns: platinum greys, lavender, blues, yellow, cream, orange, red, green, tan, pink.
+- **Icons:** colour versions of all 16 (`ICONS_COLOR`), same grid and black outlines. Selected icons darken in colour and invert in 1-bit.
+- **Chrome:** grey pinstriped title bars and bevelled boxes, grey scroll bars with a highlight-coloured bevelled thumb, a lavender menu-bar mark. Buttons keep System 7's black frames.
+- **Highlight Color** (six light choices, default Lavender) for menus, selected icons and rows, pressed tools and text selection. Every choice keeps black text at 4.5:1 or better (unit-tested).
+- **Desktop patterns:** each 1-bit pattern has a colour pair; four colour-first patterns (Tweed, Stars, Gingham, Sand) have their own drawings plus 1-bit stand-ins. Default colour desktop: a soft blue-violet.
+- **Screensaver** draws colour icons on deep blue in colour mode.
+- Still original art only (D-003): no Apple logo or Apple icons.
+- Verified: axe clean in both modes with menus, alerts and windows open; Lighthouse unchanged (99–100 / 100 / 100 / 100).
+

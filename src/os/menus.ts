@@ -32,13 +32,13 @@ export function systemMenus(
   return [
     {
       id: 'mark',
-      label: 'Mike OS',
+      label: 'MDOS',
       icon: 'mark',
       items: [
         {
           kind: 'command',
           id: 'about',
-          label: 'About Mike OS…',
+          label: 'About MDOS…',
           onSelect: actions.about,
         },
         { kind: 'separator', id: 'sep1' },
@@ -180,7 +180,7 @@ export function systemMenus(
         {
           kind: 'command',
           id: 'about-help',
-          label: 'About Mike OS…',
+          label: 'About MDOS…',
           onSelect: actions.about,
         },
       ],

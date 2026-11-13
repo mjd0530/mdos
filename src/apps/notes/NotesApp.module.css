@@ -3,11 +3,6 @@
   min-height: 100%;
 }
 
-/* Square and tall pictures (a portrait) would fill the window at full width. */
-.body :global(.doc-image img[data-upright]) {
-  max-width: min(100%, 240px);
-}
-
 .toolbar {
   position: sticky;
   top: 0;
@@ -43,8 +38,8 @@
 }
 
 .contents[open] .tool {
-  background: var(--color-black);
-  color: var(--color-white);
+  background: var(--color-highlight);
+  color: var(--color-highlight-text);
 }
 
 .tool:focus-visible {
@@ -79,8 +74,8 @@
 
 .contentsMenu a:hover,
 .contentsMenu a:focus-visible {
-  background: var(--color-black);
-  color: var(--color-white);
+  background: var(--color-highlight);
+  color: var(--color-highlight-text);
   outline: none;
 }
 
@@ -178,6 +173,11 @@
 
 .body :global(.doc-image img) {
   margin: 0;
+}
+
+/* Square and tall pictures (a portrait) would fill the window at full width. */
+.body :global(.doc-image img[data-upright]) {
+  max-width: min(100%, 240px);
 }
 
 .body :global(.doc-image:focus-visible) {

@@ -1,6 +1,7 @@
 import { createJSONStorage, type StateStorage } from 'zustand/middleware';
 
-/** Every key Mike OS saves starts with this, so Reset can find them all. */
+/** Every key MDOS saves starts with this, so Reset can find them all. It keeps the old
+ *  "mikeos:" spelling on purpose: renaming it would wipe returning visitors' settings (D-030). */
 export const STORAGE_PREFIX = 'mikeos:';
 
 // localStorage can be missing or throw (private windows, blocked site data). Saving is a
@@ -48,7 +49,7 @@ export function takeFirstVisit(): boolean {
   }
 }
 
-/** Forget everything Mike OS has saved in this browser. */
+/** Forget everything MDOS has saved in this browser. */
 export function clearSaved() {
   try {
     const keys: string[] = [];

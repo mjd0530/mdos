@@ -16,7 +16,7 @@ test.beforeEach(async ({ page }) => {
 test('the Hello test fixture is not shown to visitors', async ({ page }) => {
   await page
     .getByRole('menubar')
-    .getByRole('menuitem', { name: 'Mike OS', exact: true })
+    .getByRole('menuitem', { name: 'MDOS', exact: true })
     .click();
   await expect(page.getByRole('menuitem', { name: 'Hello' })).toHaveCount(0);
 });

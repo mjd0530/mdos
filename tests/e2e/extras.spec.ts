@@ -90,7 +90,7 @@ test.describe('cursor clock', () => {
     await expect(clock).toHaveCSS('pointer-events', 'none');
     await expect(clock).toHaveAttribute('aria-hidden', 'true');
 
-    await chooseMenu(page, 'Mike OS', 'Control Panel');
+    await chooseMenu(page, 'MDOS', 'Control Panel');
     await page
       .getByRole('dialog', { name: 'Control Panel' })
       .getByText('Clock follows the pointer')
@@ -100,7 +100,7 @@ test.describe('cursor clock', () => {
 });
 
 test.describe('sounds', () => {
-  // Count the notes Mike OS asks the browser to play.
+  // Count the notes MDOS asks the browser to play.
   const countNotes = (page: Page) =>
     page.addInitScript(() => {
       const w = window as unknown as { notes: number };
@@ -118,7 +118,7 @@ test.describe('sounds', () => {
     await countNotes(page);
     await page.goto('./');
     expect(await notes(page)).toBe(0); // nothing plays on load
-    await chooseMenu(page, 'Mike OS', 'Control Panel');
+    await chooseMenu(page, 'MDOS', 'Control Panel');
     const panel = page.getByRole('dialog', { name: 'Control Panel' });
     await expect(panel).toBeVisible();
     const afterOpen = await notes(page);
@@ -130,7 +130,7 @@ test.describe('sounds', () => {
   test('can be turned off in Control Panel, and stay off', async ({ page }) => {
     await countNotes(page);
     await page.goto('./');
-    await chooseMenu(page, 'Mike OS', 'Control Panel');
+    await chooseMenu(page, 'MDOS', 'Control Panel');
     const panel = page.getByRole('dialog', { name: 'Control Panel' });
     await expect(panel.getByRole('slider', { name: 'Volume' })).toBeEnabled();
     await panel.getByText('System sounds').click();
@@ -140,7 +140,7 @@ test.describe('sounds', () => {
     expect(await notes(page)).toBe(afterOff);
 
     await page.reload();
-    await chooseMenu(page, 'Mike OS', 'Control Panel');
+    await chooseMenu(page, 'MDOS', 'Control Panel');
     await expect(
       page.getByRole('dialog', { name: 'Control Panel' }),
     ).toBeVisible();

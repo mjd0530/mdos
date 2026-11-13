@@ -11,7 +11,23 @@ export interface SavedPlace {
   longitude: number;
 }
 
+export type Display = 'color' | 'bw';
+
+/** Light System 7-style highlight colours: black text on each passes 4.5:1 (tested). */
+export const HIGHLIGHTS = {
+  lavender: { name: 'Lavender', color: '#ccccff' },
+  blue: { name: 'Blue', color: '#aad4ff' },
+  gold: { name: 'Gold', color: '#ffdd77' },
+  green: { name: 'Green', color: '#bbeeaa' },
+  pink: { name: 'Pink', color: '#ffbbdd' },
+  grey: { name: 'Grey', color: '#cccccc' },
+} as const;
+export type HighlightName = keyof typeof HIGHLIGHTS;
+
 export interface Settings {
+  /** Monitors: the colour System 7 look (default) or the original 1-bit look (D-031). */
+  display: Display;
+  highlight: HighlightName;
   pattern: PatternName;
   clock24h: boolean;
   weatherUnit: 'fahrenheit' | 'celsius';
@@ -30,6 +46,8 @@ export const SCREENSAVER_MINUTES = [1, 2, 5, 10, 30] as const;
 export type ScreensaverMinutes = (typeof SCREENSAVER_MINUTES)[number];
 
 export const DEFAULT_SETTINGS: Settings = {
+  display: 'color',
+  highlight: 'lavender',
   pattern: 'grey',
   clock24h: false,
   weatherUnit: 'fahrenheit',
@@ -77,6 +95,14 @@ export function sanitizeSettings(saved: unknown): Settings {
     unknown
   >;
   return {
+    display:
+      value.display === 'bw' || value.display === 'color'
+        ? value.display
+        : DEFAULT_SETTINGS.display,
+    highlight:
+      typeof value.highlight === 'string' && value.highlight in HIGHLIGHTS
+        ? (value.highlight as HighlightName)
+        : DEFAULT_SETTINGS.highlight,
     pattern:
       typeof value.pattern === 'string' && value.pattern in PATTERNS
         ? (value.pattern as PatternName)

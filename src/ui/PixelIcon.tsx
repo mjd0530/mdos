@@ -1,13 +1,14 @@
 import { useMemo } from 'react';
-import { invert, parsePixels, PIXEL_FILL } from './pixels';
 import type { IconName } from '../assets/icons/icons';
-import { ICONS } from '../assets/icons/icons';
+import { ICONS, ICONS_COLOR } from '../assets/icons/icons';
+import { useDisplay } from '../os/display';
+import { darken, invert, parsePixels } from './pixels';
 
 interface PixelIconProps {
   name: IconName;
   /** Whole-number scale so pixels stay square and crisp. 1 = 32px. */
   scale?: 1 | 2 | 3;
-  /** Selected icons are drawn inverted, as in System 7. */
+  /** Selected icons are inverted in 1-bit and darkened in colour, as in System 7. */
   selected?: boolean;
   className?: string;
 }
@@ -19,7 +20,12 @@ export function PixelIcon({
   selected = false,
   className,
 }: PixelIconProps) {
-  const art = useMemo(() => parsePixels(ICONS[name]), [name]);
+  const color = useDisplay() === 'color';
+  const art = useMemo(
+    () => parsePixels(color ? ICONS_COLOR[name] : ICONS[name]),
+    [name, color],
+  );
+  const select = color ? darken : invert;
 
   return (
     <svg
@@ -38,7 +44,7 @@ export function PixelIcon({
           y={run.y}
           width={run.width}
           height={1}
-          fill={PIXEL_FILL[selected ? invert(run.color) : run.color]}
+          fill={selected ? select(run.color) : run.color}
         />
       ))}
     </svg>

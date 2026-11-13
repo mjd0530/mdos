@@ -29,7 +29,7 @@
 
 .bar {
   display: flex;
-  background: var(--color-white);
+  background: var(--color-chrome-face);
   user-select: none;
   touch-action: none;
 }
@@ -55,6 +55,9 @@
 
 .enabled .arrow {
   opacity: 1;
+  box-shadow:
+    inset 1px 1px 0 var(--color-bevel-light),
+    inset -1px -1px 0 var(--color-bevel-dark);
 }
 
 .enabled .arrow:active {
@@ -101,7 +104,10 @@
 /* System 7's thumb is a fixed square box, not a proportional bar. */
 .thumb {
   position: absolute;
-  background: var(--color-white);
+  background: var(--color-scroll-thumb);
+  box-shadow:
+    inset 1px 1px 0 var(--color-bevel-light),
+    inset -1px -1px 0 var(--color-bevel-dark);
   box-sizing: border-box;
 }
 
@@ -125,5 +131,5 @@
   position: relative;
   border-top: 1px solid var(--color-black);
   border-left: 1px solid var(--color-black);
-  background: var(--color-white);
+  background: var(--color-chrome-face);
 }

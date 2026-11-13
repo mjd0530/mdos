@@ -10,8 +10,8 @@
 }
 
 .clock:active {
-  background: var(--color-black);
-  color: var(--color-white);
+  background: var(--color-highlight);
+  color: var(--color-highlight-text);
 }
 
 .clock:focus-visible {

@@ -1,9 +1,9 @@
 import type { CSSProperties } from 'react';
 import { useState } from 'react';
 import { ICONS, type IconName } from '../assets/icons/icons';
-import { PATTERNS, type PatternName } from '../assets/patterns';
+import { PATTERNS, patternImage, type PatternName } from '../assets/patterns';
+import { useDisplay } from '../os/display';
 import { PixelIcon } from '../ui/PixelIcon';
-import { patternDataUri } from '../ui/pixels';
 import styles from './Artwork.module.css';
 
 const ICON_LABELS: Record<IconName, string> = {
@@ -14,7 +14,7 @@ const ICON_LABELS: Record<IconName, string> = {
   notes: 'Notes',
   files: 'Files',
   weather: 'Weather',
-  computer: 'Mike OS',
+  computer: 'MDOS',
   controlPanel: 'Control Panel',
   link: 'Link',
   weatherClear: 'Clear',
@@ -28,12 +28,16 @@ const ICON_LABELS: Record<IconName, string> = {
 const ICON_NAMES = Object.keys(ICONS) as IconName[];
 const PATTERN_NAMES = Object.keys(PATTERNS) as PatternName[];
 
-function patternStyle(name: PatternName): CSSProperties {
-  return { backgroundImage: patternDataUri(PATTERNS[name].rows) };
+function patternStyle(
+  name: PatternName,
+  display: 'color' | 'bw',
+): CSSProperties {
+  return { backgroundImage: patternImage(name, display) };
 }
 
 export function Artwork() {
   const [pattern, setPattern] = useState<PatternName>('grey');
+  const display = useDisplay();
 
   return (
     <>
@@ -82,7 +86,7 @@ export function Artwork() {
               />
               <span
                 className={styles.swatch}
-                style={patternStyle(name)}
+                style={patternStyle(name, display)}
                 aria-hidden="true"
               />
               {PATTERNS[name].name}
@@ -92,7 +96,7 @@ export function Artwork() {
 
         <div
           className={styles.desktop}
-          style={patternStyle(pattern)}
+          style={patternStyle(pattern, display)}
           aria-label={`Preview of the ${PATTERNS[pattern].name} pattern`}
           role="img"
         >

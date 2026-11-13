@@ -2,7 +2,7 @@
 title: Read Me
 ---
 
-Welcome to Mike OS: Mike DeMar's portfolio, built as a little computer you can explore.
+Welcome to MDOS: Mike DeMar's portfolio, built as a little computer you can explore.
 
 ## Getting around
 
