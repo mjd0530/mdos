@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useDisplay } from '../../os/display';
 import { getAnalyser } from './analyser';
 import { usePlayer } from './playerStore';
 
@@ -9,12 +10,13 @@ const HEIGHT = 8; // blocks per bar
 export function Spectrum({ className }: { className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const playing = usePlayer((s) => s.playing);
+  // Bar colour comes from the LCD token, which changes with Colors / Black & White.
+  const display = useDisplay();
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext('2d');
     if (!canvas || !ctx) return;
-    const color = getComputedStyle(canvas).color;
     const levels = new Array<number>(BARS).fill(0);
     const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const node = playing ? getAnalyser() : undefined;
@@ -38,7 +40,9 @@ export function Spectrum({ className }: { className?: string }) {
         levels.fill(0);
       }
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = color;
+      // Read each frame: the display's tokens are applied by an effect that runs after
+      // this one, so a colour read up front would be the old one.
+      ctx.fillStyle = getComputedStyle(canvas).color;
       for (let i = 0; i < BARS; i++) {
         const blocks = Math.round((levels[i] ?? 0) * HEIGHT);
         for (let b = 0; b < blocks; b++) {
@@ -47,9 +51,9 @@ export function Spectrum({ className }: { className?: string }) {
       }
       if (playing && !still) frame = requestAnimationFrame(draw);
     };
-    draw();
+    frame = requestAnimationFrame(draw);
     return () => cancelAnimationFrame(frame);
-  }, [playing]);
+  }, [playing, display]);
 
   return (
     <canvas

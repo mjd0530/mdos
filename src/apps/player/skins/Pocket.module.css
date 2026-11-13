@@ -22,7 +22,7 @@
 }
 
 /* Close button and grip slot along the top edge (D-035). */
-.top {
+.topEdge {
   position: relative;
   display: flex;
   justify-content: center;

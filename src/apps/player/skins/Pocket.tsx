@@ -240,7 +240,7 @@ export function Pocket({
     <div className={styles.pocket} onKeyDown={onKeyDown}>
       {/* The device itself is the grip (D-035): drag its body to move it. */}
       <div className={styles.shell} {...frame?.grip}>
-        <div className={styles.top}>
+        <div className={styles.topEdge}>
           {frame && (
             <button
               type="button"
