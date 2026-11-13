@@ -1,34 +1,9 @@
 import { useEffect, useRef } from 'react';
-import { currentMode } from '../../os/device';
-import { audioElement, usePlayer } from './playerStore';
+import { getAnalyser } from './analyser';
+import { usePlayer } from './playerStore';
 
 const BARS = 14;
 const HEIGHT = 8; // blocks per bar
-
-let analyser: AnalyserNode | undefined;
-
-/**
- * A real analyser on desktops. Phones and tablets get a decorative stand-in instead:
- * routing the audio through Web Audio stops background playback on iOS (D-034).
- */
-function getAnalyser(): AnalyserNode | undefined {
-  if (analyser) return analyser;
-  if (currentMode() !== 'desktop' || typeof AudioContext === 'undefined') {
-    return undefined;
-  }
-  try {
-    const context = new AudioContext();
-    const source = context.createMediaElementSource(audioElement());
-    analyser = context.createAnalyser();
-    analyser.fftSize = 64;
-    analyser.smoothingTimeConstant = 0.7;
-    source.connect(analyser);
-    analyser.connect(context.destination);
-    return analyser;
-  } catch {
-    return undefined;
-  }
-}
 
 /** Decorative spectrum bars in the Deck's display. Hidden from screen readers. */
 export function Spectrum({ className }: { className?: string }) {

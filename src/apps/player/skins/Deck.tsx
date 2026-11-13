@@ -20,8 +20,10 @@ const REPEAT_LABEL = {
 export function Deck({ albums, active }: { albums: Album[]; active: boolean }) {
   const s = usePlayer();
   const track = currentTrack(s);
-  // Before anything plays, show the first album so the playlist isn't empty.
-  const album = s.album ?? albums[0];
+  // The playlist shows the album being browsed: picking one never interrupts the song
+  // that's playing. Before anything plays it shows the first album.
+  const [browsing, setBrowsing] = useState<string | null>(null);
+  const album = albums.find((a) => a.id === browsing) ?? s.album ?? albums[0];
   const [panel, setPanel] = useState<Panel>('playlist');
   const playingIndex = s.order[s.pos];
   const duration = s.duration || track?.duration || 0;
@@ -187,7 +189,7 @@ export function Deck({ albums, active }: { albums: Album[]; active: boolean }) {
                       <button
                         type="button"
                         aria-current={a.id === album?.id || undefined}
-                        onClick={() => s.playAlbum(a, 0, false)}
+                        onClick={() => setBrowsing(a.id)}
                       >
                         <img src={a.coverThumb} alt="" width={32} height={32} />
                         <span>{a.title}</span>

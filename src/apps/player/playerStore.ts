@@ -5,6 +5,7 @@ import { announce } from '../../os/announce';
 import { useNowPlaying } from '../../os/nowPlayingStore';
 import { onClearSaved, storage } from '../../os/persist';
 import { useWindows } from '../../os/windows/store';
+import { ensureAnalyser } from './analyser';
 import { updateMediaSession } from './mediaSession';
 import { makeOrder, nextPos, prevPos, type Repeat } from './queue';
 
@@ -57,8 +58,8 @@ export interface PlayerState extends PlayerPrefs {
   /** Set when a song couldn't be loaded. */
   error: string | null;
 
-  /** Load an album at a track; plays it when `play` is true (the default). */
-  playAlbum: (album: Album, trackIndex?: number, play?: boolean) => void;
+  /** Load an album at a track and play it. */
+  playAlbum: (album: Album, trackIndex?: number) => void;
   toggle: () => void;
   play: () => void;
   pause: () => void;
@@ -113,8 +114,19 @@ function element(): HTMLAudioElement {
   return el;
 }
 
-/** The player's audio element, for the spectrum display. */
-export const audioElement = () => element();
+/**
+ * Start playing. A rejected play() only means "paused" when the browser refused it
+ * (NotAllowedError); an AbortError just means a newer song or seek replaced this one,
+ * and the element's own play/pause events keep `playing` right.
+ */
+function start(el: HTMLAudioElement) {
+  ensureAnalyser(el);
+  el.play().catch((error: unknown) => {
+    if ((error as { name?: string } | null)?.name !== 'AbortError') {
+      usePlayer.setState({ playing: false });
+    }
+  });
+}
 
 function load(pos: number, play: boolean) {
   const state = usePlayer.getState();
@@ -128,7 +140,7 @@ function load(pos: number, play: boolean) {
     error: null,
   });
   el.src = track.src;
-  if (play) void el.play().catch(() => usePlayer.setState({ playing: false }));
+  if (play) start(el);
   announce(`${play ? 'Now playing' : 'Selected'}: ${track.title}`);
 }
 
@@ -143,7 +155,7 @@ function advance(auto: boolean) {
   }
   if (to === pos && audio) {
     audio.currentTime = 0;
-    void audio.play().catch(() => undefined);
+    start(audio);
     return;
   }
   load(to, true);
@@ -161,10 +173,10 @@ export const usePlayer = create<PlayerState>()(
       duration: 0,
       error: null,
 
-      playAlbum: (album, trackIndex = 0, play = true) => {
+      playAlbum: (album, trackIndex = 0) => {
         const { shuffle, album: current, order } = get();
         if (current?.id === album.id && order[get().pos] === trackIndex) {
-          if (play && !get().playing) get().play();
+          if (!get().playing) get().play();
           return;
         }
         const nextOrder =
@@ -172,12 +184,12 @@ export const usePlayer = create<PlayerState>()(
             ? order
             : makeOrder(album.tracks.length, shuffle, trackIndex);
         set({ album, order: nextOrder });
-        load(nextOrder.indexOf(trackIndex), play);
+        load(nextOrder.indexOf(trackIndex), true);
       },
       toggle: () => (get().playing ? get().pause() : get().play()),
       play: () => {
         if (!get().album || !audio?.getAttribute('src')) return;
-        void audio.play().catch(() => set({ playing: false }));
+        start(audio);
       },
       pause: () => audio?.pause(),
       next: () => {
@@ -191,7 +203,8 @@ export const usePlayer = create<PlayerState>()(
         else load(to, get().playing);
       },
       seek: (seconds) => {
-        if (!audio) return;
+        // Nothing loaded (e.g. reopened after closing): nothing to seek.
+        if (!audio || !get().album || !audio.getAttribute('src')) return;
         const max = get().duration || audio.duration || 0;
         const time = Math.min(Math.max(0, seconds), max);
         audio.currentTime = time;
