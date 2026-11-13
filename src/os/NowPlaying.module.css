@@ -1,0 +1,28 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  padding: 0 6px;
+  border: 0;
+  background: none;
+  color: var(--color-black);
+  cursor: pointer;
+}
+
+.button:active {
+  background: var(--color-highlight);
+  color: var(--color-highlight-text);
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+}
+
+@media (pointer: coarse) {
+  .button {
+    min-width: 44px;
+    min-height: 32px;
+    justify-content: center;
+  }
+}

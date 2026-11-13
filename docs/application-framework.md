@@ -35,6 +35,7 @@ How apps plug into MDOS. Decisions: D-017 (windows), D-018 (apps).
 ## Rules
 
 - **Content only.** Never draw title bars, close boxes or scroll bars in an app; `Window` and `ScrollArea` do that.
+- **Free-standing apps** (D-035) are the one exception: with `window: { frame: 'none' }` the app draws its own shape. Call `useWindowFrame()` (`src/os/windows/frame.ts`) and spread `frame.grip` on the part people drag, give a focusable handle `onKeyDown={frame.onGripKeyDown}` and `aria-describedby={frame.hintId}`, and render a close button that calls `frame.close`. Mark parts that handle their own pointer drags `data-no-drag`. The music player is the example.
 - **Shared UI.** Build from `src/ui/` (Button, Checkbox, Radio, Alert, PixelIcon). Extend those before making a one-off.
 - **Instances.** `single` brings the existing window forward; `multiple` always opens another; `per-document` opens one window per `documentKey`.
 - **Crashes stay local.** Each app runs inside a crash boundary that shows “The application … has unexpectedly quit” with Close and Relaunch. Don't catch-and-hide errors to avoid it.

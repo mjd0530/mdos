@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { PATTERNS, type PatternName } from '../assets/patterns';
 import { storage } from './persist';
 
 /** Visitor preferences, changed in Control Panel and remembered between visits (D-025). */
@@ -28,7 +27,6 @@ export interface Settings {
   /** Monitors: the colour System 7 look (default) or the original 1-bit look (D-031). */
   display: Display;
   highlight: HighlightName;
-  pattern: PatternName;
   clock24h: boolean;
   weatherUnit: 'fahrenheit' | 'celsius';
   /** A city the visitor searched for. Never a "Use my location" position (D-026). */
@@ -48,7 +46,6 @@ export type ScreensaverMinutes = (typeof SCREENSAVER_MINUTES)[number];
 export const DEFAULT_SETTINGS: Settings = {
   display: 'color',
   highlight: 'lavender',
-  pattern: 'grey',
   clock24h: false,
   weatherUnit: 'fahrenheit',
   weatherPlace: null,
@@ -103,10 +100,6 @@ export function sanitizeSettings(saved: unknown): Settings {
       typeof value.highlight === 'string' && value.highlight in HIGHLIGHTS
         ? (value.highlight as HighlightName)
         : DEFAULT_SETTINGS.highlight,
-    pattern:
-      typeof value.pattern === 'string' && value.pattern in PATTERNS
-        ? (value.pattern as PatternName)
-        : DEFAULT_SETTINGS.pattern,
     clock24h:
       typeof value.clock24h === 'boolean'
         ? value.clock24h

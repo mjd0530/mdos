@@ -12,6 +12,7 @@ import {
   type ScreensaverMinutes,
 } from '../../os/settings';
 import { playSound } from '../../os/sounds';
+import { useDesktopPattern } from '../../os/visitPattern';
 import { Button } from '../../ui/Button';
 import { Checkbox } from '../../ui/Checkbox';
 import { Radio } from '../../ui/Radio';
@@ -23,6 +24,8 @@ const HIGHLIGHT_NAMES = Object.keys(HIGHLIGHTS) as HighlightName[];
 /** Visitor preferences. Every change applies immediately and is remembered (D-025). */
 export default function ControlPanelApp() {
   const settings = useSettings();
+  const pattern = useDesktopPattern((s) => s.pattern);
+  const choosePattern = useDesktopPattern((s) => s.choose);
 
   return (
     <div className={styles.panel}>
@@ -87,8 +90,8 @@ export default function ControlPanelApp() {
                 type="radio"
                 name="desktop-pattern"
                 value={name}
-                checked={settings.pattern === name}
-                onChange={() => settings.set('pattern', name)}
+                checked={pattern === name}
+                onChange={() => choosePattern(name)}
                 className={styles.patternInput}
               />
               <span
@@ -196,6 +199,7 @@ export default function ControlPanelApp() {
         <Button
           onClick={() => {
             settings.restoreDefaults();
+            useDesktopPattern.getState().reset();
             announce('Settings restored to their defaults');
           }}
         >

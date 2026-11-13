@@ -1,0 +1,356 @@
+.deck {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  height: 100%;
+  padding: 0 8px 8px;
+  box-sizing: border-box;
+  background: var(--color-chrome-face);
+  border: 2px solid var(--color-black);
+  box-shadow:
+    inset 1px 1px 0 var(--color-bevel-light),
+    2px 2px 0 var(--color-black);
+  font-family: var(--font-system);
+}
+
+/* The player's own title strip: the drag grip, look switch and close. */
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0 -8px;
+  padding: 2px 4px 2px 8px;
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--color-title-stripe) 0 1px,
+    transparent 1px 2px
+  );
+  border-bottom: 1px solid var(--color-black);
+  touch-action: none;
+  cursor: grab;
+}
+
+.deck:not([data-active]) .bar {
+  background: none;
+}
+
+.grip {
+  flex: 1;
+  padding: 0 4px;
+  background: var(--color-chrome-face);
+  justify-self: start;
+  max-width: max-content;
+  margin-right: auto;
+}
+
+.grip:focus-visible,
+.barButton:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 0;
+}
+
+.barButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 18px;
+  padding: 0;
+  background: var(--color-chrome-face);
+  color: var(--color-text);
+  border: 1px solid var(--color-black);
+  cursor: pointer;
+}
+
+.barButton:active {
+  background: var(--color-highlight);
+  color: var(--color-highlight-text);
+}
+
+:global([data-device='phone']) .barButton,
+:global([data-device='tablet']) .barButton {
+  width: 44px;
+  height: 32px;
+}
+
+/* The LCD */
+.display {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  gap: 4px 10px;
+  padding: 6px 8px;
+  background: var(--player-lcd);
+  color: var(--player-lcd-text);
+  border: 1px solid var(--color-black);
+  box-shadow: inset 1px 1px 0 var(--color-bevel-dark);
+}
+
+.time {
+  font-size: var(--font-size-display);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.state {
+  font-size: var(--font-size-body);
+}
+
+.marquee {
+  overflow: hidden;
+  white-space: nowrap;
+  align-self: center;
+}
+
+.marqueeText {
+  display: inline-block;
+}
+
+.marqueeText[data-scroll] {
+  padding-left: 100%;
+  animation: marquee 14s steps(140) infinite;
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    white-space: normal;
+  }
+  .marqueeText[data-scroll] {
+    padding-left: 0;
+    animation: none;
+  }
+}
+
+.spectrum {
+  image-rendering: pixelated;
+  width: 110px;
+  height: 48px;
+  color: var(--player-lcd-text);
+}
+
+.flags {
+  display: flex;
+  gap: 8px;
+  align-self: end;
+  justify-self: end;
+}
+
+/* Off flags disappear rather than dim: dimmed LCD text fails contrast. */
+.flags span:not([data-on]) {
+  visibility: hidden;
+}
+
+/* Sliders */
+.seek input,
+.volume input {
+  width: 100%;
+  margin: 0;
+  accent-color: var(--color-black);
+}
+
+.seek {
+  display: block;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.transport {
+  display: flex;
+  gap: 4px;
+}
+
+.transport button,
+.tabs button {
+  position: relative;
+  min-width: 32px;
+  min-height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 6px;
+  background: var(--color-chrome-face);
+  color: var(--color-text);
+  border: 1px solid var(--color-black);
+  box-shadow:
+    inset 1px 1px 0 var(--color-bevel-light),
+    inset -1px -1px 0 var(--color-bevel-dark);
+  font: inherit;
+  cursor: pointer;
+}
+
+.transport button:active:not(:disabled),
+.transport button[aria-pressed='true'],
+.transport button[data-on],
+.tabs button[aria-selected='true'] {
+  background: var(--color-highlight);
+  color: var(--color-highlight-text);
+  box-shadow: inset 1px 1px 0 var(--color-bevel-dark);
+}
+
+.transport button:disabled {
+  color: var(--color-grey-3);
+  cursor: default;
+}
+
+.one {
+  position: absolute;
+  right: 2px;
+  bottom: 0;
+  font-size: var(--font-size-body);
+  line-height: 1;
+}
+
+.volume {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1 1 100px;
+  max-width: 160px;
+}
+
+:global([data-device='phone']) .transport button,
+:global([data-device='tablet']) .transport button,
+:global([data-device='phone']) .tabs button,
+:global([data-device='tablet']) .tabs button {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+/* Playlist / Lyrics / Album */
+.tabs {
+  display: flex;
+  gap: 4px;
+}
+
+.panel {
+  flex: 1;
+  min-height: 120px;
+  display: flex;
+  background: var(--color-surface);
+  border: 1px solid var(--color-black);
+}
+
+.panel > * {
+  flex: 1;
+}
+
+.playlist,
+.lyrics,
+.album {
+  padding: 4px;
+  font-family: var(--font-document);
+}
+
+.albums,
+.tracks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.albums {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--color-black);
+}
+
+.albums button,
+.tracks button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 2px 4px;
+  background: none;
+  border: 0;
+  color: var(--color-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.albums button {
+  width: auto;
+}
+
+.albums img,
+.cover img {
+  image-rendering: auto;
+  border: 1px solid var(--color-black);
+}
+
+.albums button[aria-current],
+.tracks button[aria-current] {
+  background: var(--color-highlight);
+  color: var(--color-highlight-text);
+}
+
+.n {
+  min-width: 2.5ch;
+  text-align: right;
+}
+
+.title {
+  flex: 1;
+}
+
+.len {
+  font-variant-numeric: tabular-nums;
+}
+
+.lyrics h3,
+.album h3 {
+  margin: 4px 0 8px;
+  font-family: var(--font-system);
+  font-size: var(--font-size-title);
+  font-weight: 400;
+}
+
+.lyrics p {
+  margin: 0;
+  white-space: pre-line;
+  line-height: var(--line-height-body);
+}
+
+.album p {
+  margin: 0 0 6px;
+}
+
+.credits {
+  color: var(--color-grey-4);
+}
+
+.cover {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+}
+
+.error {
+  margin: 0;
+  padding: 2px 6px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-black);
+  font-family: var(--font-document);
+}

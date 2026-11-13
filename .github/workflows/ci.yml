@@ -17,6 +17,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+      # Music audio lives in Git LFS (D-034). Cache it so each run doesn't use up the
+      # free LFS bandwidth: only changed audio is downloaded.
+      - run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
+      - uses: actions/cache@v4
+        with:
+          path: .git/lfs
+          key: lfs-${{ hashFiles('.lfs-assets-id') }}
+          restore-keys: lfs-
+      - run: git lfs pull
       - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
@@ -40,6 +49,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+      # Music audio lives in Git LFS (D-034). Cache it so each run doesn't use up the
+      # free LFS bandwidth: only changed audio is downloaded.
+      - run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
+      - uses: actions/cache@v4
+        with:
+          path: .git/lfs
+          key: lfs-${{ hashFiles('.lfs-assets-id') }}
+          restore-keys: lfs-
+      - run: git lfs pull
       - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc

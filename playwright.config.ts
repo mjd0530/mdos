@@ -2,7 +2,9 @@ import { defineConfig, devices } from '@playwright/test';
 
 // End-to-end and accessibility tests run against the production build.
 // Port 4330 so a running `npm run dev` (5173) or preview (4173) doesn't clash.
-const PORT = 4330;
+// E2E_PORT lets a second checkout (a git worktree) test at the same time without
+// reusing the other checkout's server.
+const PORT = Number(process.env.E2E_PORT ?? 4330);
 
 export default defineConfig({
   testDir: 'tests/e2e',
@@ -37,7 +39,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: `npm run build && npx vite preview --port ${PORT} --strictPort`,
+    command: `MDOS_TEST_MUSIC=1 npm run build && npx vite preview --port ${PORT} --strictPort`,
     url: `http://localhost:${PORT}`,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,

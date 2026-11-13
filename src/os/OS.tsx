@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { patternImage } from '../assets/patterns';
 import { Alert } from '../ui/Alert';
@@ -12,12 +13,14 @@ import { useIdleScreensaver, useScreensaver } from './screensaverState';
 import { useDesktop } from './desktopStore';
 import { DesktopIcons } from './DesktopIcons';
 import { MenuBar } from './menubar/MenuBar';
+import { NowPlaying } from './NowPlaying';
 import { desktop } from '../vfs';
 import { openNode } from './open';
 import { clearSaved, takeFirstVisit } from './persist';
 import { currentMode, useDeviceMode } from './device';
 import { useApplyDisplay } from './display';
 import { useSettings } from './settings';
+import { useDesktopPattern } from './visitPattern';
 import { systemMenus } from './menus';
 import styles from './OS.module.css';
 import { useWindows } from './windows/store';
@@ -100,17 +103,29 @@ export function OS() {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, []);
 
-  // The visitor's chosen desktop pattern (Control Panel).
-  const pattern = useSettings((s) => s.pattern);
+  // A random pattern each visit, or one chosen in Control Panel for this visit (D-033).
+  const pattern = useDesktopPattern((s) => s.pattern);
   const display = useSettings((s) => s.display);
-  const desktopStyle = useMemo(
-    () => ({ backgroundImage: patternImage(pattern, display) }),
-    [pattern, display],
-  );
+  const desktopStyle = useMemo(() => {
+    const image = patternImage(pattern, display);
+    // Also as a variable: free-standing windows on phones use it as their backdrop.
+    return {
+      backgroundImage: image,
+      '--desktop-pattern': image,
+    } as CSSProperties;
+  }, [pattern, display]);
 
   return (
     <div className={styles.screen} data-device={device}>
-      <MenuBar menus={menus} end={<Clock />} />
+      <MenuBar
+        menus={menus}
+        end={
+          <>
+            <NowPlaying />
+            <Clock />
+          </>
+        }
+      />
 
       <main className={styles.desktop} style={desktopStyle}>
         <h1 className="visually-hidden">MDOS desktop</h1>
@@ -163,6 +178,7 @@ export function OS() {
           useWindows.getState().forgetAll();
           useDesktop.getState().cleanUp();
           useSettings.getState().restoreDefaults();
+          useDesktopPattern.getState().reset();
           clearSaved();
           announce('Desktop reset');
         }}

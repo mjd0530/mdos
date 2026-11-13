@@ -37,6 +37,8 @@ export interface OpenOptions {
   minSize?: Size;
   payload?: unknown;
   key?: string;
+  /** Free-standing windows (D-035) keep their own size: never opened zoomed. */
+  frameless?: boolean;
 }
 
 interface WindowsState {
@@ -117,6 +119,7 @@ export const useWindows = create<WindowsState>()(
           minSize = DEFAULT_MIN_SIZE,
           payload,
           key,
+          frameless,
         }) => {
           const { opened, bounds, remembered, openZoomed } = get();
           const id = `window-${opened + 1}`;
@@ -135,7 +138,7 @@ export const useWindows = create<WindowsState>()(
             payload,
             key,
           };
-          if (openZoomed) {
+          if (openZoomed && !frameless) {
             win.restoreRect = win.rect;
             win.rect = zoomedRect(bounds);
             win.zoomed = true;

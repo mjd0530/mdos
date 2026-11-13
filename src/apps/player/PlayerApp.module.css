@@ -1,0 +1,27 @@
+/* Takes focus when the window opens so its keys work; a container, like the window. */
+.player:focus {
+  outline: none;
+}
+
+.player {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.player > :first-child {
+  flex: 1;
+  min-height: 0;
+}
+
+.empty {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  padding: 12px;
+  background: var(--color-surface);
+  border: 2px solid var(--color-black);
+  box-shadow: 2px 2px 0 var(--color-black);
+}

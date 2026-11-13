@@ -16,8 +16,10 @@ export interface ImageVariant {
 export const VARIANTS = {
   /** Shown in documents and Viewer. */
   display: { maxSize: 2000, quality: 82 },
-  /** Sketchbook icons in Files. */
+  /** Sketchbook icons in Files; album covers in lists. */
   thumb: { maxSize: 192, quality: 76 },
+  /** Album covers in the music player. */
+  cover: { maxSize: 600, quality: 82 },
 } satisfies Record<string, ImageVariant>;
 
 export type VariantName = keyof typeof VARIANTS;

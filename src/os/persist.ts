@@ -49,8 +49,18 @@ export function takeFirstVisit(): boolean {
   }
 }
 
+const clearListeners = new Set<() => void>();
+
+/** Run `listener` when Reset Desktop forgets everything (stores loaded later, like an
+ *  app's own preferences, reset themselves this way). Returns an unsubscribe. */
+export function onClearSaved(listener: () => void): () => void {
+  clearListeners.add(listener);
+  return () => clearListeners.delete(listener);
+}
+
 /** Forget everything MDOS has saved in this browser. */
 export function clearSaved() {
+  for (const listener of clearListeners) listener();
   try {
     const keys: string[] = [];
     for (let i = 0; i < window.localStorage.length; i++) {

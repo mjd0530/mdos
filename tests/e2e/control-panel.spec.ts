@@ -29,17 +29,27 @@ test.beforeEach(async ({ page }) => {
   await page.goto('./');
 });
 
-test('choosing a pattern changes the desktop and is remembered', async ({
+test('each visit shows a different pattern from the last one', async ({
   page,
 }) => {
-  const before = await desktopPattern(page);
+  const first = await desktopPattern(page);
+  await page.reload();
+  expect(await desktopPattern(page)).not.toBe(first);
+});
+
+test('a chosen pattern lasts the visit, then the next visit is random', async ({
+  page,
+}) => {
   const panel = await openControlPanel(page);
   await patternRadio(panel, 'Bricks').check({ force: true });
   const bricks = await desktopPattern(page);
-  expect(bricks).not.toBe(before);
+  await patternRadio(panel, 'Weave').check({ force: true });
+  const weave = await desktopPattern(page);
+  expect(weave).not.toBe(bricks);
 
+  // Not saved: the next visit picks again, never the one shown last.
   await page.reload();
-  expect(await desktopPattern(page)).toBe(bricks);
+  expect(await desktopPattern(page)).not.toBe(weave);
 });
 
 test('the pattern group works with arrow keys', async ({ page }) => {
@@ -85,8 +95,6 @@ test('Special → Reset Desktop also resets settings', async ({ page }) => {
     .getByRole('dialog', { name: 'Reset the desktop?' })
     .getByRole('button', { name: 'Reset' })
     .click();
-  expect(await desktopPattern(page)).toBe(original);
-  await page.reload();
   expect(await desktopPattern(page)).toBe(original);
 });
 

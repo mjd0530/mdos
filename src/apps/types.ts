@@ -25,7 +25,14 @@ export interface AppDefinition<Payload = unknown> {
   name: string;
   icon: IconName;
   instances: InstanceRule;
-  window?: { size?: Size; minSize?: Size };
+  window?: {
+    size?: Size;
+    minSize?: Size;
+    /** 'none': free-standing (D-035). No title bar, frame or scroll bars: the app draws
+     *  its own shape and uses useWindowFrame() for its drag grip and close button. Never
+     *  zoomed; centred on phones. */
+    frame?: 'system' | 'none';
+  };
   /** Listed in the M menu (like System 7's Apple menu items). */
   inMarkMenu?: boolean;
   /** For per-document apps: a stable key for a payload (e.g. its file id). */

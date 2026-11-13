@@ -1,0 +1,16 @@
+# Test fixture (see ../music.yaml). Not real music.
+title: Test Tones
+artist: MDOS
+year: 2026
+cover: cover.png
+coverAlt: A colourful test pattern of bars and circles
+credits: Generated test tones, not music.
+tracks:
+  - file: 01.m4a
+    title: Low Tone
+    lyrics: 01.txt
+  - file: 02.m4a
+    title: Middle Tone
+  - file: 03.m4a
+    title: High Tone
+    lyrics: 03.txt

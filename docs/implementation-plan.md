@@ -26,6 +26,7 @@ _Each step ends with a demo Mike can try plus the checks in CLAUDE.md "Verify be
 | 13 | **Weather** ✅ 2026-11-11 (D-026) |
 | 14 | **Screensaver + cursor clock + sounds** ✅ 2026-11-11 (D-027) |
 | 15 | **Plain view + launch QA** ✅ 2026-11-12 (D-028; DNS + link from mikedemar.com remain for Mike) | `/plain/` pages; full accessibility audit, visual QA across viewports, Lighthouse, security review; link from the Astro site |
+| 16 | **Music player** 🚧 (D-034, D-035; Power Up's first song in; waiting on the rest of the albums, lyrics, artwork and the player's name) | Two looks (Deck, Pocket), lyrics, plain `/plain/music/`, LFS + encode script, e2e + axe |
 
 ## Still to decide (asked when we reach the step)
 - Your menu-bar mark, app names, MDOS name (step 2–3)
