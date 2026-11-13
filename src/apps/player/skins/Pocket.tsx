@@ -1,6 +1,7 @@
 import type { KeyboardEvent, PointerEvent } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import type { Album } from '../../../music/types';
+import { useWindowFrame } from '../../../os/windows/frame';
 import { Glyph } from '../Glyph';
 import { currentTrack, usePlayer, type Skin } from '../playerStore';
 import { formatTime } from '../queue';
@@ -31,6 +32,7 @@ export function Pocket({
   albums: Album[];
   onSkin: (skin: Skin) => void;
 }) {
+  const frame = useWindowFrame();
   const s = usePlayer();
   const track = currentTrack(s);
   const [stack, setStack] = useState<View[]>([{ kind: 'main' }]);
@@ -236,10 +238,34 @@ export function Pocket({
 
   return (
     <div className={styles.pocket} onKeyDown={onKeyDown}>
-      <div className={styles.shell}>
+      {/* The device itself is the grip (D-035): drag its body to move it. */}
+      <div className={styles.shell} {...frame?.grip}>
+        <div className={styles.top}>
+          {frame && (
+            <button
+              type="button"
+              className={styles.close}
+              onClick={frame.close}
+              aria-label={`Close ${frame.title}`}
+              title="Close"
+            >
+              <Glyph name="close" scale={1} />
+            </button>
+          )}
+          <span
+            className={styles.grip}
+            role="button"
+            aria-roledescription="drag handle"
+            aria-label={`Move ${frame?.title ?? 'Music'}`}
+            aria-describedby={frame?.hintId}
+            tabIndex={frame && !frame.phone ? 0 : -1}
+            onKeyDown={frame?.onGripKeyDown}
+          />
+        </div>
         <section
           ref={screenRef}
           className={styles.screen}
+          data-no-drag=""
           aria-label="Screen"
           tabIndex={-1}
         >
@@ -331,6 +357,7 @@ export function Pocket({
 
         <div
           className={styles.wheel}
+          data-no-drag=""
           onPointerDown={onWheelDown}
           onPointerMove={onWheelMove}
           onPointerUp={onWheelUp}

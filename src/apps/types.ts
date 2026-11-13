@@ -28,9 +28,10 @@ export interface AppDefinition<Payload = unknown> {
   window?: {
     size?: Size;
     minSize?: Size;
-    /** The app fills the window and scrolls its own parts (the music player); the
-     *  window's scroll bars stay as empty frames. */
-    fill?: boolean;
+    /** 'none': free-standing (D-035). No title bar, frame or scroll bars: the app draws
+     *  its own shape and uses useWindowFrame() for its drag grip and close button. Never
+     *  zoomed; centred on phones. */
+    frame?: 'system' | 'none';
   };
   /** Listed in the M menu (like System 7's Apple menu items). */
   inMarkMenu?: boolean;

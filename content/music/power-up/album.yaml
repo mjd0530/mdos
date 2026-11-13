@@ -1,0 +1,10 @@
+title: Power Up
+artist: Mixed Solution
+# TODO(mike): year: 20XX
+cover: cover.jpg
+coverAlt: The Mixed Solution "MS" logo glowing bright blue in an oval, above the words Power Up, on a dark blue background
+tracks:
+  # TODO(mike): the rest of the album, in order.
+  - file: 01.m4a
+    title: Beat Grenades
+    # TODO(mike): lyrics: 01.txt

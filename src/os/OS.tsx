@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { patternImage } from '../assets/patterns';
 import { Alert } from '../ui/Alert';
@@ -105,10 +106,14 @@ export function OS() {
   // A random pattern each visit, or one chosen in Control Panel for this visit (D-033).
   const pattern = useDesktopPattern((s) => s.pattern);
   const display = useSettings((s) => s.display);
-  const desktopStyle = useMemo(
-    () => ({ backgroundImage: patternImage(pattern, display) }),
-    [pattern, display],
-  );
+  const desktopStyle = useMemo(() => {
+    const image = patternImage(pattern, display);
+    // Also as a variable: free-standing windows on phones use it as their backdrop.
+    return {
+      backgroundImage: image,
+      '--desktop-pattern': image,
+    } as CSSProperties;
+  }, [pattern, display]);
 
   return (
     <div className={styles.screen} data-device={device}>

@@ -1,5 +1,4 @@
-# Placeholder album so the player can be built before the real Mixed Solution albums
-# arrive. Replace with the real albums, then delete this folder.
+# Test fixture (see ../music.yaml). Not real music.
 title: Test Tones
 artist: MDOS
 year: 2026

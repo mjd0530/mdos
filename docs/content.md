@@ -100,7 +100,7 @@ The music player (D-034) reads `content/music/`. Audio is stored with **Git LFS*
      - first-album
    ```
 
-Song lengths are read from the files. The build stops if a file is missing, a cover has no `coverAlt`, or audio isn't `.m4a`/`.mp3`. `test-tones/` is a placeholder album: delete it (and its line in `music.yaml`) once real albums are in.
+Song lengths are read from the files. The build stops if a file is missing, a cover has no `coverAlt`, or audio isn't `.m4a`/`.mp3`. The end-to-end tests add their own short **Test Tones** album from `tests/fixtures/music/` (only when `MDOS_TEST_MUSIC` is set), so it never appears on the site.
 
 ## fs.yaml entries
 

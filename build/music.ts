@@ -80,18 +80,34 @@ async function readDuration(file: string): Promise<number> {
 /**
  * Load content/music/music.yaml and each album it lists. No music.yaml means an empty
  * library. Missing files, alt text or bad fields fail with the file named.
+ * `extraLibraries` are more music folders laid out the same way, added after the real
+ * albums (the end-to-end tests' fixture album; never in a production build).
  */
 export async function buildMusic({
   contentDir,
   rootDir,
+  extraLibraries = [],
 }: {
   contentDir: string;
   rootDir: string;
+  extraLibraries?: string[];
 }): Promise<MusicResult> {
-  const musicDir = path.join(contentDir, 'music');
-  const libraryPath = path.join(musicDir, 'music.yaml');
   const result: MusicResult = { albums: [], audio: [], covers: [], files: [] };
-  if (!existsSync(libraryPath)) return result;
+  const ids = new Set<string>();
+  for (const musicDir of [path.join(contentDir, 'music'), ...extraLibraries]) {
+    await loadLibrary(musicDir, rootDir, result, ids);
+  }
+  return result;
+}
+
+async function loadLibrary(
+  musicDir: string,
+  rootDir: string,
+  result: MusicResult,
+  ids: Set<string>,
+) {
+  const libraryPath = path.join(musicDir, 'music.yaml');
+  if (!existsSync(libraryPath)) return;
 
   result.files.push(libraryPath);
   const library = libraryFile.safeParse(readYaml(libraryPath));
@@ -99,7 +115,6 @@ export async function buildMusic({
     throw new ContentError(libraryPath, describe(library.error));
   }
 
-  const ids = new Set<string>();
   for (const folder of library.data.albums) {
     const dir = path.join(musicDir, folder);
     const albumPath = path.join(dir, 'album.yaml');
@@ -166,7 +181,6 @@ export async function buildMusic({
       tracks,
     });
   }
-  return result;
 }
 
 /**

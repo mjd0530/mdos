@@ -3,10 +3,74 @@
   flex-direction: column;
   gap: 6px;
   height: 100%;
-  padding: 8px;
+  padding: 0 8px 8px;
   box-sizing: border-box;
   background: var(--color-chrome-face);
+  border: 2px solid var(--color-black);
+  box-shadow:
+    inset 1px 1px 0 var(--color-bevel-light),
+    2px 2px 0 var(--color-black);
   font-family: var(--font-system);
+}
+
+/* The player's own title strip: the drag grip, look switch and close. */
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0 -8px;
+  padding: 2px 4px 2px 8px;
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--color-title-stripe) 0 1px,
+    transparent 1px 2px
+  );
+  border-bottom: 1px solid var(--color-black);
+  touch-action: none;
+  cursor: grab;
+}
+
+.deck:not([data-active]) .bar {
+  background: none;
+}
+
+.grip {
+  flex: 1;
+  padding: 0 4px;
+  background: var(--color-chrome-face);
+  justify-self: start;
+  max-width: max-content;
+  margin-right: auto;
+}
+
+.grip:focus-visible,
+.barButton:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 0;
+}
+
+.barButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 18px;
+  padding: 0;
+  background: var(--color-chrome-face);
+  color: var(--color-text);
+  border: 1px solid var(--color-black);
+  cursor: pointer;
+}
+
+.barButton:active {
+  background: var(--color-highlight);
+  color: var(--color-highlight-text);
+}
+
+:global([data-device='phone']) .barButton,
+:global([data-device='tablet']) .barButton {
+  width: 44px;
+  height: 32px;
 }
 
 /* The LCD */

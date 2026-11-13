@@ -56,3 +56,38 @@
 .window[data-phone] .titleBar {
   cursor: default;
 }
+
+/* Free-standing windows (D-035): the app draws its own shape. */
+.frameless {
+  position: absolute;
+  box-sizing: border-box;
+}
+
+.frameless:focus {
+  outline: none;
+}
+
+.frameless[hidden] {
+  display: none;
+}
+
+.framelessBody {
+  width: 100%;
+  height: 100%;
+}
+
+/* Phones: the device sits centred on the screen over the desktop pattern. */
+.frameless[data-phone] {
+  inset: 0;
+  /* Covers the launcher like any phone window, showing the desktop pattern. */
+  background: var(--color-desktop) var(--desktop-pattern);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+}
+
+.frameless[data-phone] .framelessBody {
+  flex: none;
+  max-width: 100%;
+}

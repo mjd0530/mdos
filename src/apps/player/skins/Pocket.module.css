@@ -1,22 +1,18 @@
 .pocket {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
   height: 100%;
-  padding: 12px;
-  box-sizing: border-box;
-  background: var(--color-surface);
-  overflow: auto;
 }
 
 .shell {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 18px;
-  width: 220px;
-  padding: 14px 12px 20px;
+  justify-content: space-between;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 6px 12px 18px;
   background: var(--player-shell);
+  touch-action: none;
+  cursor: grab;
   border: 2px solid var(--color-black);
   border-radius: 16px;
   box-shadow:
@@ -25,8 +21,64 @@
     2px 2px 0 var(--color-black);
 }
 
+/* Close button and grip slot along the top edge (D-035). */
+.top {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 22px;
+}
+
+.close {
+  position: absolute;
+  left: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  background: var(--player-wheel);
+  color: var(--color-black);
+  border: 1px solid var(--color-black);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.close:active {
+  background: var(--color-highlight);
+}
+
+/* A slot like a lanyard hole: the keyboard handle for moving the device. */
+.grip {
+  width: 48px;
+  height: 8px;
+  border: 1px solid var(--color-black);
+  border-radius: 4px;
+  background: var(--player-wheel);
+  box-shadow: inset 1px 1px 0 var(--color-bevel-dark);
+}
+
+.close:focus-visible,
+.grip:focus-visible,
+.screen:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+:global([data-device='phone']) .close,
+:global([data-device='tablet']) .close {
+  width: 44px;
+  height: 44px;
+  top: -12px;
+  left: -8px;
+}
+
 /* Screen */
 .screen {
+  flex: none;
   width: 100%;
   height: 156px;
   display: flex;
@@ -176,6 +228,7 @@
 
 /* Scroll wheel */
 .wheel {
+  flex: none;
   position: relative;
   width: 160px;
   height: 160px;

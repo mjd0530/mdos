@@ -1,4 +1,5 @@
 # The music player's library. List album folders (content/music/<folder>/album.yaml) in
 # the order they should appear. How to add an album: docs/content.md → Music.
-albums:
-  - test-tones
+# TODO(mike): the other two Mixed Solution albums.
+albums: []
+  # - power-up   (added once 01.m4a is encoded)

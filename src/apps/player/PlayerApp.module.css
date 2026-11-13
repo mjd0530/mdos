@@ -10,24 +10,13 @@
 }
 
 .empty {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
   margin: 0;
-  padding: 16px;
-}
-
-.skin {
-  align-self: flex-end;
-  margin: 0 8px 6px;
-  padding: 0;
-  background: none;
-  border: 0;
-  color: var(--color-text);
-  font-family: var(--font-system);
-  font-size: var(--font-size-body);
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-:global([data-device='phone']) .skin,
-:global([data-device='tablet']) .skin {
-  min-height: 44px;
+  padding: 12px;
+  background: var(--color-surface);
+  border: 2px solid var(--color-black);
+  box-shadow: 2px 2px 0 var(--color-black);
 }

@@ -2,8 +2,8 @@ import { defineApp } from '../types';
 
 /** Window size for each look (D-034). */
 export const SKIN_SIZES = {
-  deck: { w: 440, h: 520 },
-  pocket: { w: 280, h: 470 },
+  deck: { w: 400, h: 480 },
+  pocket: { w: 240, h: 420 },
 } as const;
 
 export default defineApp({
@@ -13,6 +13,7 @@ export default defineApp({
   icon: 'player',
   instances: 'single',
   inMarkMenu: true,
-  window: { size: SKIN_SIZES.deck, minSize: { w: 260, h: 320 }, fill: true },
+  // Free-standing (D-035): each look draws its own device, with no window frame.
+  window: { size: SKIN_SIZES.deck, frame: 'none' },
   load: () => import('./PlayerApp'),
 });

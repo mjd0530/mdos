@@ -263,7 +263,19 @@ Mike was in Mixed Solution and made its visuals; the band owns the music. MDOS g
 - **Spectrum:** a real Web Audio analyser on desktops; phones and tablets get a decorative stand-in, because routing audio through Web Audio stops background playback on iOS. Hidden from screen readers; still under reduced motion (the title stops scrolling and wraps instead).
 - **Accessibility:** real buttons and native range inputs with spoken times ("1:23 of 3:45"); Space play/pause, ←/→ previous/next, Shift+←/→ seek 5 s, ↑/↓ volume (Deck) or menu (Pocket), Enter select, Escape back; song changes announced. Inactive LCD flags are hidden, not dimmed (dimmed text failed contrast). axe clean in both looks and both displays.
 - **Still to come:** the Deck's Mixed Solution skin from Mike's band artwork, and both looks on `/specimen.html`.
-- **Windows** gain `window.fill` in `defineApp`: the app fills its window and scrolls its own parts.
+- **Windows:** the player is free-standing, with no window frame (D-035).
 - **Plain view:** `/plain/music/` lists each album with a native `<audio controls>` per song and lyrics.
 - **Not verified:** real iOS lock-screen behaviour and background play, Safari and Firefox, and how real songs sound at 160 kbps.
+
+## D-035 Free-standing music player
+_2026-11-13 · Accepted (Mike)_
+
+Mike wanted the player to be a device on the desktop, not a program in a window.
+
+- **`window.frame: 'none'`** in `defineApp` makes a free-standing window: no title bar, frame, scroll bars, zoom or collapse. `Window` keeps everything else (labelled dialog, focus in and back out, stacking, Ctrl+` cycling, remembered position). The app draws its own shape and gets `useWindowFrame()`: a `grip` to spread on whatever people drag it by (drags starting on buttons, inputs, links or `[data-no-drag]` are ignored), a focusable handle where arrow keys move it, and `close`.
+- **Both looks are free-standing.** Deck has its own striped title strip (drag it; buttons to switch to Pocket and to close). Pocket is dragged by its body (not the screen or wheel), with a round close button and a slot-shaped grip along its top edge. Each look sets the window to its own size.
+- **Phones:** the device is centred on the screen over the desktop pattern (covering the launcher like any phone window), with a 44px close button. Never opened zoomed on tablets.
+- Replaces D-034's `window.fill`, which is removed.
+- **Fixture album:** the placeholder Test Tones moved to `tests/fixtures/music/` and is added only when `MDOS_TEST_MUSIC` is set (the e2e build), so the site ships only real albums. `E2E_PORT` lets a second checkout run e2e tests at the same time.
+- **Power Up** (Mixed Solution) is the first real album: cover in, Beat Grenades waiting to be encoded. The cover Mike supplied is 240px; a larger one would look sharper in Viewer.
 

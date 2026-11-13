@@ -41,6 +41,7 @@ export function launch(appId: string, payload?: unknown): string | undefined {
     title,
     size: app.window?.size,
     minSize: app.window?.minSize,
+    frameless: app.window?.frame === 'none',
     payload,
     // Keyed windows reuse their last position: one per document, or the single window.
     key:

@@ -107,7 +107,9 @@ function element(): HTMLAudioElement {
   el.addEventListener('pause', () => {
     // Changing songs while playing fires a pause before the new song plays; ignore it so
     // the player doesn't flash to paused between songs.
-    if (!switching) usePlayer.setState({ playing: false });
+    // A song reaching its end also pauses just before `ended`, which moves on to the
+    // next song; staying "playing" through that avoids a flash of paused.
+    if (!switching && !el.ended) usePlayer.setState({ playing: false });
   });
   el.addEventListener('ended', () => {
     // A late `ended` from a song that's already been replaced (skipped right at its
@@ -167,6 +169,7 @@ function advance(auto: boolean) {
   if (to === null) {
     // End of the album: back to the first song, stopped.
     audio?.pause();
+    usePlayer.setState({ playing: false });
     load(0, false);
     return;
   }

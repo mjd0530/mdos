@@ -45,7 +45,7 @@ export function WindowLayer() {
           active={win.id === activeId}
           z={order.indexOf(win.id) + 1}
           phone={phone}
-          fill={getApp(win.appId)?.window?.fill}
+          frameless={getApp(win.appId)?.window?.frame === 'none'}
         >
           <AppHost win={win} isActive={win.id === activeId} />
         </Window>

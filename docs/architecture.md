@@ -129,7 +129,7 @@ export default defineApp({
 | Weather | app | Open-Meteo; default Cary, NC; location only on explicit request |
 | Control Panel | app | Desktop pattern (this visit only; random each visit, D-033), sounds, screensaver, cursor clock, reset |
 | Screensaver | system | Not a window; idle overlay owned by the shell |
-| Music | app | Mixed Solution albums (D-034): two looks (Deck, Pocket), lyrics, Media Session; plays while the window is open, stops when it closes. `window.fill` so it fills its window |
+| Music | app | Mixed Solution albums (D-034): two looks (Deck, Pocket), lyrics, Media Session; plays while the window is open, stops when it closes. Free-standing (`window.frame: 'none'`, D-035) |
 
 ## 6. Window manager
 
@@ -154,6 +154,9 @@ Actions: `open`, `close`, `focus`, `move`, `resize`, `toggleZoom`, `toggleCollap
 - `Ctrl/⌘+\`` next window · `Ctrl/⌘+W` close · `Ctrl/⌘+O` open selection · `Esc` closes menus.
 - Window menu → "Move/Resize with keyboard": arrows move or resize, Enter commits, Esc cancels.
 - `Announcer` live region: "Notes: Magic Move opened", "Window closed".
+
+
+**Free-standing windows** (D-035): an app with `window.frame: 'none'` gets no title bar, frame or scroll bars. `Window` still provides the labelled dialog, focus handling, stacking and placement; the app draws its own shape and uses `useWindowFrame()` (`src/os/windows/frame.ts`) for a drag grip (pointer drag, arrow keys to move) and a close button. Never zoomed; on phones it's centred over the desktop pattern.
 
 ## 7. Shell and responsive
 

@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import type { Album } from '../../../music/types';
+import { useWindowFrame } from '../../../os/windows/frame';
 import { launch } from '../../launch';
 import { ScrollArea } from '../../../ui/ScrollArea';
 import { Glyph } from '../Glyph';
-import { currentTrack, usePlayer } from '../playerStore';
+import { currentTrack, usePlayer, type Skin } from '../playerStore';
 import { formatTime } from '../queue';
 import { Spectrum } from '../Spectrum';
 import styles from './Deck.module.css';
@@ -17,12 +18,25 @@ const REPEAT_LABEL = {
 };
 
 /** The late-90s desktop player skin (D-034). */
-export function Deck({ albums, active }: { albums: Album[]; active: boolean }) {
+export function Deck({
+  albums,
+  active,
+  onSkin,
+  browsing,
+  onBrowse,
+}: {
+  albums: Album[];
+  active: boolean;
+  onSkin: (skin: Skin) => void;
+  /** Which album the playlist shows (kept by PlayerApp so Space plays it too). */
+  browsing: string | null;
+  onBrowse: (albumId: string) => void;
+}) {
   const s = usePlayer();
+  const frame = useWindowFrame();
   const track = currentTrack(s);
   // The playlist shows the album being browsed: picking one never interrupts the song
   // that's playing. Before anything plays it shows the first album.
-  const [browsing, setBrowsing] = useState<string | null>(null);
   const album = albums.find((a) => a.id === browsing) ?? s.album ?? albums[0];
   const [panel, setPanel] = useState<Panel>('playlist');
   const playingIndex = s.order[s.pos];
@@ -39,7 +53,41 @@ export function Deck({ albums, active }: { albums: Album[]; active: boolean }) {
   };
 
   return (
-    <div className={styles.deck}>
+    <div className={styles.deck} data-active={active || undefined}>
+      {/* The player's own title strip (D-035): drag it to move, ← → ↑ ↓ when focused. */}
+      <div className={styles.bar} {...frame?.grip}>
+        <span
+          className={styles.grip}
+          role="button"
+          aria-roledescription="drag handle"
+          aria-label={`Move ${frame?.title ?? 'Music'}`}
+          aria-describedby={frame?.hintId}
+          tabIndex={frame && !frame.phone ? 0 : -1}
+          onKeyDown={frame?.onGripKeyDown}
+        >
+          {frame?.title ?? 'Music'}
+        </span>
+        <button
+          type="button"
+          className={styles.barButton}
+          onClick={() => onSkin('pocket')}
+          aria-label="Switch to Pocket"
+          title="Switch to Pocket"
+        >
+          <Glyph name="pocket" scale={1} />
+        </button>
+        {frame && (
+          <button
+            type="button"
+            className={styles.barButton}
+            onClick={frame.close}
+            aria-label={`Close ${frame.title}`}
+            title="Close"
+          >
+            <Glyph name="close" scale={1} />
+          </button>
+        )}
+      </div>
       <div className={styles.display}>
         <div className={styles.time} aria-hidden="true">
           <span className={styles.state}>
@@ -189,7 +237,7 @@ export function Deck({ albums, active }: { albums: Album[]; active: boolean }) {
                       <button
                         type="button"
                         aria-current={a.id === album?.id || undefined}
-                        onClick={() => setBrowsing(a.id)}
+                        onClick={() => onBrowse(a.id)}
                       >
                         <img src={a.coverThumb} alt="" width={32} height={32} />
                         <span>{a.title}</span>
