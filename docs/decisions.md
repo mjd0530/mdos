@@ -273,9 +273,9 @@ _2026-11-13 · Accepted (Mike)_
 Mike wanted the player to be a device on the desktop, not a program in a window.
 
 - **`window.frame: 'none'`** in `defineApp` makes a free-standing window: no title bar, frame, scroll bars, zoom or collapse. `Window` keeps everything else (labelled dialog, focus in and back out, stacking, Ctrl+` cycling, remembered position). The app draws its own shape and gets `useWindowFrame()`: a `grip` to spread on whatever people drag it by (drags starting on buttons, inputs, links or `[data-no-drag]` are ignored), a focusable handle where arrow keys move it, and `close`.
-- **Both looks are free-standing.** Deck has its own striped title strip (drag it; buttons to switch to Pocket and to close). Pocket is dragged by its body (not the screen or wheel), with a round close button and a slot-shaped grip along its top edge. Each look sets the window to its own size.
+- **Both looks are free-standing.** Deck has its own striped title strip (drag it; buttons to switch to Pocket and to close). Pocket is dragged by its body (not the screen or wheel), with a round close button and a slot-shaped grip along its top edge. Each look sets the window to its own size, on open and on every switch (the remembered rect may be the other look's).
 - **Phones:** the device is centred on the screen over the desktop pattern (covering the launcher like any phone window), with a 44px close button. Never opened zoomed on tablets.
 - Replaces D-034's `window.fill`, which is removed.
 - **Fixture album:** the placeholder Test Tones moved to `tests/fixtures/music/` and is added only when `MDOS_TEST_MUSIC` is set (the e2e build), so the site ships only real albums. `E2E_PORT` lets a second checkout run e2e tests at the same time.
-- **Power Up** (Mixed Solution) is the first real album: cover in, Beat Grenades waiting to be encoded. The cover Mike supplied is 240px; a larger one would look sharper in Viewer.
+- **Power Up** (Mixed Solution) is the first real album: Beat Grenades (3:43, 4.6 MB at 160 kbps) and the cover. Year, lyrics and the other songs are TODO(mike). The cover Mike supplied is 240px; a larger one would look sharper in Viewer.
 

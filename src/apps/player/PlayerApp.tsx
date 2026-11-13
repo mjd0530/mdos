@@ -1,5 +1,5 @@
 import type { KeyboardEvent } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { albums } from 'virtual:music';
 import { useWindowFrame } from '../../os/windows/frame';
 import { useWindows } from '../../os/windows/store';
@@ -26,15 +26,17 @@ export default function PlayerApp({ instanceId, isActive }: AppProps) {
   const [browsing, setBrowsing] = useState<string | null>(null);
   const shown = albums.find((a) => a.id === browsing) ?? albums[0];
 
-  const switchSkin = (next: Skin) => {
-    usePlayer.getState().setSkin(next);
-    const win = useWindows.getState().windows.find((w) => w.id === instanceId);
-    if (win) {
-      useWindows
-        .getState()
-        .resize(instanceId, SKIN_SIZES[next].w, SKIN_SIZES[next].h);
+  const switchSkin = (next: Skin) => usePlayer.getState().setSkin(next);
+
+  // The device is exactly its look's size. The window remembers its last rect, which
+  // may be the other look's (or an older size), so set it on open and on every switch.
+  useEffect(() => {
+    const { w, h } = SKIN_SIZES[skin];
+    const win = useWindows.getState().windows.find((x) => x.id === instanceId);
+    if (win && (win.rect.w !== w || win.rect.h !== h)) {
+      useWindows.getState().resize(instanceId, w, h);
     }
-  };
+  }, [skin, instanceId]);
 
   // Keys that work anywhere in the player (sliders and buttons keep their own).
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
