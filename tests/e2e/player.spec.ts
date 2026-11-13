@@ -19,6 +19,8 @@ async function openPlayer(page: Page) {
 
 /** Deck: show the Test Tones playlist (album buttons appear only with 2+ albums). */
 async function showTestTones(player: Locator) {
+  // Wait for the player to load before asking whether it has an album list.
+  await expect(player.getByRole('list', { name: /songs$/ })).toBeVisible();
   const albums = player.getByRole('list', { name: 'Albums' });
   if (await albums.count()) {
     await albums.getByRole('button', { name: 'Test Tones' }).click();
