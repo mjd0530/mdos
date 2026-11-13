@@ -109,7 +109,11 @@ function element(): HTMLAudioElement {
     // the player doesn't flash to paused between songs.
     if (!switching) usePlayer.setState({ playing: false });
   });
-  el.addEventListener('ended', () => advance(true));
+  el.addEventListener('ended', () => {
+    // A late `ended` from a song that's already been replaced (skipped right at its
+    // end) must not skip the new one too.
+    if (el.ended && !switching) advance(true);
+  });
   el.addEventListener('error', () => {
     switching = false;
     if (!el.getAttribute('src')) return;
@@ -171,7 +175,8 @@ function advance(auto: boolean) {
     start(audio);
     return;
   }
-  load(to, true);
+  // A song ending goes on to the next; Next while paused just moves, staying paused.
+  load(to, auto || usePlayer.getState().playing);
 }
 
 export const usePlayer = create<PlayerState>()(
@@ -204,7 +209,12 @@ export const usePlayer = create<PlayerState>()(
         if (!get().album || !audio?.getAttribute('src')) return;
         start(audio);
       },
-      pause: () => audio?.pause(),
+      pause: () => {
+        // Pausing mid-swap cancels the swap: the pause it fires is real.
+        switching = false;
+        set({ playing: false });
+        audio?.pause();
+      },
       next: () => {
         if (get().album) advance(false);
       },

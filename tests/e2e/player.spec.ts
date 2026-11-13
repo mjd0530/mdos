@@ -51,7 +51,16 @@ test('Deck plays, skips, pauses and shows lyrics', async ({ page }) => {
   await expect(player.getByRole('button', { name: 'Play' })).toBeVisible();
   await expect(nowPlaying(page)).toHaveCount(0);
 
+  // Skipping while paused moves without starting playback.
+  await player.getByRole('tab', { name: 'Playlist' }).click();
+  await player.getByRole('button', { name: 'Next' }).click();
+  await expect(songs.locator('[aria-current]')).toContainText('High Tone');
+  await expect(player.getByRole('button', { name: 'Play' })).toBeVisible();
+  await expect(nowPlaying(page)).toHaveCount(0);
+
   await player.getByRole('button', { name: 'Previous' }).click();
+  await player.getByRole('button', { name: 'Previous' }).click();
+  await expect(songs.locator('[aria-current]')).toContainText('Low Tone');
   await player.getByRole('button', { name: 'Play' }).click();
   await player.getByRole('tab', { name: 'Lyrics' }).click();
   await expect(player.getByRole('tabpanel')).toContainText('TODO(mike)');
