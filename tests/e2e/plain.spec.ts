@@ -21,9 +21,9 @@ test('a plain case study has its details, headings and working pictures', async 
   page,
 }) => {
   await page.goto('./plain/');
-  await page.getByRole('link', { name: 'Smart Share / Magic Move' }).click();
+  await page.getByRole('link', { name: 'Tap to Launch' }).click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-    'Smart Share / Magic Move',
+    'Tap to Launch',
   );
   await expect(page.getByText('Lead UX Designer')).toBeVisible();
   await expect(

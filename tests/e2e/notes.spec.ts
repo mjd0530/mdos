@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { isPhone } from './device.ts';
 
 const WCAG = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
-const STUDY = 'Smart Share / Magic Move';
+const STUDY = 'Tap to Launch';
 
 async function openMagicMove(page: Page) {
   const desktop = page.getByRole('listbox', { name: 'Desktop' });
@@ -24,7 +24,9 @@ test.beforeEach(async ({ page }) => {
 test('a case study shows its subtitle, details and award', async ({ page }) => {
   const notes = await openMagicMove(page);
   await expect(
-    notes.getByText('Designing Lenovo’s cross-device interaction model'),
+    notes.getByText(
+      'From the Magic Move concept to a tap interaction shipped in Lenovo Smart Connect',
+    ),
   ).toBeVisible();
   for (const term of ['Role', 'Client', 'Years', 'Scope', 'Award']) {
     await expect(

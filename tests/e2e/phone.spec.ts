@@ -36,19 +36,17 @@ test('one window at a time; closing goes back to the one behind', async ({
   const icons = page.getByRole('listbox', { name: 'Desktop' });
   await icons.getByRole('option', { name: 'Portfolio', exact: true }).tap();
   const files = page.getByRole('dialog', { name: 'Portfolio' });
-  await files.getByRole('option', { name: 'Smart Share / Magic Move' }).tap();
+  await files.getByRole('option', { name: 'Tap to Launch' }).tap();
 
-  const notes = page.getByRole('dialog', { name: 'Smart Share / Magic Move' });
+  const notes = page.getByRole('dialog', { name: 'Tap to Launch' });
   await expect(notes).toBeVisible();
   await expect(files).toBeHidden(); // still open, just behind
 
-  await notes
-    .getByRole('button', { name: 'Close Smart Share / Magic Move' })
-    .tap();
+  await notes.getByRole('button', { name: 'Close Tap to Launch' }).tap();
   await expect(files).toBeVisible();
   // Focus returns to the item that opened the document.
   await expect(
-    files.getByRole('option', { name: 'Smart Share / Magic Move' }),
+    files.getByRole('option', { name: 'Tap to Launch' }),
   ).toBeFocused();
 
   await files.getByRole('button', { name: 'Close Portfolio' }).tap();
@@ -63,9 +61,9 @@ test('a picture opens in Viewer on top; closing returns to the document', async 
   await icons.getByRole('option', { name: 'Portfolio', exact: true }).tap();
   await page
     .getByRole('dialog', { name: 'Portfolio' })
-    .getByRole('option', { name: 'Smart Share / Magic Move' })
+    .getByRole('option', { name: 'Tap to Launch' })
     .tap();
-  const notes = page.getByRole('dialog', { name: 'Smart Share / Magic Move' });
+  const notes = page.getByRole('dialog', { name: 'Tap to Launch' });
   await notes
     .getByRole('button', { name: /View larger: Planning board/ })
     .tap();

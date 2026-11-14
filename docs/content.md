@@ -54,7 +54,7 @@ Portfolio documents add a `caseStudy` block (`subtitle` and `awards` optional, t
 
 ```yaml
 ---
-title: Smart Share / Magic Move
+title: Tap to Launch
 caseStudy:
   client: Lenovo UXD · Project Fuji
   years: 2023–2026
