@@ -109,7 +109,7 @@ export function Specimen() {
                   <span className={styles.box} />
                 </div>
                 <div className={styles.doc}>
-                  <p className={styles.docHeading}>Smart Share / Magic Move</p>
+                  <p className={styles.docHeading}>Tap to Launch</p>
                   <p className={styles.docMeta}>
                     Role · Client · Years (sample metadata)
                   </p>
