@@ -30,7 +30,7 @@ Everything visitors read lives in `content/`. You never touch code to add or cha
 
 ## Pictures
 
-`![Alt text describing the picture](./file.png "Optional caption")`. Every picture can be clicked to open larger in Viewer (which steps through all the pictures in that document); the caption shows under it and in Viewer's title. Pictures are resized to WebP at build time, so add originals at full size.
+`![Alt text describing the picture](./file.png "Optional caption")`. Every wide picture can be clicked to open larger in Viewer (which steps through all the pictures in that document); the caption shows under it and in Viewer's title. Square and tall pictures are treated as portraits (like the photo in About Mike): they show small, at most 160px wide, and don't open in Viewer. Pictures are resized to WebP at build time, so add originals at full size.
 
 ## Sketchbook drawings
 

@@ -535,8 +535,9 @@ export function buildContent({
 // ---------- Module code ----------
 
 /**
- * Give a document's pictures width and height so the page doesn't jump as they load, and
- * mark square or tall ones (a portrait) so Notes shows them smaller than the full width.
+ * Give a document's pictures width and height so the page doesn't jump as they load.
+ * Square and tall pictures are portraits (Mike's photo in About Mike): they show small
+ * and in place, as a plain picture rather than a button that opens Viewer.
  */
 export function addImageSizes(
   rendered: RenderedDoc,
@@ -545,11 +546,25 @@ export function addImageSizes(
   rendered.images.forEach((source, i) => {
     const size = sizes.get(source);
     if (!size?.width || !size.height) return;
-    rendered.doc.html = rendered.doc.html.replaceAll(
-      `src="${imageToken(i)}"`,
-      `src="${imageToken(i)}" width="${size.width}" height="${size.height}"` +
-        (size.height >= size.width ? ' data-upright' : ''),
+    const token = imageToken(i);
+    const portrait = size.height >= size.width;
+    let html = rendered.doc.html.replaceAll(
+      `src="${token}"`,
+      `src="${token}" width="${size.width}" height="${size.height}"` +
+        (portrait ? ' class="doc-portrait"' : ''),
     );
+    if (portrait) {
+      html = html.replace(
+        new RegExp(
+          `<button type="button" class="doc-image"[^>]*>` +
+            `<span class="visually-hidden">View larger: </span>` +
+            `(<img src="${token}"[^>]*>)</button>`,
+          'g',
+        ),
+        '$1',
+      );
+    }
+    rendered.doc.html = html;
   });
 }
 

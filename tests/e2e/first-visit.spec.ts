@@ -44,5 +44,9 @@ test('the About Mike note starts with the portrait', async ({ page }) => {
     .poll(() => image.evaluate((img: HTMLImageElement) => img.naturalWidth))
     .toBeGreaterThan(0);
   const box = await image.boundingBox();
-  expect(box?.width).toBeLessThanOrEqual(240);
+  expect(box?.width).toBeLessThanOrEqual(160);
+  // A portrait is just a picture: not a button that opens Viewer.
+  await expect(
+    about(page).getByRole('button', { name: /View larger/ }),
+  ).toHaveCount(0);
 });
