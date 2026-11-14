@@ -8,6 +8,8 @@ export interface SystemActions {
   closeWindow: () => void;
   nextWindow: () => void;
   cleanUp: () => void;
+  moveToTrash: () => void;
+  emptyTrash: () => void;
   resetDesktop: () => void;
   startScreensaver: () => void;
   plainVersion: () => void;
@@ -17,6 +19,8 @@ export interface SystemState {
   /** Is there an active window for Close / Next to act on? */
   hasWindow: boolean;
   windowCount: number;
+  /** Is a desktop icon (not the Trash) selected for File → Move to Trash? */
+  canTrash: boolean;
   /** Apps listed in the M menu, like System 7's Apple menu items. */
   markMenuApps: { id: string; name: string }[];
 }
@@ -77,6 +81,14 @@ export function systemMenus(
           keyHint: { label: 'Ctrl+`', aria: 'Control+`' },
           disabled: state.windowCount < 2,
           onSelect: actions.nextWindow,
+        },
+        { kind: 'separator', id: 'sep2' },
+        {
+          kind: 'command',
+          id: 'move-to-trash',
+          label: 'Move to Trash',
+          disabled: !state.canTrash,
+          onSelect: actions.moveToTrash,
         },
       ],
     },
@@ -139,6 +151,12 @@ export function systemMenus(
           id: 'clean-up',
           label: 'Clean Up Desktop',
           onSelect: actions.cleanUp,
+        },
+        {
+          kind: 'command',
+          id: 'empty-trash',
+          label: 'Empty Trash…',
+          onSelect: actions.emptyTrash,
         },
         {
           kind: 'command',

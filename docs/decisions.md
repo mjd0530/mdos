@@ -267,3 +267,14 @@ Mike was in Mixed Solution and made its visuals; the band owns the music. MDOS g
 - **Plain view:** `/plain/music/` lists each album with a native `<audio controls>` per song and lyrics.
 - **Not verified:** real iOS lock-screen behaviour and background play, Safari and Firefox, and how real songs sound at 160 kbps.
 
+## D-036 Trash: throw things away, never lose them
+_2026-11-13 · Accepted (Mike)_
+
+A playful System 7 Trash. Content is read-only, so nothing is ever deleted; the Trash is a place to hide things and bring them back.
+
+- **On the desktop**, in the bottom slot of the first icon column (System 7's corner); the default arrangement keeps that slot free. Phones show it as the last launcher tile. The icon shows a lifted lid and paper (`trashFull`, 1-bit and colour) when anything is inside.
+- **In:** drag a desktop icon onto the Trash (it inverts while an icon hovers over it), right-click / long-press → Move to Trash, File → Move to Trash, or Delete / Backspace on a focused icon. A synthesized "clatter" plays on release (`sounds.ts`, D-003), and the move is announced. Only top-level desktop items; items inside folders stay where they are.
+- **Out:** open the Trash (a window like Files), then right-click / long-press → Put Away returns the icon to where it was dragged from; or drag an icon out of the Trash window onto the desktop to drop it there (desktops and tablets). A rising blip plays.
+- **Empty Trash** (the Trash window's Empty button, the Special menu and the Trash's context menu) empties nothing: it opens a classic error alert with an original stop-sign icon (`stop`) and an original buzzy error sound (`error`; Apple's own alert icons and sounds are off limits): "Error! Hey, whaddaya think you're doing?" with a "Sorry!" button. `Alert` gained a `sound` option for this.
+- **Remembered:** Trash contents persist in `mikeos:desktop` (v2) alongside icon positions. Clean Up leaves the Trash alone; Reset Desktop puts everything back.
+- Items open normally from inside the Trash. Files showing the Desktop folder hides trashed items too.

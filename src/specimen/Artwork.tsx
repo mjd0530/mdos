@@ -11,6 +11,8 @@ const ICON_LABELS: Record<IconName, string> = {
   document: 'Document',
   image: 'Picture',
   trash: 'Trash',
+  trashFull: 'Trash (full)',
+  stop: 'Stop (error alert)',
   notes: 'Notes',
   files: 'Files',
   weather: 'Weather',

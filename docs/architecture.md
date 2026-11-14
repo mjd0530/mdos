@@ -92,7 +92,7 @@ Zustand stores, each persisted under a versioned key; any parse failure falls ba
 | Store | Holds | Persisted |
 |---|---|---|
 | `windows` | instances, z-order, focus, rect, state, payload | rects per app; open windows only if "Reopen windows" is on |
-| `desktop` | icon positions, selection, label editing | positions only |
+| `desktop` | icon positions, selection, Trash contents (D-036) | positions and Trash |
 | `settings` | sounds, screensaver delay/enabled, cursor clock, weather location | all |
 | `player` (`src/apps/player/playerStore.ts`) | album, play order, position, playing; owns the one `<audio>` element | volume, shuffle, repeat, look only (`mikeos:player`) |
 | `nowPlaying` (`src/os/nowPlayingStore.ts`) | title, artist, playing, for the menu-bar indicator | no |
@@ -128,6 +128,7 @@ export default defineApp({
 | Viewer | image | Single image, prev/next within its folder, title/date/description |
 | Weather | app | Open-Meteo; default Cary, NC; location only on explicit request |
 | Control Panel | app | Desktop pattern (this visit only; random each visit, D-033), sounds, screensaver, cursor clock, reset |
+| Trash | app | What's been thrown away from the desktop (D-036); Put Away or drag out. Its desktop icon is a shell item (`src/os/trash.ts`), not content |
 | Screensaver | system | Not a window; idle overlay owned by the shell |
 | Music | app | Mixed Solution albums (D-034): two looks (Deck, Pocket), lyrics, Media Session; plays while the window is open, stops when it closes. `window.fill` so it fills its window |
 
