@@ -126,6 +126,25 @@ export function IconView({
     if (el && el.parentElement?.contains(document.activeElement)) el.focus();
   }, [selectedId]);
 
+  // The last icon that had focus, and where it was, so focus can land on a neighbour
+  // when that icon leaves the view (Move to Trash, Put Away).
+  const lastFocused = useRef<{ id: string; index: number } | null>(null);
+  useEffect(() => {
+    const last = lastFocused.current;
+    if (!last || nodes.some((n) => n.id === last.id)) return;
+    lastFocused.current = null;
+    const active = document.activeElement;
+    const lost =
+      !active ||
+      active === document.body ||
+      !active.isConnected ||
+      active === viewRef.current;
+    const next = nodes[Math.min(last.index, nodes.length - 1)];
+    if (!lost || !next) return;
+    onSelect(next.id);
+    optionRefs.current.get(next.id)?.focus();
+  }, [nodes, onSelect]);
+
   const nearest = (fromId: string, key: string): string | undefined => {
     const from = optionRefs.current.get(fromId)?.getBoundingClientRect();
     if (!from) return undefined;
@@ -328,6 +347,7 @@ export function IconView({
               }}
               onKeyDown={(event) => onKeyDown(event, node)}
               onFocus={() => {
+                lastFocused.current = { id: node.id, index };
                 if (!selected) onSelect(node.id);
               }}
             >

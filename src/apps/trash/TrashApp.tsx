@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { TRASH_ID, useDesktop, type Point } from '../../os/desktopStore';
 import { useDeviceMode } from '../../os/device';
 import { IconView, type IconLayout } from '../../os/IconView';
@@ -38,6 +38,16 @@ export default function TrashApp() {
     .filter((node): node is VNode => !!node);
   const count = nodes.length;
 
+  // Putting the last item away removes the focused icon with the list: land on the
+  // empty message instead of losing focus to the page.
+  const emptyRef = useRef<HTMLParagraphElement>(null);
+  useEffect(() => {
+    const active = document.activeElement;
+    if (count === 0 && (!active || active === document.body)) {
+      emptyRef.current?.focus();
+    }
+  }, [count]);
+
   return (
     <div className={styles.trash}>
       <div className={`${bar.toolbar} ${bar.spread}`}>
@@ -72,8 +82,10 @@ export default function TrashApp() {
         {count === 1 ? '1 item' : `${count} items`}
       </p>
       {count === 0 ? (
-        <p className={styles.empty}>
-          The Trash is empty. Drag something from the desktop here.
+        <p ref={emptyRef} tabIndex={-1} className={styles.empty}>
+          {phone
+            ? 'The Trash is empty. Touch and hold an icon and choose Move to Trash.'
+            : 'The Trash is empty. Drag an icon onto the Trash on the desktop.'}
         </p>
       ) : (
         <IconView

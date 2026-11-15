@@ -56,6 +56,10 @@ test('Delete moves an icon to the Trash; Put Away brings it back', async ({
   await page.keyboard.press('Delete');
   await expect(icon(page, 'Weather')).toHaveCount(0);
   await expect(page.getByText('Weather moved to Trash')).toBeAttached();
+  // Focus lands on a neighbouring icon, so the arrow keys keep working.
+  await expect(
+    desktopIcons(page).getByRole('option', { selected: true }),
+  ).toBeFocused();
 
   await icon(page, 'Trash').focus();
   await page.keyboard.press('Enter');
@@ -74,7 +78,25 @@ test('Delete moves an icon to the Trash; Put Away brings it back', async ({
     .getByRole('menuitem', { name: 'Put Away' })
     .click();
   await expect(icon(page, 'Weather')).toBeAttached();
-  await expect(trash.getByText('The Trash is empty.')).toBeVisible();
+  await expect(trash.getByText('The Trash is empty.')).toBeFocused();
+});
+
+test('Put Away moves focus to the next item in the Trash', async ({ page }) => {
+  for (const name of ['Weather', 'Read Me']) {
+    await icon(page, name).focus();
+    await page.keyboard.press('Delete');
+    await expect(icon(page, name)).toHaveCount(0);
+  }
+  await icon(page, 'Trash').focus();
+  await page.keyboard.press('Enter');
+  const trash = trashWindow(page);
+  await trash.getByRole('option', { name: 'Weather' }).focus();
+  await page.keyboard.press('Shift+F10');
+  await page
+    .getByRole('menu', { name: 'Weather' })
+    .getByRole('menuitem', { name: 'Put Away' })
+    .click();
+  await expect(trash.getByRole('option', { name: 'Read Me' })).toBeFocused();
 });
 
 test('the Trash is remembered after a reload, and Reset Desktop empties it', async ({
