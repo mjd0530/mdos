@@ -30,7 +30,7 @@ test('a plain case study has its details, headings and working pictures', async 
     page.getByRole('heading', { level: 2, name: 'Impact' }),
   ).toBeVisible();
   const images = page.getByRole('img');
-  await expect(images).toHaveCount(7);
+  await expect(images).toHaveCount(18);
   const first = images.first();
   await first.scrollIntoViewIfNeeded();
   await expect
