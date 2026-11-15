@@ -670,11 +670,19 @@ export const ICONS = {
   ],
 } as const satisfies Record<string, readonly string[]>;
 
-export type IconName = keyof typeof ICONS;
+export type PixelIconName = keyof typeof ICONS;
+
+/** Icons that are pictures rather than pixel drawings: Mike's logo, which has to look like
+ *  itself. Files live beside this one (PNG, 64px for 2x screens) and are mapped
+ *  to URLs in ui/PixelIcon; names are listed here so the content build can validate them. */
+export const IMAGE_ICON_NAMES = ['mdLogo'] as const;
+export type ImageIconName = (typeof IMAGE_ICON_NAMES)[number];
+
+export type IconName = PixelIconName | ImageIconName;
 
 /** Colour versions for the Colors display (D-031): same grid and outlines, colour fills.
  *  Drafted from the 1-bit art, then edited by hand like any other drawing. */
-export const ICONS_COLOR: Record<IconName, readonly string[]> = {
+export const ICONS_COLOR: Record<PixelIconName, readonly string[]> = {
   folder: [
     '                                ',
     '                                ',

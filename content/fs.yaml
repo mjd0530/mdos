@@ -26,6 +26,10 @@ desktop:
       - doc: portfolio/vantage
       - doc: portfolio/hello-design-system
 
+  - link: https://mikedemar.com/
+    name: Website
+    icon: mdLogo
+
   - gallery: sketchbook
     name: Sketchbook
 

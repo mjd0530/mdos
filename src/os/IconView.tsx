@@ -50,6 +50,11 @@ const KIND_LABEL: Record<VNode['kind'], string> = {
   image: 'Picture',
 };
 
+/** Marks a web link: opening it leaves MDOS for a new browser tab. */
+function NewTabBadge() {
+  return <span aria-hidden="true" className={styles.newTab} />;
+}
+
 /**
  * Icons as a single-select listbox. Click selects, double-click / Enter opens, arrows move
  * to the nearest icon in that direction, Shift+F10 opens the context menu. In the free
@@ -297,7 +302,11 @@ export function IconView({
               }}
               role="option"
               aria-selected={selected}
-              aria-description={KIND_LABEL[node.kind]}
+              aria-description={
+                node.kind === 'link'
+                  ? 'Web link, opens in a new tab'
+                  : KIND_LABEL[node.kind]
+              }
               data-id={node.id}
               tabIndex={node.id === tabStopId ? 0 : -1}
               className={styles.item}
@@ -333,11 +342,14 @@ export function IconView({
                   draggable={false}
                 />
               ) : (
-                <PixelIcon
-                  name={iconFor(node)}
-                  selected={highlighted}
-                  className={styles.icon}
-                />
+                <span className={styles.glyph}>
+                  <PixelIcon
+                    name={iconFor(node)}
+                    selected={highlighted}
+                    className={styles.icon}
+                  />
+                  {node.kind === 'link' && <NewTabBadge />}
+                </span>
               )}
               <span className={styles.label}>{node.name}</span>
               {layout === 'list' && (
@@ -361,7 +373,10 @@ export function IconView({
                 className={`${styles.icon} ${styles.thumb}`}
               />
             ) : (
-              <PixelIcon name={iconFor(ghost.node)} className={styles.icon} />
+              <span className={styles.glyph}>
+                <PixelIcon name={iconFor(ghost.node)} className={styles.icon} />
+                {ghost.node.kind === 'link' && <NewTabBadge />}
+              </span>
             )}
             <span className={styles.label}>{ghost.node.name}</span>
           </div>,

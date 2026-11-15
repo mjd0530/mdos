@@ -113,7 +113,7 @@ Song lengths are read from the files. The build stops if a file is missing, a co
 | `gallery:` | `- gallery: sketchbook` + `name:` | Files, showing thumbnails; pictures open in Viewer |
 | `image:` | `- image: about/portrait.jpg` + `name:` + `alt:` | Viewer (one picture; PNG or JPG) |
 
-Any entry can take `icon:` with a name from `src/assets/icons/icons.ts`. Order in the file is the order on screen.
+Any entry can take `icon:` with a name from `src/assets/icons/icons.ts`: a pixel drawing, or `mdLogo` (Mike's logo, a picture rather than a drawing). Web links get a small arrow badge in the corner to show they open a new tab. Order in the file is the order on screen.
 
 A `doc:` or `image:` on the desktop (not inside a folder) can add `opensOnFirstVisit: true` to open by itself the first time someone visits, on desktops and tablets. Phones start at the launcher instead. Reset Desktop counts as a fresh visit. About Mike uses this.
 

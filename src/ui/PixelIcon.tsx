@@ -1,8 +1,20 @@
 import { useMemo } from 'react';
-import type { IconName } from '../assets/icons/icons';
+import type {
+  IconName,
+  ImageIconName,
+  PixelIconName,
+} from '../assets/icons/icons';
 import { ICONS, ICONS_COLOR } from '../assets/icons/icons';
+import mdLogo from '../assets/icons/md-logo.png';
 import { useDisplay } from '../os/display';
+import styles from './PixelIcon.module.css';
 import { darken, invert, parsePixels } from './pixels';
+
+/** Picture icons (see IMAGE_ICON_NAMES): the same in both looks. */
+const IMAGE_ICONS: Record<ImageIconName, string> = { mdLogo };
+
+const isImageIcon = (name: IconName): name is ImageIconName =>
+  name in IMAGE_ICONS;
 
 interface PixelIconProps {
   name: IconName;
@@ -20,6 +32,38 @@ export function PixelIcon({
   selected = false,
   className,
 }: PixelIconProps) {
+  if (isImageIcon(name)) {
+    return (
+      <img
+        src={IMAGE_ICONS[name]}
+        alt=""
+        width={32 * scale}
+        height={32 * scale}
+        draggable={false}
+        className={`${styles.image} ${className ?? ''}`}
+        data-selected={selected || undefined}
+      />
+    );
+  }
+  return (
+    <PixelArtIcon
+      name={name}
+      scale={scale}
+      selected={selected}
+      className={className}
+    />
+  );
+}
+
+function PixelArtIcon({
+  name,
+  scale,
+  selected,
+  className,
+}: Required<Omit<PixelIconProps, 'className' | 'name'>> & {
+  name: PixelIconName;
+  className?: string;
+}) {
   const color = useDisplay() === 'color';
   const art = useMemo(
     () => parsePixels(color ? ICONS_COLOR[name] : ICONS[name]),

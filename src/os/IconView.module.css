@@ -149,3 +149,22 @@
   background: var(--color-highlight);
   color: var(--color-highlight-text);
 }
+
+/* ---------- Icon glyph and web-link badge ---------- */
+
+.glyph {
+  position: relative;
+  display: block;
+  flex: none;
+}
+
+/* An arrow-out-of-a-box in the icon's corner: this one opens a new browser tab. */
+.newTab {
+  position: absolute;
+  right: -4px;
+  bottom: -2px;
+  width: 11px;
+  height: 11px;
+  background: var(--art-new-tab) center / 11px 11px no-repeat;
+  image-rendering: pixelated;
+}

@@ -6,7 +6,7 @@ import path from 'node:path';
 import { Marked, type Tokens } from 'marked';
 import YAML from 'yaml';
 import { z } from 'zod';
-import { ICONS } from '../src/assets/icons/icons.ts';
+import { ICONS, IMAGE_ICON_NAMES } from '../src/assets/icons/icons.ts';
 import type { Doc, FolderNode, ImageNode, VNode } from '../src/vfs/types.ts';
 
 export class ContentError extends Error {
@@ -21,7 +21,10 @@ export class ContentError extends Error {
 
 // ---------- Schemas ----------
 
-const iconName = z.enum(Object.keys(ICONS) as [string, ...string[]]);
+const iconName = z.enum([
+  ...IMAGE_ICON_NAMES,
+  ...(Object.keys(ICONS) as (keyof typeof ICONS)[]),
+]);
 const text = z.string().trim().min(1);
 
 type FsEntry =

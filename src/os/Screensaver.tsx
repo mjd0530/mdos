@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { ICONS, ICONS_COLOR, type IconName } from '../assets/icons/icons';
+import { ICONS, ICONS_COLOR, type PixelIconName } from '../assets/icons/icons';
 import { invert, parsePixels } from '../ui/pixels';
 import { useSettings } from './settings';
 import {
@@ -12,7 +12,7 @@ import styles from './Screensaver.module.css';
 
 const SCALE = 2;
 const SIZE = 32 * SCALE;
-const SPRITE_ICONS: IconName[] = [
+const SPRITE_ICONS: PixelIconName[] = [
   'folder',
   'document',
   'computer',
@@ -29,7 +29,7 @@ const SPRITE_ICONS: IconName[] = [
 const MOVE_TO_WAKE = 6; // px: ignore jitter from a resting mouse
 
 /** Pre-draw an icon at 2×: inverted white-on-black in 1-bit, its own colours in colour. */
-function renderSprite(name: IconName, color: boolean): HTMLCanvasElement {
+function renderSprite(name: PixelIconName, color: boolean): HTMLCanvasElement {
   const art = parsePixels(color ? ICONS_COLOR[name] : ICONS[name]);
   const canvas = document.createElement('canvas');
   canvas.width = art.width * SCALE;
