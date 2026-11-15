@@ -1,0 +1,17 @@
+.trash {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.status {
+  margin: 0;
+  padding: 2px 8px;
+  border-bottom: 1px solid var(--color-black);
+  color: var(--color-grey-4);
+}
+
+.empty {
+  margin: 0;
+  padding: 12px 16px;
+}

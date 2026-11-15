@@ -175,9 +175,9 @@
   margin: 0;
 }
 
-/* Square and tall pictures (a portrait) would fill the window at full width. */
-.body :global(.doc-image img[data-upright]) {
-  max-width: min(100%, 240px);
+/* Square and tall pictures are portraits: small, in place, not opened in Viewer. */
+.body :global(img.doc-portrait) {
+  max-width: min(100%, 160px);
 }
 
 .body :global(.doc-image:focus-visible) {

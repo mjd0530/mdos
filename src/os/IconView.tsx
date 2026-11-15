@@ -1,5 +1,6 @@
 import type { CSSProperties, KeyboardEvent, PointerEvent } from 'react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { PixelIcon } from '../ui/PixelIcon';
 import type { VNode } from '../vfs';
 import { iconFor } from './iconFor';
@@ -24,6 +25,17 @@ interface IconViewProps {
   onContextMenu?: (node: VNode | null, at: Point) => void;
   /** Phones open on a single tap, like a home screen; elsewhere double-click opens. */
   openOn?: 'single' | 'double';
+  /** Free layout only: an icon that others can be dropped onto (the Trash). */
+  dropTargetId?: string;
+  /** An icon was dropped onto `dropTargetId`; `origin` is where its drag started. */
+  onDropOnTarget?: (id: string, origin: Point) => void;
+  /** Delete or Backspace on a focused icon (Move to Trash). */
+  onDelete?: (node: VNode) => void;
+  /**
+   * Grid and list layouts: icons can be dragged out of this view's window. Called with
+   * the release point (viewport coordinates) when it lands outside the window.
+   */
+  onDragOut?: (id: string, at: Point) => void;
   className?: string;
 }
 
@@ -37,6 +49,11 @@ const KIND_LABEL: Record<VNode['kind'], string> = {
   link: 'Web link',
   image: 'Picture',
 };
+
+/** Marks a web link: opening it leaves MDOS for a new browser tab. */
+function NewTabBadge() {
+  return <span aria-hidden="true" className={styles.newTab} />;
+}
 
 /**
  * Icons as a single-select listbox. Click selects, double-click / Enter opens, arrows move
@@ -54,8 +71,21 @@ export function IconView({
   onOpen,
   onContextMenu,
   openOn = 'double',
+  dropTargetId,
+  onDropOnTarget,
+  onDelete,
+  onDragOut,
   className,
 }: IconViewProps) {
+  const viewRef = useRef<HTMLDivElement>(null);
+  // While an icon hovers over the drop target, the target shows selected (inverted).
+  const [overTarget, setOverTarget] = useState(false);
+  // An icon being dragged out of a window follows the pointer as a ghost.
+  const [ghost, setGhost] = useState<{
+    node: VNode;
+    x: number;
+    y: number;
+  } | null>(null);
   const optionRefs = useRef(new Map<string, HTMLDivElement>());
   // Touch has no right-click: holding a finger on an icon opens its context menu.
   const longPress = useRef<{ timer: number; x: number; y: number } | null>(
@@ -73,7 +103,15 @@ export function IconView({
     startY: number;
     origin: Point;
     moving: boolean;
+    /** Lifting out of a window (grid/list) rather than moving on the desktop. */
+    out: boolean;
   } | null>(null);
+
+  const isOverTarget = (id: string, x: number, y: number) => {
+    if (!dropTargetId || id === dropTargetId) return false;
+    const r = optionRefs.current.get(dropTargetId)?.getBoundingClientRect();
+    return !!r && x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
+  };
 
   // Keep the roving tab stop on the selected icon, or the first one.
   const tabStopId =
@@ -87,6 +125,25 @@ export function IconView({
     const el = optionRefs.current.get(selectedId);
     if (el && el.parentElement?.contains(document.activeElement)) el.focus();
   }, [selectedId]);
+
+  // The last icon that had focus, and where it was, so focus can land on a neighbour
+  // when that icon leaves the view (Move to Trash, Put Away).
+  const lastFocused = useRef<{ id: string; index: number } | null>(null);
+  useEffect(() => {
+    const last = lastFocused.current;
+    if (!last || nodes.some((n) => n.id === last.id)) return;
+    lastFocused.current = null;
+    const active = document.activeElement;
+    const lost =
+      !active ||
+      active === document.body ||
+      !active.isConnected ||
+      active === viewRef.current;
+    const next = nodes[Math.min(last.index, nodes.length - 1)];
+    if (!lost || !next) return;
+    onSelect(next.id);
+    optionRefs.current.get(next.id)?.focus();
+  }, [nodes, onSelect]);
 
   const nearest = (fromId: string, key: string): string | undefined => {
     const from = optionRefs.current.get(fromId)?.getBoundingClientRect();
@@ -119,6 +176,8 @@ export function IconView({
     const { key } = event;
     if (key === 'Enter') {
       onOpen(node);
+    } else if ((key === 'Delete' || key === 'Backspace') && onDelete) {
+      onDelete(node);
     } else if (key.startsWith('Arrow')) {
       const next = nearest(node.id, key);
       if (next) onSelect(next);
@@ -154,14 +213,16 @@ export function IconView({
         }, LONG_PRESS_MS),
       };
     }
-    if (layout === 'free' && positionOf && onMove) {
+    const free = layout === 'free' && positionOf && onMove;
+    if (free || (layout !== 'free' && onDragOut)) {
       event.currentTarget.setPointerCapture(event.pointerId);
       drag.current = {
         id: node.id,
         startX: event.clientX,
         startY: event.clientY,
-        origin: positionOf(node, index),
+        origin: free ? positionOf(node, index) : { x: 0, y: 0 },
         moving: false,
+        out: !free,
       };
     }
   };
@@ -176,113 +237,171 @@ export function IconView({
       cancelLongPress();
     }
     const d = drag.current;
-    if (!d || !onMove) return;
+    if (!d) return;
     const dx = event.clientX - d.startX;
     const dy = event.clientY - d.startY;
     if (!d.moving && Math.hypot(dx, dy) < DRAG_THRESHOLD) return;
     d.moving = true;
-    onMove(d.id, {
+    if (d.out) {
+      const node = nodes.find((n) => n.id === d.id);
+      if (node) setGhost({ node, x: event.clientX, y: event.clientY });
+      return;
+    }
+    onMove?.(d.id, {
       x: Math.max(0, d.origin.x + dx),
       y: Math.max(0, d.origin.y + dy),
     });
+    const over = isOverTarget(d.id, event.clientX, event.clientY);
+    if (over !== overTarget) setOverTarget(over);
   };
 
-  const endDrag = () => {
+  const endDrag = (event: PointerEvent, cancelled = false) => {
+    const d = drag.current;
     drag.current = null;
     cancelLongPress();
+    setOverTarget(false);
+    setGhost(null);
+    if (!d?.moving || cancelled) return;
+    const { clientX: x, clientY: y } = event;
+    if (d.out) {
+      const frame =
+        viewRef.current?.closest('[role="dialog"]') ?? viewRef.current;
+      const r = frame?.getBoundingClientRect();
+      const inside =
+        !!r && x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
+      if (!inside) onDragOut?.(d.id, { x, y });
+    } else if (isOverTarget(d.id, x, y)) {
+      onDropOnTarget?.(d.id, d.origin);
+    }
   };
 
   useEffect(() => cancelLongPress, []);
 
   return (
-    <div
-      role="listbox"
-      aria-label={label}
-      aria-orientation={layout === 'list' ? 'vertical' : undefined}
-      className={`${styles.view} ${styles[layout]} ${className ?? ''}`}
-      onPointerDown={(event) => {
-        if (event.target === event.currentTarget) onSelect(null);
-      }}
-      onContextMenu={(event) => {
-        if (!onContextMenu) return;
-        event.preventDefault();
-        // Android also fires contextmenu on long-press; ours already handled it.
-        if (Date.now() - longPressFiredAt.current < 1000) return;
-        const option = (event.target as Element).closest('[role="option"]');
-        const node = nodes.find(
-          (n) => n.id === option?.getAttribute('data-id'),
-        );
-        if (node) onSelect(node.id);
-        onContextMenu(node ?? null, { x: event.clientX, y: event.clientY });
-      }}
-    >
-      {nodes.map((node, index) => {
-        const selected = node.id === selectedId;
-        const position: CSSProperties | undefined =
-          layout === 'free' && positionOf
-            ? {
-                left: positionOf(node, index).x,
-                top: positionOf(node, index).y,
+    <>
+      <div
+        ref={viewRef}
+        role="listbox"
+        aria-label={label}
+        aria-orientation={layout === 'list' ? 'vertical' : undefined}
+        className={`${styles.view} ${styles[layout]} ${className ?? ''}`}
+        onPointerDown={(event) => {
+          if (event.target === event.currentTarget) onSelect(null);
+        }}
+        onContextMenu={(event) => {
+          if (!onContextMenu) return;
+          event.preventDefault();
+          // Android also fires contextmenu on long-press; ours already handled it.
+          if (Date.now() - longPressFiredAt.current < 1000) return;
+          const option = (event.target as Element).closest('[role="option"]');
+          const node = nodes.find(
+            (n) => n.id === option?.getAttribute('data-id'),
+          );
+          if (node) onSelect(node.id);
+          onContextMenu(node ?? null, { x: event.clientX, y: event.clientY });
+        }}
+      >
+        {nodes.map((node, index) => {
+          const selected = node.id === selectedId;
+          const highlighted =
+            selected || (overTarget && node.id === dropTargetId);
+          const position: CSSProperties | undefined =
+            layout === 'free' && positionOf
+              ? {
+                  left: positionOf(node, index).x,
+                  top: positionOf(node, index).y,
+                }
+              : undefined;
+          return (
+            <div
+              key={node.id}
+              ref={(el) => {
+                if (el) optionRefs.current.set(node.id, el);
+                else optionRefs.current.delete(node.id);
+              }}
+              role="option"
+              aria-selected={selected}
+              aria-description={
+                node.kind === 'link'
+                  ? 'Web link, opens in a new tab'
+                  : KIND_LABEL[node.kind]
               }
-            : undefined;
-        return (
+              data-id={node.id}
+              tabIndex={node.id === tabStopId ? 0 : -1}
+              className={styles.item}
+              style={position}
+              onPointerDown={(event) => onPointerDown(event, node, index)}
+              onPointerMove={onPointerMove}
+              onPointerUp={(event) => endDrag(event)}
+              onPointerCancel={(event) => endDrag(event, true)}
+              onDoubleClick={() => {
+                if (openOn === 'double') onOpen(node);
+              }}
+              onClick={() => {
+                if (
+                  openOn === 'single' &&
+                  Date.now() - longPressFiredAt.current > 1000
+                ) {
+                  onOpen(node);
+                }
+              }}
+              onKeyDown={(event) => onKeyDown(event, node)}
+              onFocus={() => {
+                lastFocused.current = { id: node.id, index };
+                if (!selected) onSelect(node.id);
+              }}
+            >
+              {node.kind === 'image' ? (
+                // Drawings show themselves; the label carries the name.
+                <img
+                  src={node.thumb}
+                  alt=""
+                  className={`${styles.icon} ${styles.thumb}`}
+                  loading="lazy"
+                  decoding="async"
+                  draggable={false}
+                />
+              ) : (
+                <span className={styles.glyph}>
+                  <PixelIcon
+                    name={iconFor(node)}
+                    selected={highlighted}
+                    className={styles.icon}
+                  />
+                  {node.kind === 'link' && <NewTabBadge />}
+                </span>
+              )}
+              <span className={styles.label}>{node.name}</span>
+              {layout === 'list' && (
+                <span className={styles.kind}>{KIND_LABEL[node.kind]}</span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      {ghost &&
+        createPortal(
           <div
-            key={node.id}
-            ref={(el) => {
-              if (el) optionRefs.current.set(node.id, el);
-              else optionRefs.current.delete(node.id);
-            }}
-            role="option"
-            aria-selected={selected}
-            aria-description={KIND_LABEL[node.kind]}
-            data-id={node.id}
-            tabIndex={node.id === tabStopId ? 0 : -1}
-            className={styles.item}
-            style={position}
-            onPointerDown={(event) => onPointerDown(event, node, index)}
-            onPointerMove={onPointerMove}
-            onPointerUp={endDrag}
-            onPointerCancel={endDrag}
-            onDoubleClick={() => {
-              if (openOn === 'double') onOpen(node);
-            }}
-            onClick={() => {
-              if (
-                openOn === 'single' &&
-                Date.now() - longPressFiredAt.current > 1000
-              ) {
-                onOpen(node);
-              }
-            }}
-            onKeyDown={(event) => onKeyDown(event, node)}
-            onFocus={() => {
-              if (!selected) onSelect(node.id);
-            }}
+            aria-hidden="true"
+            className={styles.ghost}
+            style={{ left: ghost.x - 44, top: ghost.y - 20 }}
           >
-            {node.kind === 'image' ? (
-              // Drawings show themselves; the label carries the name.
+            {ghost.node.kind === 'image' ? (
               <img
-                src={node.thumb}
+                src={ghost.node.thumb}
                 alt=""
                 className={`${styles.icon} ${styles.thumb}`}
-                loading="lazy"
-                decoding="async"
-                draggable={false}
               />
             ) : (
-              <PixelIcon
-                name={iconFor(node)}
-                selected={selected}
-                className={styles.icon}
-              />
+              <span className={styles.glyph}>
+                <PixelIcon name={iconFor(ghost.node)} className={styles.icon} />
+                {ghost.node.kind === 'link' && <NewTabBadge />}
+              </span>
             )}
-            <span className={styles.label}>{node.name}</span>
-            {layout === 'list' && (
-              <span className={styles.kind}>{KIND_LABEL[node.kind]}</span>
-            )}
-          </div>
-        );
-      })}
-    </div>
+            <span className={styles.label}>{ghost.node.name}</span>
+          </div>,
+          document.body,
+        )}
+    </>
   );
 }

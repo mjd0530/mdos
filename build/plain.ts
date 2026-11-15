@@ -31,6 +31,7 @@ const STYLE = `
     font: 1.0625rem/1.6 system-ui, sans-serif; }
   h1, h2, h3 { line-height: 1.25; }
   img { max-width: 100%; height: auto; }
+  img.doc-portrait { max-width: 160px; }
   figure { margin: 1.5rem 0; }
   figcaption { font-size: 0.9375rem; opacity: 0.8; }
   blockquote { margin: 1.5rem 0; padding-left: 1rem; border-left: 3px solid; }

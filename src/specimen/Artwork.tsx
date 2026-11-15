@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 import { useState } from 'react';
-import { ICONS, type IconName } from '../assets/icons/icons';
+import { ICONS, IMAGE_ICON_NAMES, type IconName } from '../assets/icons/icons';
 import { PATTERNS, patternImage, type PatternName } from '../assets/patterns';
 import { useDisplay } from '../os/display';
 import { PixelIcon } from '../ui/PixelIcon';
@@ -11,6 +11,9 @@ const ICON_LABELS: Record<IconName, string> = {
   document: 'Document',
   image: 'Picture',
   trash: 'Trash',
+  trashFull: 'Trash (full)',
+  stop: 'Stop (error alert)',
+  mdLogo: 'Mike DeMar logo',
   notes: 'Notes',
   files: 'Files',
   weather: 'Weather',
@@ -26,7 +29,10 @@ const ICON_LABELS: Record<IconName, string> = {
   weatherStorm: 'Storm',
 };
 
-const ICON_NAMES = Object.keys(ICONS) as IconName[];
+const ICON_NAMES: IconName[] = [
+  ...(Object.keys(ICONS) as IconName[]),
+  ...IMAGE_ICON_NAMES,
+];
 const PATTERN_NAMES = Object.keys(PATTERNS) as PatternName[];
 
 function patternStyle(

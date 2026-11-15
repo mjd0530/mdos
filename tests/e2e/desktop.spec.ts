@@ -51,10 +51,8 @@ test('folder → Files → document → Notes', async ({ page }) => {
   await openWithKeyboard(page, 'Portfolio');
   await expect(page.getByRole('dialog', { name: 'Portfolio' })).toHaveCount(1);
 
-  await files
-    .getByRole('option', { name: 'Smart Share / Magic Move' })
-    .dblclick();
-  const notes = page.getByRole('dialog', { name: 'Smart Share / Magic Move' });
+  await files.getByRole('option', { name: 'Tap to Launch' }).dblclick();
+  const notes = page.getByRole('dialog', { name: 'Tap to Launch' });
   await expect(notes.getByText('Lead UX Designer')).toBeVisible();
   const image = notes.getByRole('img', {
     name: /Smart Share open on a Lenovo/,

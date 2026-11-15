@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { announce } from '../../os/announce';
 import { useDeviceMode } from '../../os/device';
+import { useDesktop } from '../../os/desktopStore';
 import { IconView, type IconLayout } from '../../os/IconView';
 import { openNode } from '../../os/open';
-import { findNode, pathTo, type VNode } from '../../vfs';
+import { desktop, findNode, pathTo, type VNode } from '../../vfs';
 import type { AppProps } from '../types';
 import type { FilesPayload } from './index';
+import bar from '../../ui/toolbar.module.css';
 import styles from './FilesApp.module.css';
 
 interface History {
@@ -28,7 +30,14 @@ export default function FilesApp({
 
   const folderId = history.stack[history.index] ?? 'desktop';
   const folder = findNode(folderId);
-  const children = folder?.kind === 'folder' ? folder.children : [];
+  const trashed = useDesktop((s) => s.trashed);
+  // The desktop folder hides what's in the Trash, like the desktop itself.
+  const children =
+    folder?.kind !== 'folder'
+      ? []
+      : folder.id === desktop.id
+        ? folder.children.filter((node) => !trashed.includes(node.id))
+        : folder.children;
 
   useEffect(() => {
     if (folder) setTitle(folder.name);
@@ -70,11 +79,11 @@ export default function FilesApp({
 
   return (
     <div className={styles.files}>
-      <div className={styles.toolbar}>
-        <div className={styles.group}>
+      <div className={bar.toolbar}>
+        <div className={bar.group}>
           <button
             type="button"
-            className={styles.tool}
+            className={bar.tool}
             onClick={() => step(-1)}
             disabled={history.index === 0}
             aria-label="Back"
@@ -83,7 +92,7 @@ export default function FilesApp({
           </button>
           <button
             type="button"
-            className={styles.tool}
+            className={bar.tool}
             onClick={() => step(1)}
             disabled={history.index >= history.stack.length - 1}
             aria-label="Forward"
@@ -110,10 +119,10 @@ export default function FilesApp({
             ))}
           </ol>
         </nav>
-        <div className={styles.group} role="group" aria-label="View">
+        <div className={bar.group} role="group" aria-label="View">
           <button
             type="button"
-            className={styles.tool}
+            className={bar.tool}
             aria-pressed={view === 'grid'}
             onClick={() => setView('grid')}
           >
@@ -121,7 +130,7 @@ export default function FilesApp({
           </button>
           <button
             type="button"
-            className={styles.tool}
+            className={bar.tool}
             aria-pressed={view === 'list'}
             onClick={() => setView('list')}
           >

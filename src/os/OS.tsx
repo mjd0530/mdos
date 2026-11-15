@@ -10,11 +10,12 @@ import { Clock } from './Clock';
 import { CursorClock } from './CursorClock';
 import { Screensaver } from './Screensaver';
 import { useIdleScreensaver, useScreensaver } from './screensaverState';
-import { useDesktop } from './desktopStore';
+import { TRASH_ID, useDesktop } from './desktopStore';
 import { DesktopIcons } from './DesktopIcons';
+import { emptyTrash, moveToTrash, useEmptyTrashAlert } from './trash';
 import { MenuBar } from './menubar/MenuBar';
 import { NowPlaying } from './NowPlaying';
-import { desktop } from '../vfs';
+import { desktop, findNode } from '../vfs';
 import { openNode } from './open';
 import { clearSaved, takeFirstVisit } from './persist';
 import { currentMode, useDeviceMode } from './device';
@@ -55,6 +56,10 @@ export function OS() {
 
   const windowCount = useWindows((s) => s.windows.length);
   const activeId = useWindows((s) => s.order.at(-1));
+  const selectedIcon = useDesktop((s) => s.selectedId);
+  const canTrash =
+    device !== 'phone' && !!selectedIcon && selectedIcon !== TRASH_ID;
+  const emptyTrashOpen = useEmptyTrashAlert((s) => s.open);
 
   const menus = useMemo(
     () =>
@@ -69,6 +74,12 @@ export function OS() {
           },
           nextWindow: () => useWindows.getState().cycle(),
           cleanUp: () => useDesktop.getState().cleanUp(),
+          moveToTrash: () => {
+            const id = useDesktop.getState().selectedId;
+            const node = id ? findNode(id) : undefined;
+            if (node) moveToTrash(node);
+          },
+          emptyTrash,
           resetDesktop: () => setAlert('reset'),
           plainVersion: () => {
             window.location.href = `${import.meta.env.BASE_URL}plain/`;
@@ -80,10 +91,11 @@ export function OS() {
         {
           hasWindow: activeId !== undefined,
           windowCount,
+          canTrash,
           markMenuApps: MARK_MENU_APPS,
         },
       ),
-    [activeId, windowCount],
+    [activeId, windowCount, canTrash],
   );
 
   // Ctrl+` cycles windows (Shift reverses). ⌘` is taken by macOS for browser windows.
@@ -177,6 +189,7 @@ export function OS() {
           if (value !== 'reset') return;
           useWindows.getState().forgetAll();
           useDesktop.getState().cleanUp();
+          useDesktop.getState().restoreAll();
           useSettings.getState().restoreDefaults();
           useDesktopPattern.getState().reset();
           clearSaved();
@@ -184,8 +197,24 @@ export function OS() {
         }}
       >
         <p>
-          All windows close, icons and windows go back to where they started,
-          and Control Panel settings return to their defaults.
+          All windows close, icons and windows go back to where they started
+          (including anything in the Trash), and Control Panel settings return
+          to their defaults.
+        </p>
+      </Alert>
+
+      <Alert
+        open={emptyTrashOpen}
+        title="Error! Hey, whaddaya think you're doing?"
+        icon="stop"
+        sound="error"
+        buttons={[{ value: 'ok', label: 'Sorry!', isDefault: true }]}
+        onClose={() => useEmptyTrashAlert.setState({ open: false })}
+      >
+        <p>
+          That's Mike's stuff! Nothing on this computer gets thrown away for
+          good. Drag things out of the Trash, or right-click and choose Put
+          Away.
         </p>
       </Alert>
 

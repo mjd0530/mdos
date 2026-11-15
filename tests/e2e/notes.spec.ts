@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { isPhone } from './device.ts';
 
 const WCAG = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
-const STUDY = 'Smart Share / Magic Move';
+const STUDY = 'Tap to Launch';
 
 async function openMagicMove(page: Page) {
   const desktop = page.getByRole('listbox', { name: 'Desktop' });
@@ -24,7 +24,7 @@ test.beforeEach(async ({ page }) => {
 test('a case study shows its subtitle, details and award', async ({ page }) => {
   const notes = await openMagicMove(page);
   await expect(
-    notes.getByText('Designing Lenovo’s cross-device interaction model'),
+    notes.getByText('A signature feature of Lenovo Aura Edition PCs'),
   ).toBeVisible();
   for (const term of ['Role', 'Client', 'Years', 'Scope', 'Award']) {
     await expect(
@@ -39,7 +39,7 @@ test('Contents jumps to a section and moves focus there', async ({ page }) => {
   await notes.getByText('Contents', { exact: true }).click();
   const nav = notes.getByRole('navigation', { name: `Contents of ${STUDY}` });
   await nav.getByRole('link', { name: 'Delivery' }).click();
-  const heading = notes.getByRole('heading', { name: 'Delivery' });
+  const heading = notes.getByRole('heading', { name: 'Delivery', exact: true });
   await expect(heading).toBeFocused();
   await expect(heading).toBeInViewport();
   await expect(nav).toBeHidden();
@@ -106,13 +106,13 @@ test('Viewer steps through every picture in the document', async ({
   const viewer = page.getByRole('dialog', {
     name: 'Journey and competitive mapping board',
   });
-  await expect(viewer.getByText('2 of 7')).toBeVisible();
+  await expect(viewer.getByText('2 of 18')).toBeVisible();
 
   await viewer.getByRole('button', { name: 'Next ▶' }).click();
   const next = page.getByRole('dialog', {
-    name: 'Mid-fidelity experience flows',
+    name: 'Benchmark testing flow',
   });
-  await expect(next.getByText('3 of 7')).toBeVisible();
+  await expect(next.getByText('3 of 18')).toBeVisible();
 
   // ← goes back while the window is active.
   await next.getByRole('button', { name: 'Actual Size' }).focus();
@@ -128,15 +128,17 @@ test('Viewer steps through every picture in the document', async ({
     .focus();
   await page.keyboard.press('Enter');
   await expect(
-    page.getByRole('dialog', { name: 'Delivery screens' }),
+    page.getByRole('dialog', { name: 'The delivery file' }),
   ).toBeVisible();
   await expect(page.getByRole('dialog', { name: /mapping board/ })).toHaveCount(
     0,
   );
   await expect(
-    page.getByRole('dialog', { name: 'Delivery screens' }).getByRole('button', {
-      name: 'Next ▶',
-    }),
+    page
+      .getByRole('dialog', { name: 'The delivery file' })
+      .getByRole('button', {
+        name: 'Next ▶',
+      }),
   ).toBeDisabled();
 });
 

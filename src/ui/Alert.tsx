@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { useEffect, useId, useRef } from 'react';
 import type { IconName } from '../assets/icons/icons';
-import { playSound } from '../os/sounds';
+import { playSound, type SoundName } from '../os/sounds';
 import { Button } from './Button';
 import { PixelIcon } from './PixelIcon';
 import styles from './Alert.module.css';
@@ -17,6 +17,8 @@ interface AlertProps {
   /** Accessible name of the dialog (also shown as the bold first line). */
   title: string;
   icon?: IconName;
+  /** Played as the alert opens. */
+  sound?: SoundName;
   children?: ReactNode;
   buttons?: AlertButton[];
   /** Called with the chosen button's value, or null for Esc. */
@@ -32,6 +34,7 @@ export function Alert({
   open,
   title,
   icon = 'computer',
+  sound = 'alert',
   children,
   buttons = [{ value: 'ok', label: 'OK', isDefault: true }],
   onClose,
@@ -45,12 +48,12 @@ export function Alert({
     if (!dialog) return;
     if (open && !dialog.open) {
       dialog.showModal();
-      playSound('alert');
+      playSound(sound);
       // showModal() focuses the first button; System 7 puts Return on the default one.
       dialog.querySelector<HTMLButtonElement>('[data-default]')?.focus();
     }
     if (!open && dialog.open) dialog.close();
-  }, [open]);
+  }, [open, sound]);
 
   return (
     <dialog

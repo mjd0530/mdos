@@ -219,7 +219,7 @@ System sounds are on for new visitors. They are short blips (under a quarter of 
 _2026-11-12 · Accepted (Mike)_
 
 - **About Mike** (`content/about/biography.md`) sits on the desktop, right after Read Me. The "About Mike" folder is gone; it held only the biography.
-- **Portrait** (from the Astro site) heads the About Mike note. Square and tall document pictures are marked `data-upright` at build time and shown at most 240px wide in Notes, so the portrait doesn't fill the window and hide the text. Clicking opens it full size in Viewer. A separate Mike.jpg desktop icon was tried and dropped (Mike): one place for it is enough.
+- **Portrait** (from the Astro site) heads the About Mike note. Square and tall document pictures count as portraits: at build time they lose the Viewer button and show as a plain picture at most 160px wide in Notes (Mike, 2026-11-14: smaller, and not opened larger). Wide pictures keep click-to-enlarge. A separate Mike.jpg desktop icon was tried and dropped (Mike): one place for it is enough.
 - `fs.yaml` gains an `image:` entry for a single picture (PNG or JPG, `name` and `alt` required), resized like Sketchbook drawings and opened in Viewer. Unused for now; desktop icons show such pictures as 32px thumbnails.
 - **First visit:** desktop items marked `opensOnFirstVisit: true` (About Mike) open by themselves the first time a browser loads MDOS, so a visitor meets Mike before exploring. Return visits start on a clean desktop. Remembered with `mikeos:visited`; Reset Desktop forgets it. Phones skip it: their launcher is the front door and a full-screen window would hide it. Blocked storage counts as a return visit, so nothing reopens on every load.
 - E2E tests start as returning visitors (Playwright `storageState`); `first-visit.spec.ts` covers the first visit.
@@ -279,3 +279,14 @@ Mike wanted the player to be a device on the desktop, not a program in a window.
 - **Fixture album:** the placeholder Test Tones moved to `tests/fixtures/music/` and is added only when `MDOS_TEST_MUSIC` is set (the e2e build), so the site ships only real albums. `E2E_PORT` lets a second checkout run e2e tests at the same time.
 - **Power Up** (Mixed Solution) is the first real album: Beat Grenades (3:43, 4.6 MB at 160 kbps) and the cover. Year, lyrics and the other songs are TODO(mike). The cover Mike supplied is 240px; a larger one would look sharper in Viewer.
 
+## D-036 Trash: throw things away, never lose them
+_2026-11-13 · Accepted (Mike)_
+
+A playful System 7 Trash. Content is read-only, so nothing is ever deleted; the Trash is a place to hide things and bring them back.
+
+- **On the desktop**, in the bottom slot of the first icon column (System 7's corner); the default arrangement keeps that slot free. Phones show it as the last launcher tile. The icon shows a lifted lid and paper (`trashFull`, 1-bit and colour) when anything is inside.
+- **In:** drag a desktop icon onto the Trash (it inverts while an icon hovers over it), right-click / long-press → Move to Trash, File → Move to Trash, or Delete / Backspace on a focused icon. A synthesized "clatter" plays on release (`sounds.ts`, D-003), and the move is announced. Only top-level desktop items; items inside folders stay where they are.
+- **Out:** open the Trash (a window like Files), then right-click / long-press → Put Away returns the icon to where it was dragged from; or drag an icon out of the Trash window onto the desktop to drop it there (desktops and tablets). A rising blip plays.
+- **Empty Trash** (the Trash window's Empty button, the Special menu and the Trash's context menu) empties nothing: it opens a classic error alert with an original stop-sign icon (`stop`) and an original buzzy error sound (`error`; Apple's own alert icons and sounds are off limits): "Error! Hey, whaddaya think you're doing?" with a "Sorry!" button. `Alert` gained a `sound` option for this.
+- **Remembered:** Trash contents persist in `mikeos:desktop` (v2) alongside icon positions. Clean Up leaves the Trash alone; Reset Desktop puts everything back.
+- Items open normally from inside the Trash. Files showing the Desktop folder hides trashed items too.

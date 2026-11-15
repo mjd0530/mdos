@@ -1,0 +1,13 @@
+/* Picture icons (Mike's logo) are drawn at 2x and scaled down smoothly so they look like
+   the real mark; selecting one inverts it in 1-bit and darkens it in colour. */
+.image {
+  display: block;
+}
+
+.image[data-selected] {
+  filter: invert(1);
+}
+
+:global([data-display='color']) .image[data-selected] {
+  filter: brightness(0.6);
+}
