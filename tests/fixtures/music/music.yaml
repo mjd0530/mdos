@@ -1,0 +1,5 @@
+# A test-only album for the end-to-end tests: three short tones (one with no lyrics).
+# Added to the library only when MDOS_TEST_MUSIC is set (playwright.config.ts), so it
+# never ships. Real albums live in content/music/.
+albums:
+  - test-tones

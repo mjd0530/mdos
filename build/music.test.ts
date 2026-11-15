@@ -18,7 +18,7 @@ import { plainPages } from './plain.ts';
 
 let root: string;
 let content: string;
-const tones = path.resolve('content/music/test-tones');
+const tones = path.resolve('tests/fixtures/music/test-tones');
 
 const write = (file: string, body: string) => {
   const full = path.join(content, file);

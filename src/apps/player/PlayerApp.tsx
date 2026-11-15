@@ -1,6 +1,9 @@
 import type { KeyboardEvent } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { albums } from 'virtual:music';
+import { useWindowFrame } from '../../os/windows/frame';
 import { useWindows } from '../../os/windows/store';
+import { Button } from '../../ui/Button';
 import type { AppProps } from '../types';
 import { SKIN_SIZES } from './index';
 import styles from './PlayerApp.module.css';
@@ -18,16 +21,33 @@ const isTyping = (target: EventTarget) => {
 /** The music player (D-034): one engine, two looks. */
 export default function PlayerApp({ instanceId, isActive }: AppProps) {
   const skin = usePlayer((s) => s.skin);
+  const frame = useWindowFrame();
+  // The album Deck's playlist shows; Play and Space start it when nothing is loaded.
+  const [browsing, setBrowsing] = useState<string | null>(null);
+  const shown = albums.find((a) => a.id === browsing) ?? albums[0];
 
-  const switchSkin = (next: Skin) => {
-    usePlayer.getState().setSkin(next);
-    const win = useWindows.getState().windows.find((w) => w.id === instanceId);
-    if (win && !win.zoomed) {
-      useWindows
-        .getState()
-        .resize(instanceId, SKIN_SIZES[next].w, SKIN_SIZES[next].h);
+  const switchSkin = (next: Skin) => usePlayer.getState().setSkin(next);
+
+  // The device is exactly its look's size. The window remembers its last rect, which
+  // may be the other look's (or an older size), so set it on open and on every switch.
+  useEffect(() => {
+    const { w, h } = SKIN_SIZES[skin];
+    const win = useWindows.getState().windows.find((x) => x.id === instanceId);
+    if (win && (win.rect.w !== w || win.rect.h !== h)) {
+      useWindows.getState().resize(instanceId, w, h);
     }
-  };
+  }, [skin, instanceId]);
+
+  // Opening or activating the window focuses the window itself, which is outside this
+  // element and so never sees the player's keys. Step inside, so Space works at once.
+  const rootRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const root = rootRef.current;
+    const win = root?.closest('[role="dialog"]');
+    if (isActive && root && win && document.activeElement === win) {
+      root.focus({ preventScroll: true });
+    }
+  }, [isActive]);
 
   // Keys that work anywhere in the player (sliders and buttons keep their own).
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
@@ -37,7 +57,7 @@ export default function PlayerApp({ instanceId, isActive }: AppProps) {
     if (e.key === ' ' && !onButton && !isTyping(e.target)) {
       e.preventDefault();
       if (player.album) player.toggle();
-      else if (albums[0]) player.playAlbum(albums[0], 0);
+      else if (shown) player.playAlbum(shown, 0);
     } else if (
       (e.key === 'ArrowLeft' || e.key === 'ArrowRight') &&
       !isTyping(e.target)
@@ -58,22 +78,27 @@ export default function PlayerApp({ instanceId, isActive }: AppProps) {
   };
 
   return (
-    <div className={styles.player} onKeyDown={onKeyDown}>
+    <div
+      ref={rootRef}
+      className={styles.player}
+      tabIndex={-1}
+      onKeyDown={onKeyDown}
+    >
       {albums.length === 0 ? (
-        <p className={styles.empty}>No music yet.</p>
+        <div className={styles.empty} {...frame?.grip}>
+          <p>No music yet.</p>
+          {frame && <Button onClick={frame.close}>Close</Button>}
+        </div>
       ) : skin === 'deck' ? (
-        <Deck albums={albums} active={isActive} />
+        <Deck
+          albums={albums}
+          active={isActive}
+          onSkin={switchSkin}
+          browsing={browsing}
+          onBrowse={setBrowsing}
+        />
       ) : (
         <Pocket albums={albums} onSkin={switchSkin} />
-      )}
-      {skin === 'deck' && albums.length > 0 && (
-        <button
-          type="button"
-          className={styles.skin}
-          onClick={() => switchSkin('pocket')}
-        >
-          Switch to Pocket
-        </button>
       )}
     </div>
   );

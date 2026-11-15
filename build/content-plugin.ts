@@ -47,7 +47,14 @@ export function contentPlugin(): Plugin {
   // Validate synchronously, then resize every referenced image (cached by content).
   const rebuild = async () => {
     const next = buildContent({ contentDir, rootDir, appExists });
-    const nextMusic = await buildMusic({ contentDir, rootDir });
+    const nextMusic = await buildMusic({
+      contentDir,
+      rootDir,
+      // The end-to-end tests add a fixture album (playwright.config.ts); real builds don't.
+      extraLibraries: process.env.MDOS_TEST_MUSIC
+        ? [path.join(rootDir, 'tests', 'fixtures', 'music')]
+        : [],
+    });
     const [coverDisplay, coverThumb] = await Promise.all([
       processAll(rootDir, nextMusic.covers, 'cover'),
       processAll(rootDir, nextMusic.covers, 'thumb'),

@@ -1,7 +1,8 @@
 import type { KeyboardEvent, PointerEvent, ReactNode } from 'react';
-import { useEffect, useId, useRef } from 'react';
+import { useEffect, useId, useMemo, useRef } from 'react';
 import chrome from '../../ui/chrome.module.css';
 import { ScrollArea } from '../../ui/ScrollArea';
+import { WindowFrameContext, type WindowFrame } from './frame';
 import { useWindows, type WindowInstance } from './store';
 import styles from './Window.module.css';
 
@@ -12,8 +13,8 @@ interface WindowProps {
   z: number;
   /** Phones: full screen, one at a time; no zoom, collapse or resize. */
   phone?: boolean;
-  /** The app fills the window instead of scrolling inside it. */
-  fill?: boolean;
+  /** Free-standing (D-035): no chrome; the app draws its own shape, grip and close. */
+  frameless?: boolean;
   children: ReactNode;
 }
 
@@ -36,7 +37,7 @@ export function Window({
   active,
   z,
   phone = false,
-  fill = false,
+  frameless = false,
   children,
 }: WindowProps) {
   const { id, title, rect, zoomed, collapsed } = win;
@@ -70,8 +71,13 @@ export function Window({
   }, [active]);
 
   const startDrag = (kind: 'move' | 'resize') => (event: PointerEvent) => {
-    if (event.button !== 0) return;
-    if (kind === 'move' && (event.target as Element).closest('button')) return;
+    if (event.button !== 0 || (phone && frameless)) return;
+    if (
+      kind === 'move' &&
+      (event.target as Element).closest('button, input, a, [data-no-drag]')
+    ) {
+      return;
+    }
     if (zoomed || (kind === 'resize' && collapsed)) return;
     event.currentTarget.setPointerCapture(event.pointerId);
     drag.current = {
@@ -102,13 +108,80 @@ export function Window({
     const direction = ARROWS[event.key];
     if (!direction) return;
     event.preventDefault();
+    event.stopPropagation();
     const [dx, dy] = direction;
-    if (event.shiftKey) {
+    if (event.shiftKey && !frameless) {
       actions.resize(id, rect.w + dx * KEY_STEP, rect.h + dy * KEY_STEP);
     } else {
       actions.move(id, rect.x + dx * KEY_STEP, rect.y + dy * KEY_STEP);
     }
   };
+
+  const frame = useMemo<WindowFrame>(
+    () => ({
+      title,
+      close: () => useWindows.getState().close(id),
+      grip: {
+        onPointerDown: startDrag('move'),
+        onPointerMove: onDragMove,
+        onPointerUp: endDrag,
+        onPointerCancel: endDrag,
+      },
+      onGripKeyDown: onTitleKeyDown,
+      hintId,
+      phone,
+    }),
+    // The handlers read the latest rect through closures recreated each render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [title, id, hintId, phone, rect, zoomed, collapsed],
+  );
+
+  if (frameless) {
+    return (
+      <section
+        ref={ref}
+        role="dialog"
+        aria-modal="false"
+        aria-labelledby={titleId}
+        tabIndex={-1}
+        data-active={active || undefined}
+        data-phone={phone || undefined}
+        data-frameless=""
+        hidden={phone && !active}
+        inert={phone && !active}
+        className={styles.frameless}
+        // Phones centre the device on the screen instead of placing it.
+        style={
+          phone
+            ? { zIndex: z }
+            : {
+                left: rect.x,
+                top: rect.y,
+                width: rect.w,
+                height: rect.h,
+                zIndex: z,
+              }
+        }
+        onPointerDownCapture={() => actions.focus(id)}
+        onFocusCapture={() => actions.focus(id)}
+      >
+        <h2 id={titleId} className="visually-hidden">
+          {title}
+        </h2>
+        <span id={hintId} className="visually-hidden">
+          Arrow keys move this window.
+        </span>
+        <div
+          className={styles.framelessBody}
+          style={phone ? { width: rect.w, height: rect.h } : undefined}
+        >
+          <WindowFrameContext.Provider value={frame}>
+            {children}
+          </WindowFrameContext.Provider>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section
@@ -191,7 +264,6 @@ export function Window({
         <ScrollArea
           active={active}
           className={styles.body}
-          fill={fill}
           corner={
             !zoomed && (
               <div

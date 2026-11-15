@@ -1,3 +1,0 @@
-TODO(mike): lyrics go here, one line per sung line.
-
-A blank line starts a new verse.

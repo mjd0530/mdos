@@ -1,0 +1,3 @@
+Placeholder lyrics for a test tone.
+
+A blank line starts a new verse.
