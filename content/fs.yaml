@@ -20,6 +20,9 @@ desktop:
     name: About Mike
     opensOnFirstVisit: true
 
+  - doc: resume
+    name: Resume
+
   - folder: Portfolio
     children:
       - doc: portfolio/magic-move
