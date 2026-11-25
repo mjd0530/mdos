@@ -4,10 +4,10 @@ title: About Mike
 
 ![Mike DeMar smiling outdoors, wearing dark rectangular glasses and a grey plaid flannel shirt, with autumn leaves behind him](./portrait.jpg)
 
-A designer from the Concentrated Area of Relocated Yankees, Cary NC.
+I design at the intersection of hardware, software, and AI.
 
-I enjoy crafting intuitive and beautiful product experiences for users.
+I'm a Lead UX Designer at Lenovo, where I lead a team of designers while staying hands-on in the work. I've been designing products since 2008, from early concepts through shipped hardware and software experiences.
 
-Currently I'm leading a team of designers on the Software UXD team @ Lenovo.
+Based in Raleigh-Durham, NC. Open to Lead, Staff, and Principal product design roles.
 
 <!-- TODO(mike): more of your story: background, how you got into design, what you care about. MDOS never invents facts about you; this file is where they come from. -->

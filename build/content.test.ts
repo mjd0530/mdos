@@ -446,7 +446,7 @@ describe('addImageSizes', () => {
     );
   });
 
-  it('marks square and tall pictures so Notes shows them smaller', () => {
+  it('shows square and tall pictures as plain portraits, not Viewer buttons', () => {
     write('fs.yaml', 'desktop:\n  - doc: a\n');
     write('a.md', doc('A', '![A portrait](./me.jpg)'));
     write('me.jpg', 'jpg');
@@ -456,7 +456,9 @@ describe('addImageSizes', () => {
       new Map([['/content/me.jpg', { width: 800, height: 800 }]]),
     );
     expect(rendered.doc.html).toContain(
-      `width="800" height="800" data-upright alt="A portrait"`,
+      `width="800" height="800" class="doc-portrait" alt="A portrait"`,
     );
+    expect(rendered.doc.html).not.toContain('doc-image');
+    expect(rendered.doc.html).not.toContain('View larger');
   });
 });

@@ -1,7 +1,7 @@
 import { docLoaders, tree } from 'virtual:vfs';
 import type { Doc, FolderNode, VNode } from './types';
 
-export type { Doc, FolderNode, ImageNode, VNode } from './types';
+export type { AppNode, Doc, FolderNode, ImageNode, VNode } from './types';
 export { DEFAULT_ICONS } from './types';
 
 /** The desktop folder: the root of everything in content/fs.yaml. */

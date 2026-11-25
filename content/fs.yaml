@@ -20,11 +20,18 @@ desktop:
     name: About Mike
     opensOnFirstVisit: true
 
+  - doc: resume
+    name: Resume
+
   - folder: Portfolio
     children:
       - doc: portfolio/magic-move
       - doc: portfolio/vantage
       - doc: portfolio/hello-design-system
+
+  - link: https://mikedemar.com/
+    name: Website
+    icon: mdLogo
 
   - gallery: sketchbook
     name: Sketchbook
@@ -38,6 +45,8 @@ desktop:
 
   - folder: Contact
     children:
+      - link: mailto:mjd0530@gmail.com
+        name: Email
       - link: https://www.linkedin.com/in/mikedemar/
         name: LinkedIn
       - link: https://dribbble.com/mikedemar

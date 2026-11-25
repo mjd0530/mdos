@@ -51,13 +51,11 @@ test('folder → Files → document → Notes', async ({ page }) => {
   await openWithKeyboard(page, 'Portfolio');
   await expect(page.getByRole('dialog', { name: 'Portfolio' })).toHaveCount(1);
 
-  await files
-    .getByRole('option', { name: 'Smart Share / Magic Move' })
-    .dblclick();
-  const notes = page.getByRole('dialog', { name: 'Smart Share / Magic Move' });
+  await files.getByRole('option', { name: 'Tap to Launch' }).dblclick();
+  const notes = page.getByRole('dialog', { name: 'Tap to Launch' });
   await expect(notes.getByText('Lead UX Designer')).toBeVisible();
   const image = notes.getByRole('img', {
-    name: /Smart Share open on a Lenovo/,
+    name: /Smart Share open on a Lenovo laptop next to a phone/,
   });
   await expect(image).toBeVisible();
   await expect
@@ -102,12 +100,13 @@ test.describe('keyboard', () => {
   }) => {
     // The layout differs by screen (a column on desktops, a grid on phones), so follow
     // wherever ↓ lands and check that icon opens.
-    await icon(page, 'Read Me').focus();
+    // Start where ↓ lands on a window, not a link, in both layouts.
+    await icon(page, 'About Mike').focus();
     await page.keyboard.press('ArrowDown');
     const focused = desktopIcons(page).locator('[role="option"]:focus');
     await expect(focused).toHaveAttribute('aria-selected', 'true');
     const name = (await focused.textContent()) ?? '';
-    expect(name).not.toBe('Read Me');
+    expect(name).not.toBe('About Mike');
     await page.keyboard.press('Enter');
     await expect(page.getByRole('dialog', { name })).toBeFocused();
   });

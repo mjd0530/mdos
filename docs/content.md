@@ -30,7 +30,7 @@ Everything visitors read lives in `content/`. You never touch code to add or cha
 
 ## Pictures
 
-`![Alt text describing the picture](./file.png "Optional caption")`. Every picture can be clicked to open larger in Viewer (which steps through all the pictures in that document); the caption shows under it and in Viewer's title. Pictures are resized to WebP at build time, so add originals at full size.
+`![Alt text describing the picture](./file.png "Optional caption")`. Every wide picture can be clicked to open larger in Viewer (which steps through all the pictures in that document); the caption shows under it and in Viewer's title. Square and tall pictures are treated as portraits (like the photo in About Mike): they show small, at most 160px wide, and don't open in Viewer. Pictures are resized to WebP at build time, so add originals at full size.
 
 ## Sketchbook drawings
 
@@ -54,7 +54,7 @@ Portfolio documents add a `caseStudy` block (`subtitle` and `awards` optional, t
 
 ```yaml
 ---
-title: Smart Share / Magic Move
+title: Tap to Launch
 caseStudy:
   client: Lenovo UXD · Project Fuji
   years: 2023–2026
@@ -113,7 +113,7 @@ Song lengths are read from the files. The build stops if a file is missing, a co
 | `gallery:` | `- gallery: sketchbook` + `name:` | Files, showing thumbnails; pictures open in Viewer |
 | `image:` | `- image: about/portrait.jpg` + `name:` + `alt:` | Viewer (one picture; PNG or JPG) |
 
-Any entry can take `icon:` with a name from `src/assets/icons/icons.ts`. Order in the file is the order on screen.
+Any entry can take `icon:` with a name from `src/assets/icons/icons.ts`: a pixel drawing, or `mdLogo` (Mike's logo, a picture rather than a drawing). Web links get a small arrow badge in the corner to show they open a new tab. Order in the file is the order on screen.
 
 A `doc:` or `image:` on the desktop (not inside a folder) can add `opensOnFirstVisit: true` to open by itself the first time someone visits, on desktops and tablets. Phones start at the launcher instead. Reset Desktop counts as a fresh visit. About Mike uses this.
 
