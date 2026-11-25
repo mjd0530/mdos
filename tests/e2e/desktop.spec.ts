@@ -55,7 +55,7 @@ test('folder → Files → document → Notes', async ({ page }) => {
   const notes = page.getByRole('dialog', { name: 'Tap to Launch' });
   await expect(notes.getByText('Lead UX Designer')).toBeVisible();
   const image = notes.getByRole('img', {
-    name: /Smart Share open on a Lenovo/,
+    name: /Smart Share open on a Lenovo laptop next to a phone/,
   });
   await expect(image).toBeVisible();
   await expect

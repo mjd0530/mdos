@@ -42,6 +42,8 @@ desktop:
 
   - folder: Contact
     children:
+      - link: mailto:mjd0530@gmail.com
+        name: Email
       - link: https://www.linkedin.com/in/mikedemar/
         name: LinkedIn
       - link: https://dribbble.com/mikedemar

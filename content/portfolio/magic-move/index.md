@@ -12,7 +12,7 @@ caseStudy:
     - Research
     - UX specifications
     - Cross-functional leadership
-  summary: I led UX for the tap that sends photos from phone to PC, from a rough prototype to launch at IFA 2024 on 11 Aura Edition PCs.
+  summary: I led the design team behind the tap, a cross-platform experience connecting users' phones and PCs, from vision and rough concepts to launch at IFA 2024 on 11 Aura Edition PCs.
   awards: Lenovo Corporate Award, Team Excellence, FY24/25, for the Project Fuji Aura experience
 ---
 
@@ -23,12 +23,13 @@ caseStudy:
 ## Impact
 
 - **11** Aura Edition devices at launch
-- **+3** more PC lines after launch
-- **Tap** became the Aura Edition signature gesture, from photos to pairing accessories
+- **80–88%** of repeat launches came from the tap experience
+- **~70%** of active Smart Share users engaged with it weekly
+- **86** System Usability Scale score, well above the 68 average
 
 ## Challenge
 
-Getting a photo from your phone to your PC was possible, but never effortless. In Smart Share research, most people emailed photos to themselves, and many used chat or cloud apps instead.
+Getting a photo from your phone to your PC was possible, but never frictionless. In Smart Share research, most people emailed photos to themselves, and many used chat or cloud apps instead.
 
 - **81%** used email to move photos from phone to PC
 - **69%** used chat apps
@@ -42,25 +43,25 @@ That question raised harder ones. Would people actually want to tap their phone 
 
 And could it even be built? We needed hardware and engineering teams to tell us whether a laptop could reliably sense a tap at all. We had a vision, and a long road ahead.
 
-<!-- TODO: the 40-second early-concept prototype film (needs video support in Notes). Filmed from above: a phone held next to a laptop opens the Magic Move window with the phone's recent photos, which are then dragged onto the laptop screen by touch. -->
-
 ## Process
 
 ### Collaboration
 
-Magic Move sat between hardware, software and two outside partners, with teams spread across the US, China, Japan and Norway, so most of my job was keeping one experience intact across all of them. As the lead and primary designer, I owned the experience end to end, working with product management, hardware and software engineering, and our partners.
+Magic Move, our working name for what shipped as Smart Share, sat between hardware, software and two outside partners, with teams across the US, China, Japan and Norway. Most of my job was keeping one experience and UX vision intact across all of them. As the lead designer, I owned the experience end to end, working with product management, hardware and software engineering, quality assurance and our partners.
 
 I presented the work regularly to our executive design director and to directors in product management and engineering, and it was shown to Lenovo’s CEO, Yang Yuanqing. The UX specification became the shared reference that kept those teams building the same thing.
 
+To build shared understanding early, we partnered with a third-party design agency on a vision video. I worked directly with the agency, producing the design artifacts they needed to create it. The video gave stakeholders and cross-functional teams one clear picture of where we were headed, and helped align everyone around it.
+
+<!-- TODO: the 40-second Smart Share vision video (needs video support in Notes). Filmed from above: a phone with a photo gallery is held next to a laptop, the Magic Move window opens with the phone's recent photos, and a finger drags them onto the laptop screen by touch. -->
+
 ### Defining the experience
 
-We started with the experience, then wove in the technology, cost, and the hardware constraints of Lenovo PCs, iPhones and Android phones. Early work mapped user journeys and analyzed competitors. Then we envisioned how the tap should look and feel, and what it could do, focusing on three key experiences:
+We started with the experience, then wove in the technology, cost and the hardware constraints of Lenovo PCs, iPhones and Android phones. Early work mapped user journeys and analyzed competitors. Then we envisioned how the tap should look and feel, and what it could do, focusing on three key experiences:
 
 - **Multi-platform:** Android, iOS and Windows apps that behave as one experience.
-- **Transfer photos:** drag photos from your phone straight into any app on your PC, and back again.
-- **Tap to Launch:** tap your phone against the side of the PC and Smart Share opens instantly.
-
-Six principles kept us honest: clear, familiar, cross-platform, simple, trustworthy and secure.
+- **Transfer photos:** drag photos from your phone straight to your PC, and back again.
+- **Tap to launch:** tap your phone against the side of the PC and Smart Share opens instantly.
 
 ![Planning board with sections for design process and next steps, key user experiences, competitive analysis, and key user journeys](./process-mapping.png "Journey and competitive mapping board")
 
@@ -68,7 +69,7 @@ Six principles kept us honest: clear, familiar, cross-platform, simple, trustwor
 
 ### Low-fidelity flows
 
-I started with experience mapping and low-fidelity flows for the core journey: connecting the phone and laptop, the first-run experience, tap to launch and photo transfer. These flows became the benchmark we tested against.
+Next, I mapped the experience and sketched low-fidelity flows for the core journey: connecting the phone and laptop, the first-run experience, tap to launch and photo transfer. These flows became the benchmark we tested against.
 
 <!-- TODO(mike): what the map changed, e.g. a feature cut, a reordered flow, or a gap you found. -->
 
@@ -76,17 +77,17 @@ I started with experience mapping and low-fidelity flows for the core journey: c
 
 ### Mid- to high-fidelity design
 
-Mid-fidelity flows worked out tap to launch, drag and drop, proximity detection, and sharing photos and links. High-fidelity flows then took the whole journey end to end, including the mobile app.
+Mid-fidelity flows worked out tap to launch, drag and drop, proximity detection, and sharing photos and links. High-fidelity flows then took the whole journey end to end, including the mobile app experience.
 
 ![Mid-fidelity flows for tap to launch, drag and drop, proximity detection, and sharing photos and hyperlinks](./mid-fidelity-flows.png "Mid-fidelity experience flows")
 
-![High-fidelity end-to-end flow, including ultrasound tap to launch and the mobile app](./high-fidelity-flows.png "High-fidelity end-to-end flow")
+![High-fidelity end-to-end flow, including tap to launch and the mobile app](./high-fidelity-flows.png "High-fidelity end-to-end flow")
 
 ![High-fidelity mockups of the Magic Move photo view, selection mode and drag states, with annotations](./high-fidelity-mockups.png "High-fidelity mockups")
 
 ### Prototyping and research
 
-We built a working prototype early: hold the phone near the laptop, and its photos appear on screen, ready to drag. Then we tested it across three studies, each answering a different question.
+We built a working prototype early: tap the phone against the side of the laptop, and its photos appear on screen, ready to drag. Then we tested it across three studies, each answering a different question.
 
 - **3** studies, 2023 to May 2024
 - **37** participant sessions
@@ -95,9 +96,9 @@ We built a working prototype early: hold the phone near the laptop, and its phot
 **Will people understand the gesture?** _Guerrilla testing · Dec 2023 · 6 sessions_
 
 - **What we saw:** People tapped at different angles, too lightly, or held the phone to the laptop like NFC. One worried about damaging the devices.
-- **What changed:** The question became how to make the tap forgiving and teachable, so the design added tap guidance, success feedback, error recovery and first-use education.
+- **What changed:** The question became how to make the tap forgiving and easy to learn. I wrote guidance that asks people to tap gently against the side of the PC, to answer both the light taps and the worry about damage. We also added success feedback, error recovery and first-use education.
 
-**Does the interaction model work?** _Magic Move usability study with UX researcher Peggy He · 2023 · 15 hybrid workers and creatives_
+**Does the interaction model work?** _Usability study with UX researcher Peggy He · 2023 · 15 hybrid workers and creatives_
 
 - **What we saw:** Tapping made the link between devices clearest. Drag and drop worked, but seven people clicked a photo before finding they could drag it. People moved photos in batches.
 - **What changed:** Tap became the primary path, with F11 as the fallback. Discoverability became the priority, multi-select joined the core flow, and the PC layout stopped mirroring the phone.
@@ -111,15 +112,15 @@ Research never told us to drop the gesture. It showed what had to surround it: g
 
 ## Delivery
 
-In September 2024, Smart Share launched at IFA in Berlin as a signature feature of the Lenovo Aura Edition, shipping on 11 PCs at once.
+In September 2024, the tap launched at IFA in Berlin as the way to open Smart Share, a signature feature of the Lenovo Aura Edition, shipping on 11 PCs at once.
 
-Through launch, I stayed close to engineering, answering questions as they came up and protecting the hero use cases from drift or redirection. This is what made it out the door.
+Through launch, I stayed close to engineering, answering questions as they came up and making sure the tap and photo transfer shipped as designed. Here's what shipped.
 
 <!-- TODO(mike): capture Smart Connect Tap to Launch screens and add them here. -->
 
 ### The shipped experience
 
-![The shipped Smart Share on a Lenovo laptop beside a phone showing the same photos, with a Tap and share label between them](./tap-and-share.jpg "Tap and share")
+![Smart Share open on a Lenovo laptop beside a phone showing the same photos, with a Tap and share label between them](./tap-and-share.jpg "Tap and share")
 
 One tap on the side of the laptop opens Smart Share with the phone’s recent photos.
 
@@ -171,14 +172,16 @@ Drag a file onto the window and it becomes a drop zone for sending to the phone.
 
 ![Delivery board of final desktop screens and laptop renders for each step of the flow](./delivery-board.png "The delivery file")
 
-Every final screen and laptop render, one for each step of the flow, handed to engineering as the build reference.
+Every final screen and laptop render, one for each step of the flow, with detailed annotations for each interaction. Engineering built from it as the reference.
 
 ## Outcome
 
-Seeing the tap ship is still one of the proudest moments of my career. A gesture we first tested in six quick guerrilla sessions became the star of Lenovo’s product film.
+Seeing this experience ship is still one of the proudest moments of my career. It went from quick testing, rough concepts and an experience vision to a signature feature of Lenovo’s Aura Edition PCs.
 
-> One tap, from a rough prototype on a desk to a signature feature of Lenovo’s Aura Edition PCs.
+> The tap experience grew beyond the app it was built for.
 
 And it kept going. The tap became the main way people opened Smart Share. It spread to more consumer, commercial and all-in-one PCs, carried into Lenovo Smart Connect as Tap to Launch, and grew into Tap to Pair, connecting earphones, headsets and mice with the same gesture. The Aura Edition team’s work earned a Lenovo Corporate Award for Team Excellence.
 
-I’m deeply grateful I got to lead the UX for it, and to the engineers, product managers, researchers and partners across four countries who made a tap feel like magic. Projects like this are why I love designing where hardware meets software.
+After launch, a study of 1,484 Aura Edition owners and Smart Share telemetry showed how the tap held up in everyday use. Among active users, about 70% used Smart Share weekly, and 80% to 88% of repeat launches came through the tap rather than menus or keyboard shortcuts. Smart Share earned an overall System Usability Scale score of 86.
+
+Leading the UX for this experience was a privilege, and I’m deeply grateful to the designers, engineers, product managers, researchers and partners across four countries who made a tap feel like magic. Projects like this are why I love designing where hardware meets software.

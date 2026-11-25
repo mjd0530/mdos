@@ -20,7 +20,7 @@ test('About Mike opens on the first visit only', async ({ page }, testInfo) => {
     return;
   }
   await expect(about(page)).toBeVisible();
-  await expect(about(page)).toContainText('Cary NC');
+  await expect(about(page)).toContainText('Raleigh-Durham, NC');
 
   await page.reload();
   await expect(page.getByRole('listbox', { name: 'Desktop' })).toBeVisible();
